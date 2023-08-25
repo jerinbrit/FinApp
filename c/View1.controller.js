@@ -40,7 +40,7 @@ sap.ui.define([
 			var j = $.Deferred();
 			$.ajax({
 				type: 'GET',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
+				url: '/britmanjerin/FinApp/main/m/cust.json',
 				success: function(data) {
 					data = data ? JSON.parse(data) : [];
 					that.oModel.setData(data);
@@ -50,7 +50,7 @@ sap.ui.define([
 			});
 			$.ajax({
 				type: 'GET',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/main.json',
+				url: '/britmanjerin/FinApp/main/m/main.json',
 				success: function(data) {
 					data = data ? JSON.parse(data) : {
 						roi: [{
@@ -129,7 +129,7 @@ sap.ui.define([
 					'X-Requested-With': 'XMLHttpRequest',
 					'Access-Control-Allow-Origin': '*'
 				},
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
+				url: '/britmanjerin/FinApp/main/m/cust.json',
 
 				data: data,
 				success: function(e) {
@@ -348,7 +348,7 @@ sap.ui.define([
 			this.mModel.getData().modDt = Date.now().toString();
 			$.ajax({
 				type: 'PUT',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/main.json',
+				url: '/britmanjerin/FinApp/main/m/main.json',
 
 				data: JSON.stringify(this.mModel.getData()),
 				success: function(e) {}
@@ -413,7 +413,7 @@ sap.ui.define([
 			this.mModel.getData().modDt = Date.now().toString();
 			$.ajax({
 				type: 'PUT',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/main.json',
+				url: '/britmanjerin/FinApp/main/m/main.json',
 
 				data: JSON.stringify(this.mModel.getData()),
 				success: function(e) {}
