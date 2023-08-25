@@ -10,7 +10,7 @@ sap.ui.define([
 		formatter: formatter,
 		onInit: function() {
 			this.headers = {
-				"Authorization": 'Bearer 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',
+				"Authorization": 'Bearer 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',
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
