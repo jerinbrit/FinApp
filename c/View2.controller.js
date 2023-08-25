@@ -301,7 +301,7 @@ sap.ui.define([
 			if (this._iDialog) {
 				this._iDialog.destroy();
 			}
-			this._iDialog = sap.ui.xmlfragment("FabFinV3.fragment.AddInst", this);
+			this._iDialog = sap.ui.xmlfragment("FabFinV3.f.AddInst", this);
 			this.getView().addDependent(this._iDialog);
 
 			var cModel = this.cModel.getData();
@@ -458,7 +458,7 @@ sap.ui.define([
 			if (this._itDialog) {
 				this._itDialog.destroy();
 			}
-			this._itDialog = sap.ui.xmlfragment("FabFinV3.fragment.intRate", this);
+			this._itDialog = sap.ui.xmlfragment("FabFinV3.f.intRate", this);
 			this.getView().addDependent(this._itDialog);
 			this._itDialog.setModel(new JSONModel($.extend(true, [], this.cModel.getData().roiDet)), "iDialogModel");
 			this._itDialog.open();
@@ -537,7 +537,7 @@ sap.ui.define([
 			if (this._hDialog) {
 				this._hDialog.destroy();
 			}
-			this._hDialog = sap.ui.xmlfragment("FabFinV3.fragment.payHistory", this);
+			this._hDialog = sap.ui.xmlfragment("FabFinV3.f.payHistory", this);
 			this.getView().addDependent(this._hDialog);
 			this._hDialog.bindElement("cModel>" + oEvent.getSource().getBindingContext("cModel").getPath());
 
