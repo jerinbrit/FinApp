@@ -2,12 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"FabFinV3/util/formatter",
+	"FabFinV3/u/formatter",
 	"sap/m/MessageBox"
 ], function(Controller, JSONModel, formatter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.controller.View2", {
+	return Controller.extend("FabFinV3.c.View2", {
 
 		formatter: formatter,
 
