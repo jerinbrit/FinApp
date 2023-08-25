@@ -27,11 +27,7 @@ sap.ui.define([
 		loadCustData: function(custId) {
 			var that = this;
 			$.ajax({
-				type: 'GET',
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Access-Control-Allow-Origin': '*'
-				},
+				type: 'GET',				
 				url: '/britmanjerin/FinApp/main/m/cust.json',
 				success: function(data) {
 
