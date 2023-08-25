@@ -40,7 +40,7 @@ sap.ui.define([
 			var j = $.Deferred();
 			$.ajax({
 				type: 'GET',
-				url: 'https://raw.githubusercontent.com/britmanjerin/tst/main/new.json',
+				url: '/britmanjerin/tst/main/new.json',
 				success: function(data) {
 					data = data ? JSON.parse(data) : [];
 					that.oModel.setData(data);
