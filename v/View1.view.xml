@@ -1,0 +1,84 @@
+<mvc:View controllerName="FabFinV3.controller.View1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table">
+	<App>
+		<pages>
+			<Page title="Finance_" class="sapUiSizeCompact">
+				<content>
+				
+					<Toolbar>
+						<ToolbarSpacer/>
+							<Button text="Payment Window" press="onUpdatePW"/>
+						<Button text="Interest rate" press="onUpdateInt"/>
+						<Button text="Add Customer" press=".onAddCust(false)"/>
+					</Toolbar>
+						<t:Table id="idMastTable" rows="{oModel>/}" enableColumnReordering="false" visibleRowCount="14" selectionMode="None" showNoData="true"
+						rowActionCount="0"  enableCellFilter="true">
+						<t:columns>
+						
+							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="10rem">
+								<Text text="Name" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Link text="{oModel>name}" press=".onNav(${oModel>})"/>
+								</t:template>
+							</t:Column>
+						
+						
+							<t:Column sortProperty="TREND" filterProperty="TREND" hAlign="Start" resizable="false" width="5.5rem">
+								<Text text="Gold (gms)" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{oModel>goldGms}"/>
+								</t:template>
+							</t:Column>
+							<t:Column sortProperty="PERIOD" filterProperty="PERIOD" hAlign="Start" resizable="false" width="7rem">
+								<Text text="Loan Amount" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{oModel>lnAmt}"/>
+								</t:template>
+							</t:Column>
+							<t:Column sortProperty="FORMULA" filterProperty="FORMULA" hAlign="Start" resizable="false" width="5.5rem">
+								<Text text="Loan Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{oModel>lnDt}"/>
+								</t:template>
+							</t:Column>
+							
+								<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="10rem">
+								<Text text="Last Payment date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{oModel>lstPayDate}"/>
+								</t:template>
+							</t:Column>
+								<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="10rem">
+								<Text text="Next Payment date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{oModel>nxtInstsDate}"/>
+								</t:template>
+							</t:Column>
+						
+								<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="10rem">
+								<Text text="Status" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<t:template>
+									<Text text="{ parts: [{ path: 'oModel>lnCls' },
+											   { path: 'oModel>nxtInstsDate' },
+									           { path: 'oModel>odDat_1' },
+									           { path: 'oModel>odDat_2' },
+									           { path: 'oModel>odDat_3' },
+									           { path: 'oModel>odAmt_1' },
+									           { path: 'oModel>odAmt_2' },
+									           { path: 'oModel>odAmt_3' },
+									           { path: 'oModel>partPay' }], 
+									   formatter: '.formatter.setStatus' }"/>
+								</t:template>
+							</t:Column>
+							
+							
+						
+						
+						</t:columns>
+				
+					</t:Table>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
