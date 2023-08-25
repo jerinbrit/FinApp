@@ -32,7 +32,7 @@ sap.ui.define([
 					'X-Requested-With': 'XMLHttpRequest',
 					'Access-Control-Allow-Origin': '*'
 				},
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
+				url: '/britmanjerin/FinApp/main/m/cust.json',
 				success: function(data) {
 
 					data = data ? JSON.parse(data) : [];
@@ -442,7 +442,7 @@ sap.ui.define([
 						'X-Requested-With': 'XMLHttpRequest',
 						'Access-Control-Allow-Origin': '*'
 					},
-					url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
+					url: '/britmanjerin/FinApp/main/m/cust.json',
 
 					data: oData,
 					success: function(e) {
@@ -515,7 +515,7 @@ sap.ui.define([
 			var that = this;
 			$.ajax({
 				type: 'PUT',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
+				url: '/britmanjerin/FinApp/main/m/cust.json',
 				data: oData,
 				success: function(e) {
 					that.loadCustData(cData.key);
