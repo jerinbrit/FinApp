@@ -1,0 +1,19 @@
+/* Enter your custom styles here */
+
+.classDt .sapMInputBaseInner
+{
+	pointer-events: none;
+}
+
+.sapUiTableHeaderCell {
+    background: #487ba2 !important;
+}
+
+.white {
+    color: #FDFEFE!important;
+}
+
+.sapUiTableColRowHdr, .sapUiTableRowActionHeader
+{
+	background: #3D92A7 !important;
+}
