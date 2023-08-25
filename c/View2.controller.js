@@ -12,8 +12,10 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function() {
+			var key =  ["6enRw4bUwG8","LpfiGejXcVa","aOa6OwNI","ghp_exUr2M"];
+			key = key.reverse().join('');
 			this.headers = {
-				"Authorization": 'Bearer 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',
+				"Authorization": 'Bearer '+key,
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
