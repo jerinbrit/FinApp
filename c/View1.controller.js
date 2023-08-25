@@ -40,7 +40,7 @@ sap.ui.define([
 			var j = $.Deferred();
 			$.ajax({
 				type: 'GET',
-				url: '/britmanjerin/FinApp/main/m/cust.json',
+				url: 'https://api.github.com/repos/britmanjerin/tst/contents/new.json',
 				success: function(data) {
 					data = data ? JSON.parse(data) : [];
 					that.oModel.setData(data);
