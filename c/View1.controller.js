@@ -75,7 +75,7 @@ sap.ui.define([
 			if (this._oDialog) {
 				this._oDialog.destroy();
 			}
-			this._oDialog = sap.ui.xmlfragment("FabFinV3.fragment.AddCust", this);
+			this._oDialog = sap.ui.xmlfragment("FabFinV3.f.AddCust", this);
 			this.getView().addDependent(this._oDialog);
 
 			if (!obj) {
@@ -306,7 +306,7 @@ sap.ui.define([
 			if (this._iDialog) {
 				this._iDialog.destroy();
 			}
-			this._iDialog = sap.ui.xmlfragment("FabFinV3.fragment.intRate", this);
+			this._iDialog = sap.ui.xmlfragment("FabFinV3.f.intRate", this);
 			this.getView().addDependent(this._iDialog);
 			this._iDialog.setModel(new JSONModel($.extend(true, [], this.mModel.getData().roi)), "iDialogModel");
 			this._iDialog.open();
@@ -367,7 +367,7 @@ sap.ui.define([
 			if (this._pwDialog) {
 				this._pwDialog.destroy();
 			}
-			this._pwDialog = sap.ui.xmlfragment("FabFinV3.fragment.PayWindow", this);
+			this._pwDialog = sap.ui.xmlfragment("FabFinV3.f.PayWindow", this);
 			this.getView().addDependent(this._pwDialog);
 			this._pwDialog.setModel(new JSONModel($.extend(true, [], this.mModel.getData().pw)), "pwDialogModel");
 			this._pwDialog.open();
