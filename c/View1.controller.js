@@ -50,6 +50,11 @@ sap.ui.define([
 			});
 			$.ajax({
 				type: 'GET',
+				 headers: {
+     'Cache-Control': 'no-cache, no-store, must-revalidate', 
+     'Pragma': 'no-cache', 
+     'Expires': '0'
+   },
 				url: '/britmanjerin/FinApp/main/m/main.json',
 				success: function(data) {
 					data = data ? JSON.parse(data) : {
