@@ -7,11 +7,16 @@ sap.ui.define([
 ], function(Controller, JSONModel, formatter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.c.View2", {
+	return Controller.extend("FabFinV3.controller.View2", {
 
 		formatter: formatter,
 
 		onInit: function() {
+			this.headers = {
+				"Authorization": 'Bearer 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',
+				"Accept": "application/vnd.github.v3+json",
+				"Content-Type": "application/json"
+			};
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
 		
 			//this.getMonthRange()
@@ -26,11 +31,17 @@ sap.ui.define([
 
 		loadCustData: function(custId) {
 			var that = this;
+			
+			
+		
+			
+			
 			$.ajax({
-				type: 'GET',				
-				url: '/britmanjerin/FinApp/main/m/cust.json',
-				success: function(data) {
-
+				type: 'GET',
+					headers: this.headers,
+				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
+				success: function(odata) {
+	var data = atob(odata.content);
 					data = data ? JSON.parse(data) : [];
 
 					that.oModel.setData(data);
@@ -316,23 +327,7 @@ sap.ui.define([
 			var othrAmt = Number(sap.ui.getCore().byId("idOthrAmt").getValue());
 
 			var cData = this.cModel.getData();
-		/*	var	cObj,
-				totAmtDI = cData.intTD.int + cData.intTD.prA,
-				totAmtMI = 0;
-
-			for (var i in cData.instDet) {
-				if (new Date(payDate) <= cData.instDet[i].intTo && new Date(payDate) >= cData.instDet[i].intFrm) {
-					cObj = cData.instDet[i];
-					break;
-				}
-			}
-
-			totAmtMI = (cObj.int + cObj.prA) - cObj.amtPaid;
-
-			if ((Number(payAmt)) > (totAmtMI)) {
-				MessageBox.error("Amount greater than (Principal + Interest). Pending Amount to be collected is " + (totAmtMI));
-				return;
-			}*/
+		
 
 			if (lnClsr) {
 				
@@ -430,23 +425,42 @@ sap.ui.define([
 					}
 				}
 
-				oData = JSON.stringify(oData);
-				var that = this;
-				$.ajax({
-					type: 'PUT',
-					headers: {
-						'X-Requested-With': 'XMLHttpRequest',
-						'Access-Control-Allow-Origin': '*'
-					},
-					url: '/britmanjerin/FinApp/main/m/cust.json',
+			
+				
+				var that=this;
+				var data=JSON.stringify(oData);
+			
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			$.ajax({
+				type: 'GET',
+				url: url,
+				headers: that.headers,
+				success: function(odata) {
 
-					data: oData,
-					success: function(e) {
-						that.loadCustData(cData.key);
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: odata.sha
+					};
+
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						headers: that.headers,
+						data: JSON.stringify(body),
+						dataType: 'text',
+						success: function(odata) {
+							that.loadCustData(cData.key);
 						that.onCl();
-					}
-				});
-
+						},	error: function(odata) {
+							that.loadCustData(cData.key);
+						that.onCl();
+						}
+					});
+				}
+			});
+				
+		
 			}
 		},
 
@@ -506,18 +520,51 @@ sap.ui.define([
 					break;
 				}
 			}
+			
+				var that=this;
+				var data=JSON.stringify(oData);
+			
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			$.ajax({
+				type: 'GET',
+				url: url,
+				headers: that.headers,
+				success: function(odata) {
 
-			oData = JSON.stringify(oData);
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: odata.sha
+					};
+
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						headers: that.headers,
+						data: JSON.stringify(body),
+						dataType: 'text',
+						success: function(odata) {
+							that.loadCustData(cData.key);
+						that.onCl();
+						},	error: function(odata) {
+							that.loadCustData(cData.key);
+						that.onCl();
+						}
+					});
+				}
+			});
+
+			/*oData = JSON.stringify(oData);
 			var that = this;
 			$.ajax({
 				type: 'PUT',
-				url: '/britmanjerin/FinApp/main/m/cust.json',
+				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
 				data: oData,
 				success: function(e) {
 					that.loadCustData(cData.key);
 					that.onCl();
 				}
-			});
+			});*/
 			this.onClose();
 		},
 
