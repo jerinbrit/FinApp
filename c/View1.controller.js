@@ -9,19 +9,22 @@ sap.ui.define([
 	return Controller.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
-		
+			this.headers = {
+				"Authorization": 'Bearer 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',
+				"Accept": "application/vnd.github.v3+json",
+				"Content-Type": "application/json"
+			};
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
 			this.getView().setModel(this.oModel, "oModel");
 			this.getView().setModel(this.mModel, "mModel");
-	this.loadCustData();
-	this.getOwnerComponent().getRouter().getRoute("home").attachPatternMatched(this._onObjectMatched, this);
+			//this.loadCustData();
+			this.getOwnerComponent().getRouter().getRoute("home").attachPatternMatched(this._onObjectMatched, this);
 
-			
 		},
-			_onObjectMatched: function(evt) {
-				this.loadCustData();
-			},
+		_onObjectMatched: function(evt) {
+			this.loadCustData();
+		},
 
 		/*downloadObjectAsJson(data, "new");
 				function downloadObjectAsJson(exportObj, exportName) {
@@ -38,10 +41,13 @@ sap.ui.define([
 			var that = this;
 			var i = $.Deferred();
 			var j = $.Deferred();
+
 			$.ajax({
 				type: 'GET',
-				url: '/britmanjerin/FinApp/main/m/cust.json',
-				success: function(data) {
+				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
+				headers: this.headers,
+				success: function(odata) {
+					var data = atob(odata.content);
 					data = data ? JSON.parse(data) : [];
 					that.oModel.setData(data);
 					that.oModel.refresh();
@@ -50,9 +56,11 @@ sap.ui.define([
 			});
 			$.ajax({
 				type: 'GET',
-				
-				url: '/britmanjerin/FinApp/main/m/main.json',
-				success: function(data) {
+
+				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
+				headers: this.headers,
+				success: function(odata) {
+					var data = atob(odata.content);
 					data = data ? JSON.parse(data) : {
 						roi: [{
 							month: 1,
@@ -125,7 +133,8 @@ sap.ui.define([
 			var data = this.oModel.getData();
 			data = JSON.stringify(data);
 			var that = this;
-			$.ajax({
+
+		/*	$.ajax({
 				type: 'PUT',
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest',
@@ -138,7 +147,38 @@ sap.ui.define([
 					that.loadCustData();
 					that.onClose();
 				}
-			});
+			});*/
+
+			fetch(url, {
+					that.headers
+				})
+				.then(response => response.json())
+				.then(fileDetails => {
+
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: fileDetails.sha
+					};
+
+					return fetch(url, {
+						method: 'PUT',
+						that.headers,
+						body: JSON.stringify(data)
+					});
+				})
+				.then(response => {
+					if (response.status === 200) {
+						that.loadCustData();
+						that.onClose();
+					} else {
+						console.log("Failed to update file:", response.statusText);
+					}
+				})
+				.catch(error => {
+					console.error("An error occurred:", error);
+				});
+
 		},
 
 		calculateEMI: function(e) {
@@ -152,7 +192,7 @@ sap.ui.define([
 					data.goldRt = Number(data.lnAmt) / Number(data.goldGms);
 				}
 			}
-			if (Number(data.lnAmt) > 0  && Number(data.roi) > 0) {
+			if (Number(data.lnAmt) > 0 && Number(data.roi) > 0) {
 
 				data.lnDt = data.lnDt ? data.lnDt : new Date().toDateString();
 				data.payDet = [];
@@ -212,7 +252,7 @@ sap.ui.define([
 					fInstMnth = (date.getMonth() + 1) % 12,
 					fInstYr = !((date.getMonth() + 1) % 12) ? date.getFullYear() + 1 : date.getFullYear(),
 					fInstDay = 5,
-					mc=1;
+					mc = 1;
 				for (var i in pwArr) {
 					if (date.getDate() >= pwArr[i].frm && date.getDate() <= pwArr[i].to) {
 						fInstMnth = date.getMonth() + pwArr[i].mc;
@@ -280,7 +320,6 @@ sap.ui.define([
 
 					pObj.instStDt = instStDt.toDateString();
 					instStDt = new Date(new Date(pObj.fnPayDt).getTime() + (1 * 24 * 60 * 60 * 1000));
-
 
 					if ((new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm))) {
 						iEnd = i + 5;
