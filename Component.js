@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"FabFinV3/model/models"
+	"FabFinV3/m/models"
 ], function(UIComponent, Device, models) {
 	"use strict";
 
