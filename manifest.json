@@ -39,7 +39,7 @@
 
 	"sap.ui5": {
 	 "rootView": {
-            "viewName": "FabFinV3.view.App",
+            "viewName": "FabFinV3.v.App",
             "type": "XML",
             "async": true
         },
@@ -71,7 +71,7 @@
             "config": {
                 "routerClass": "sap.m.routing.Router",
                 "viewType": "XML",
-                "viewPath": "FabFinV3.view",
+                "viewPath": "FabFinV3.v",
                 "controlId": "app",
                 "controlAggregation": "pages",
                 "bypassed": {
