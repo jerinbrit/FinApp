@@ -2,11 +2,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"FabFinV3/util/formatter"
+	"FabFinV3/u/formatter"
 ], function(Controller, JSONModel, formatter) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.controller.View1", {
+	return Controller.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
 		
