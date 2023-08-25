@@ -10,7 +10,7 @@ sap.ui.define([
 		formatter: formatter,
 		onInit: function() {
 			this.headers = {
-				"Authorization": 'Bearer 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',
+				"Authorization": 'Bearer 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',
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
@@ -48,7 +48,7 @@ sap.ui.define([
 				headers: this.headers,
 				success: function(odata) {
 					var data = atob(odata.content);
-					data = data ? JSON.parse(data) : [];
+					data = data.trim() ? JSON.parse(data) : [];
 					that.oModel.setData(data);
 					that.oModel.refresh();
 					i.resolve();
@@ -61,7 +61,7 @@ sap.ui.define([
 				headers: this.headers,
 				success: function(odata) {
 					var data = atob(odata.content);
-					data = data ? JSON.parse(data) : {
+					data = data.trim() ? JSON.parse(data) : {
 						roi: [{
 							month: 1,
 							roi: 12
@@ -71,8 +71,7 @@ sap.ui.define([
 					that.mModel.setData(data);
 					that.mModel.refresh();
 					j.resolve();
-				},
-				cache: false
+				}
 			});
 
 			$.when(i, j).done(function() {
@@ -134,22 +133,58 @@ sap.ui.define([
 			data = JSON.stringify(data);
 			var that = this;
 
-		/*	$.ajax({
-				type: 'PUT',
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-					'Access-Control-Allow-Origin': '*'
-				},
-				url: '/britmanjerin/FinApp/main/m/cust.json',
+			/*	$.ajax({
+					type: 'PUT',
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest',
+						'Access-Control-Allow-Origin': '*'
+					},
+					url: '/britmanjerin/FinApp/main/m/cust.json',
 
-				data: data,
-				success: function(e) {
-					that.loadCustData();
-					that.onClose();
+					data: data,
+					success: function(e) {
+						that.loadCustData();
+						that.onClose();
+					}
+				});*/
+				
+		
+
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			$.ajax({
+				type: 'GET',
+				url: url,
+				headers: that.headers,
+				success: function(odata) {
+
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: odata.sha
+					};
+
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						headers: that.headers,
+						data: JSON.stringify(body),
+						dataType: 'text',
+						success: function(odata) {
+
+							that.loadCustData();
+						that.onClose();
+
+						},	error: function(odata) {
+
+							that.loadCustData();
+						that.onClose();
+
+						}
+					});
 				}
-			});*/
+			});
 
-			fetch(url, {
+		/*	fetch(url, {
 					that.headers
 				})
 				.then(response => response.json())
@@ -163,7 +198,7 @@ sap.ui.define([
 
 					return fetch(url, {
 						method: 'PUT',
-						that.headers,
+						headers,
 						body: JSON.stringify(data)
 					});
 				})
@@ -177,7 +212,7 @@ sap.ui.define([
 				})
 				.catch(error => {
 					console.error("An error occurred:", error);
-				});
+				});*/
 
 		},
 
@@ -385,15 +420,44 @@ sap.ui.define([
 		},
 
 		cUpdateInt: function() {
+			var that = this;
 			this.mModel.getData().roi = this._iDialog.getModel("iDialogModel").getData();
 			this.mModel.getData().modDt = Date.now().toString();
-			$.ajax({
+		/*	$.ajax({
 				type: 'PUT',
 				url: '/britmanjerin/FinApp/main/m/main.json',
 
 				data: JSON.stringify(this.mModel.getData()),
 				success: function(e) {}
+			});*/
+			
+			var data=JSON.stringify(this.mModel.getData());
+			
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			$.ajax({
+				type: 'GET',
+				url: url,
+				headers: that.headers,
+				success: function(odata) {
+
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: odata.sha
+					};
+
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						headers: that.headers,
+						data: JSON.stringify(body),
+						dataType: 'text',
+						success: function(odata) {},	error: function(odata) {}
+					});
+				}
 			});
+			
+			
 			this.onClose();
 		},
 
@@ -452,13 +516,42 @@ sap.ui.define([
 		cUpdatePW: function() {
 			this.mModel.getData().pw = this._pwDialog.getModel("pwDialogModel").getData();
 			this.mModel.getData().modDt = Date.now().toString();
-			$.ajax({
+		/*	$.ajax({
 				type: 'PUT',
 				url: '/britmanjerin/FinApp/main/m/main.json',
 
 				data: JSON.stringify(this.mModel.getData()),
 				success: function(e) {}
+			});*/
+			
+			
+				var that=this;
+				var data=JSON.stringify(this.mModel.getData());
+			
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			$.ajax({
+				type: 'GET',
+				url: url,
+				headers: that.headers,
+				success: function(odata) {
+
+					var body = {
+						message: "Updating file",
+						content: btoa(data),
+						sha: odata.sha
+					};
+
+					$.ajax({
+						type: 'PUT',
+						url: url,
+						headers: that.headers,
+						data: JSON.stringify(body),
+						dataType: 'text',
+						success: function(odata) {},	error: function(odata) {}
+					});
+				}
 			});
+			
 			this.onClose();
 		},
 
