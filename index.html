@@ -1,37 +1,55 @@
 <!DOCTYPE HTML>
 <html>
-
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta charset="UTF-8">
-
-		<title>Finance</title>
-
-		
-		<script id="sap-ui-bootstrap"
-			src="https://sapui5.hana.ondemand.com/resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"FabFinV3": ""}'>
-		</script>
-
-		<link rel="stylesheet" type="text/css" href="cs/style.css">
-
-		<script>
-			sap.ui.getCore().attachInit(function() {
-				new sap.m.Shell({
-					app: new sap.ui.core.ComponentContainer({
-						height : "100%",
-						name : "FabFinV3"
-					})
-				}).placeAt("content");
-			});
-		</script>
-	</head>
-
-	<body class="sapUiBody" id="content">
-	
-	</body>
-
-</html>
+			<title>Finance</title>
+			<link rel="stylesheet" type="text/css" href="style.css">
+				<script>
+					window.load_sap = function () {
+						sap.ui.getCore().attachInit(function () {
+							new sap.m.Shell({
+								app: new sap.ui.core.ComponentContainer({
+									height: "100%",
+									name: "FabFinV3"
+								})
+							}).placeAt("content");
+						});
+					}
+				</script>
+				<script>
+					window.srcUrl = "https://sapui5.hana.ondemand.com/resources/sap-ui-core.js";
+					async function check() {
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange = function () {
+							if (this.readyState == 4) {
+								var script = document.createElement('script');
+								script.src = window.srcUrl;
+								script.id = "sap-ui-bootstrap";
+								script.setAttribute('data-sap-ui-libs', 'sap.m');
+								script.setAttribute('data-sap-ui-theme', 'sap_belize');
+								script.setAttribute('data-sap-ui-compatVersion', 'edge');
+								script.setAttribute('data-sap-ui-resourceroots', '{"FabFinV3": ""}');
+								document.getElementsByTagName('head')[0].appendChild(script);
+								function proceed() {
+									setTimeout(function () {
+										if (typeof sap != 'undefined') {
+											window.load_sap();
+										} else {
+											document.getElementsByTagName("script")[2].remove();
+											window.srcUrl = "../../resources/sap-ui-core.js";
+											check()
+										}
+									}, 100);
+								}
+								proceed()
+							}
+						}
+						xhr.open('GET', window.srcUrl, true);
+						xhr.send();
+					}
+					check()
+				</script>
+			</head>
+			<body class="sapUiBody" id="content"></body>
+		</html>
