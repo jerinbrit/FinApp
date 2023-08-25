@@ -9,8 +9,10 @@ sap.ui.define([
 	return Controller.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
+			var key = '{"words":[1734897759,1702385010,843931983,1630949239,1313426544,1718175589,1784177494,1630954862,1383543906,1433880376,134744072,134744072],"sigBytes":40}';
+			key = key.toString(CryptoJS.enc.Utf8)
 			this.headers = {
-				"Authorization": 'Bearer '+atob('Z2hwX0p4a1FacUM2djBuUVBRV0lpZEt4TmZVZGQ4QlBiUzM4N1ExSQ=='),
+				"Authorization": 'Bearer '+key,
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
