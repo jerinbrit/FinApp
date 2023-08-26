@@ -2,118 +2,70 @@
 	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout">
 	<App>
 		<pages>
-			<Page title="Customer" class="sapUiSizeCompact">
+			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
 				<content>
-					<l:Grid defaultSpan="L12 M12 S12">
-						<VBox>
-							<Text text="Name"/>
-							<Text text="{cModel>/name}"/>
-							<layoutData>
-								<l:GridData span="L3 M4 S12"/>
-							</layoutData>
-						</VBox>
-						<VBox>
-							<Text text="Address"/>
-							<Text text="{cModel>/addr}"/>
-							<layoutData>
-								<l:GridData span="L3 M4 S12"/>
-							</layoutData>
-						</VBox>
-						<VBox>
-							<Text text="Mobile No"/>
-							<Text text="{cModel>/mob}"/>
-							<layoutData>
-								<l:GridData span="L3 M4 S12"/>
-							</layoutData>
-						</VBox>
-						<VBox>
-							<Text text="Email"/>
-							<Text text="{cModel>/mail}"/>
-							<layoutData>
-								<l:GridData span="L3 M4 S12"/>
-							</layoutData>
-						</VBox>
-					</l:Grid>
-					<Toolbar>
-						<!--<Text text="Interest till today for balance Principal Amount {cModel>/intTD/prA} is {cModel>/intTD/int}"/>-->
-						<ToolbarSpacer/>
-						<Text text="Lone Closed" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/> 
-							<Button text="Interest rate" press="onUpdateInt" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
-						<Button text="Add" press="onAddInst" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
-					</Toolbar>
-					<t:Table rows="{cModel>/instDet/}" enableColumnReordering="false" visibleRowCount="14" selectionMode="None" showNoData="true"
-						rowActionCount="1" fixedColumnCount="1" enableCellFilter="true">
-						<t:columns>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="5.5rem">
-								<Text text="Installment" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
+					<ObjectHeader binding="{/ProductCollection/0}" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
+						<statuses>
+							<ObjectStatus text="{cModel>/goldGms} gms"/>
+							<ObjectStatus	
+							text="{ parts: [{ path: 'cModel>/lnCls' },
+							{ path: 'cModel>/nxtInstsDate' }, 
+							{ path: 'cModel>/odDat_1' }, 
+							{ path: 'cModel>/odDat_2' },
+							{ path: 'cModel>/odDat_3' }, 
+							{ path: 'cModel>/odAmt_1' }, 
+							{ path: 'cModel>/odAmt_2' },
+							{ path: 'cModel>/odAmt_3' },
+							{ path: 'cModel>/partPay' }],
+							formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
+								<ObjectStatus text="Due on: {cModel>/nxtInstsDate}"/>
+						</statuses>
+						<ObjectAttribute text="Loan Date: {cModel>/lnDt}"/>
+						<ObjectAttribute text="Phone: {cModel>/mob}"/>
+						<ObjectAttribute text="Email: {cModel>/mail}"/>
+						<ObjectAttribute text="Address: {cModel>/addr}"/>
+					</ObjectHeader>
+				
+					<Table width="96%" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders,HeaderToolbar" class="sapUiTinyMarginBegin">
+						<headerToolbar>
+							<OverflowToolbar>
+								<content>
+									<ToolbarSpacer/>
+									<Button type="Accept" text="Interest rate" press="onUpdateInt" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
+									<Button type="Accept" text="Add Payment" press="onAddInst" visible="{=${cModel>/lnCls}=== 'X' ? false : true}" />
+								</content>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column width="12em">
+								<Text text="Installment" class="white_c bold"/>
+							</Column>
+							<Column minScreenWidth="Tablet" demandPopin="true">
+								<Text text="Principal" class="white_c bold"/>
+							</Column>
+							<Column minScreenWidth="Tablet" demandPopin="true">
+								<Text text="Interest" class="white_c bold"/>
+							</Column>
+							<Column minScreenWidth="Tablet" demandPopin="true">
+								<Text text="Payment Date" class="white_c bold"/>
+							</Column>
+							<Column hAlign="End">
+								<Text text="Amount Paid" class="white_c bold"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem vAlign="Middle" type="Active" press=".onShowHistory($event)">
+								<cells>
 									<Text text="{cModel>no}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Principal" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
 									<Text text="{cModel>prA}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Interest" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
 									<Text text="{cModel>int}"/>
-								</t:template>
-							</t:Column>
-							<!--	<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Late Payment Interest" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{cModel>ltPay}"/>
-								</t:template>
-							</t:Column>
-							-->
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Amount Paid" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{cModel>amtPaid}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Payment Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Int. Period From" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'cModel>intFrm', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Int. Period To" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'cModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Balance" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{cModel>bPrA}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Payment Window" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text
-										text="{path: 'cModel>instStDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}} to {path: 'cModel>fnPayDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-						
-						</t:columns>
-						<t:rowActionTemplate>
-							<t:RowAction>
-								<t:RowActionItem icon="sap-icon://history" press=".onShowHistory($event)"/>
-							</t:RowAction>
-						</t:rowActionTemplate>
-					</t:Table>
+									<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+									<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				
 				</content>
 			</Page>
 		</pages>
