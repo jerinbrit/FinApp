@@ -45,7 +45,7 @@ sap.ui.define([
 					}
 
 					var data = atob(odata.content);
-					data = data ? JSON.parse(data) : [];
+					data = data.trim() ? JSON.parse(data) : [];
 
 					that.oModel.setData(data);
 					that.oModel.refresh();
