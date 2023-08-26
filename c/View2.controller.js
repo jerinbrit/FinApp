@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(Controller, JSONModel, formatter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.controller.View2", {
+	return Controller.extend("FabFinV3.c.View2", {
 
 		formatter: formatter,
 
@@ -19,8 +19,9 @@ sap.ui.define([
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
+			this.custsha;
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
-		
+
 			//this.getMonthRange()
 		},
 		_onObjectMatched: function(evt) {
@@ -33,17 +34,17 @@ sap.ui.define([
 
 		loadCustData: function(custId) {
 			var that = this;
-			
-			
-		
-			
-			
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
 				type: 'GET',
-					headers: this.headers,
+				headers: this.headers,
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
 				success: function(odata) {
-	var data = atob(odata.content);
+					if (!that.custsha) {
+						that.custsha = odata.sha;
+					}
+
+					var data = atob(odata.content);
 					data = data ? JSON.parse(data) : [];
 
 					that.oModel.setData(data);
@@ -61,7 +62,7 @@ sap.ui.define([
 							break;
 						}
 					}
-
+					sap.ui.core.BusyIndicator.hide();
 				}
 			});
 		},
@@ -128,7 +129,7 @@ sap.ui.define([
 					fInstMnth = (date.getMonth() + 1) % 12,
 					fInstYr = !((date.getMonth() + 1) % 12) ? date.getFullYear() + 1 : date.getFullYear(),
 					fInstDay = 5,
-					mc=1;;
+					mc = 1;;
 				for (var i in pwArr) {
 					if (date.getDate() >= pwArr[i].frm && date.getDate() <= pwArr[i].to) {
 						fInstMnth = date.getMonth() + pwArr[i].mc;
@@ -198,17 +199,17 @@ sap.ui.define([
 					}
 
 					pObj.instStDt = instStDt.toDateString();
-					
+
 					for (var j in data) {
 						if (new Date(data[j].payDate) <= new Date(pObj.fnPayDt) && new Date(data[j].payDate) >= new Date(pObj.instStDt)) {
 							pObj.amtPaid += Number(data[j].amt);
 							pObj.payDate = Number(data[j].amt) > 0 ? data[j].payDate : pObj.payDate;
 							pObj.hist.push(data[j]);
-							isLnClsd = data[j].lnClsr  ? true : false;                      
-							
+							isLnClsd = data[j].lnClsr ? true : false;
+
 						}
 					}
-					
+
 					instStDt = new Date(new Date(pObj.fnPayDt).getTime() + (1 * 24 * 60 * 60 * 1000));
 
 					if (pObj.amtPaid > pObj.int) {
@@ -233,20 +234,18 @@ sap.ui.define([
 					pObj.intTo = new Date(pObj.intTo);
 					pObj.payDate = pObj.payDate ? new Date(pObj.payDate) : "";
 					pObj.fnPayDt = new Date(pObj.fnPayDt);
-					pObj.instStDt= new Date(pObj.instStDt);
-					
-					if(isLnClsd)
-						{
-							pObj.int = Number(pObj.amtPaid)-Number(pObj.prA);
-							pObj.bPrA = 0;
-						}
+					pObj.instStDt = new Date(pObj.instStDt);
+
+					if (isLnClsd) {
+						pObj.int = Number(pObj.amtPaid) - Number(pObj.prA);
+						pObj.bPrA = 0;
+					}
 
 					pArr.push(pObj);
-					
-					if(isLnClsd)
-						{
-							break;
-						}
+
+					if (isLnClsd) {
+						break;
+					}
 
 				}
 
@@ -293,14 +292,14 @@ sap.ui.define([
 					break;
 				}
 			}
-			
+
 			cData.intTD = curDtObj;
 			var intCurMnth = curDtObj.int - curDtObj.cfInt;
 			var intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
 				curDtObj.roi / 100 * 1 / 365);
 
 			var amtToPay = (curDtObj.prA + curDtObj.cfInt + Number(othrAmt) + Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm),
-				new Date(payDate)) * curDtObj.roi / 100 * 1 / 365)- curDtObj.amtPaid);
+				new Date(payDate)) * curDtObj.roi / 100 * 1 / 365) - curDtObj.amtPaid);
 
 			sap.ui.getCore().byId("idTot").setText(amtToPay);
 
@@ -329,92 +328,79 @@ sap.ui.define([
 			var othrAmt = Number(sap.ui.getCore().byId("idOthrAmt").getValue());
 
 			var cData = this.cModel.getData();
-		
 
 			if (lnClsr) {
-				
+
 				var amtToPay = Number(sap.ui.getCore().byId("idTot").getText());
-				if(Number(payAmt) < amtToPay)
-					{
-						if(amtToPay - Number(payAmt) > 100 )
-							{
-									MessageBox.error("Pending Amount to be collected is " + (amtToPay));
-									return;
-							}
+				if (Number(payAmt) < amtToPay) {
+					if (amtToPay - Number(payAmt) > 100) {
+						MessageBox.error("Pending Amount to be collected is " + (amtToPay));
+						return;
 					}
-				
+				}
+
 				cData.defAmt = amtToPay - Number(payAmt);
 				cData.clsDt = Date.now().toString();
 				cData.lnCls = "X";
 				cData.othrAmt = othrAmt;
-				
-				if(othrAmt<0)
-					{
-						cData.defAmt += othrAmt;
-					}
-				
-			}
-			
-			if(cData.lstPayDate)
-				{
-					if(new Date(cData.lstPayDate) < new Date(payDate)){
-						cData.lstPayDate =  this.formatter.dateFormat(new Date(payDate));
-					}
+
+				if (othrAmt < 0) {
+					cData.defAmt += othrAmt;
 				}
-			else
-			{
-				cData.lstPayDate =  this.formatter.dateFormat(new Date(payDate));
+
 			}
-			
+
+			if (cData.lstPayDate) {
+				if (new Date(cData.lstPayDate) < new Date(payDate)) {
+					cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
+				}
+			} else {
+				cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
+			}
+
 			if (!lnClsr) {
-			for (var i = cData.instDet.length - 1; i >= 0; i--) {
-				if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
-					
-					var amtPaid =  cData.instDet[i].amtPaid + Number(payAmt);
-					var ctr = i;
-					if(amtPaid<cData.instDet[i].int)
-						{
+				for (var i = cData.instDet.length - 1; i >= 0; i--) {
+					if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
+
+						var amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+						var ctr = i;
+						if (amtPaid < cData.instDet[i].int) {
 							cData.partPay = "X";
-						}
-					else
-						{
+						} else {
 							cData.partPay = "";
-							ctr = i+1;
+							ctr = i + 1;
 						}
-					
-					cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
-					cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int ;
-					cData.odAmt_2 = cData.instDet[ctr+1].int;
-					cData.odAmt_3 = cData.instDet[ctr+2].int;
-					cData.odDat_1 = this.formatter.dateFormat(cData.instDet[ctr].fnPayDt);
-					cData.odDat_2 = this.formatter.dateFormat(cData.instDet[ctr+1].fnPayDt);
-					cData.odDat_3 = this.formatter.dateFormat(cData.instDet[ctr+2].fnPayDt);
-					break;
+
+						cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
+						cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
+						cData.odAmt_2 = cData.instDet[ctr + 1].int;
+						cData.odAmt_3 = cData.instDet[ctr + 2].int;
+						cData.odDat_1 = this.formatter.dateFormat(cData.instDet[ctr].fnPayDt);
+						cData.odDat_2 = this.formatter.dateFormat(cData.instDet[ctr + 1].fnPayDt);
+						cData.odDat_3 = this.formatter.dateFormat(cData.instDet[ctr + 2].fnPayDt);
+						break;
+					}
 				}
+			} else {
+				cData.nxtInstsDate = "";
+				cData.odAmt_1 = "";
+				cData.odAmt_2 = "";
+				cData.odAmt_3 = "";
+				cData.odDat_1 = "";
+				cData.odDat_2 = "";
+				cData.odDat_3 = "";
 			}
-			}
-			else
-				{
-					cData.nxtInstsDate = "";
-					cData.odAmt_1 = "";
-					cData.odAmt_2 = "";
-					cData.odAmt_3 = "";
-					cData.odDat_1 = "";
-					cData.odDat_2 = "";
-					cData.odDat_3 = "";
-				}
-			
-			
+
 			if (payDate && payAmt) {
 
 				cData.payDet.push({
 					payDate: payDate,
 					amt: payAmt,
-					othrAmt : othrAmt,
-					lnClsr : lnClsr ? "X" : "",
+					othrAmt: othrAmt,
+					lnClsr: lnClsr ? "X" : "",
 					crtDt: Date.now().toString()
 				});
-				
+
 				cData.modDt = Date.now().toString();
 				delete cData.instDet;
 				delete cData.intTD
@@ -427,42 +413,35 @@ sap.ui.define([
 					}
 				}
 
-			
-				
-				var that=this;
-				var data=JSON.stringify(oData);
-			
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
-			$.ajax({
-				type: 'GET',
-				url: url,
-				headers: that.headers,
-				success: function(odata) {
+				var that = this;
+				var data = JSON.stringify(oData);
 
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: odata.sha
-					};
+				var body = {
+					message: "Updating file",
+					content: btoa(data),
+					sha: that.custsha
+				};
+				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+				sap.ui.core.BusyIndicator.show(0);
+				$.ajax({
+					type: 'PUT',
+					url: url,
+					headers: that.headers,
+					data: JSON.stringify(body),
+					dataType: 'text',
+					success: function(odata) {
+						that.custsha = JSON.parse(odata).content.sha;
+						that.loadCustData(cData.key);
+						that.onCl();
+						sap.ui.core.BusyIndicator.hide();
+						MessageBox.success("Updated Successfully.")
+					},
+					error: function(odata) {
+						that.loadCustData(cData.key);
+						that.onCl();
+					}
+				});
 
-					$.ajax({
-						type: 'PUT',
-						url: url,
-						headers: that.headers,
-						data: JSON.stringify(body),
-						dataType: 'text',
-						success: function(odata) {
-							that.loadCustData(cData.key);
-						that.onCl();
-						},	error: function(odata) {
-							that.loadCustData(cData.key);
-						that.onCl();
-						}
-					});
-				}
-			});
-				
-		
 			}
 		},
 
@@ -522,51 +501,37 @@ sap.ui.define([
 					break;
 				}
 			}
-			
-				var that=this;
-				var data=JSON.stringify(oData);
-			
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
-			$.ajax({
-				type: 'GET',
-				url: url,
-				headers: that.headers,
-				success: function(odata) {
 
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: odata.sha
-					};
-
-					$.ajax({
-						type: 'PUT',
-						url: url,
-						headers: that.headers,
-						data: JSON.stringify(body),
-						dataType: 'text',
-						success: function(odata) {
-							that.loadCustData(cData.key);
-						that.onCl();
-						},	error: function(odata) {
-							that.loadCustData(cData.key);
-						that.onCl();
-						}
-					});
-				}
-			});
-
-			/*oData = JSON.stringify(oData);
 			var that = this;
+			var data = JSON.stringify(oData);
+
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: that.custsha
+			};
+
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
 				type: 'PUT',
-				url: 'http://localhost:8080/file/Britman-OrionContent/FinanceV2/webapp/model/cust.json',
-				data: oData,
-				success: function(e) {
+				url: url,
+				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
+				success: function(odata) {
+					that.custsha = JSON.parse(odata).content.sha;
+					that.loadCustData(cData.key);
+					that.onCl();
+					sap.ui.core.BusyIndicator.hide();
+					MessageBox.success("Updated Successfully.")
+				},
+				error: function(odata) {
 					that.loadCustData(cData.key);
 					that.onCl();
 				}
-			});*/
+			});
+
 			this.onClose();
 		},
 
@@ -636,6 +601,9 @@ sap.ui.define([
 
 			}
 			return arr;
+		},
+		onNavBack: function() {
+			this.getOwnerComponent().getRouter().navTo("home");
 		}
 
 	});
