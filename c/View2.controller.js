@@ -19,7 +19,7 @@ sap.ui.define([
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
-			this.custsha;
+			window.custsha;
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
 
 			//this.getMonthRange()
@@ -40,8 +40,8 @@ sap.ui.define([
 				headers: this.headers,
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
 				success: function(odata) {
-					if (!that.custsha) {
-						that.custsha = odata.sha;
+					if (!window.custsha) {
+						window.custsha = odata.sha;
 					}
 
 					var data = atob(odata.content);
@@ -419,7 +419,7 @@ sap.ui.define([
 				var body = {
 					message: "Updating file",
 					content: btoa(data),
-					sha: that.custsha
+					sha: window.custsha
 				};
 				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
 				sap.ui.core.BusyIndicator.show(0);
@@ -430,7 +430,7 @@ sap.ui.define([
 					data: JSON.stringify(body),
 					dataType: 'text',
 					success: function(odata) {
-						that.custsha = JSON.parse(odata).content.sha;
+						window.custsha = JSON.parse(odata).content.sha;
 						that.loadCustData(cData.key);
 						that.onCl();
 						sap.ui.core.BusyIndicator.hide();
@@ -508,7 +508,7 @@ sap.ui.define([
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
-				sha: that.custsha
+				sha: window.custsha
 			};
 
 			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
@@ -520,7 +520,7 @@ sap.ui.define([
 				data: JSON.stringify(body),
 				dataType: 'text',
 				success: function(odata) {
-					that.custsha = JSON.parse(odata).content.sha;
+					window.custsha = JSON.parse(odata).content.sha;
 					that.loadCustData(cData.key);
 					that.onCl();
 					sap.ui.core.BusyIndicator.hide();
