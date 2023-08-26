@@ -10,6 +10,8 @@
 						<Button type="Accept" text="Interest rate" press="onUpdateInt"/>
 						<Button type="Accept" text="Add Customer" press=".onAddCust(false)" class="sapUiTinyMarginEnd"/>
 					</Toolbar>
+						<PullToRefresh id="pullToRefresh"
+				refresh="handleRefresh" />
 					<List items="{oModel>/}" class="sapUiTinyMarginBegin" width="96.5%">
 						<ObjectListItem title="{oModel>name}" type="Active" press=".onNav(${oModel>})" number="{oModel>lnAmt}" numberUnit="INR">
 							<firstStatus>
