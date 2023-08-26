@@ -1,16 +1,37 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
-	<Dialog title="Payment Details" class="sapUiContentPadding sapUiSizeCompact" contentWidth="50%" initialFocus="done">
+	<Dialog title="Details" class="sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
-			<l:Grid defaultSpan="L12 M12 S12" vSpacing="1" hSpacing="1">
+			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="1">
 				<l:content>
-				
+					
+					<Text text="Installment Date" class="sapUiSmallMarginTop bold" />
+					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
+						<Text text="{path: 'cModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+					
+					</HBox>
+					<Text text="Interest Period" class="sapUiSmallMarginTop bold" />
+					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
+						<Text text="{path: 'cModel>intFrm', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+						<Text text="-" class="sapUiSmallMarginBeginEnd"/>
+						<Text text="{path: 'cModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+					</HBox>
+					
+						<Text text="Balace Principal" class="sapUiSmallMarginTop bold" />
+					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
+						<Text text="{cModel>bPrA}"/>
+					
+					</HBox>
+					
+					<Toolbar height="2rem" class="sapUiTinyMarginTop">
+						<Text text="Payment History" class="bold"/>
+					</Toolbar>
 					<t:Table rows="{cModel>hist/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
-						enableCellFilter="true">
+						enableCellFilter="true" class="sapUiSmallMarginBottom">
 						<t:columns>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
 								<Text text="Payment Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
-									<Text text="{cModel>payDate}" />
+									<Text text="{cModel>payDate}"/>
 								</t:template>
 							</t:Column>
 							<!--	<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false">
@@ -25,7 +46,6 @@
 									<Text text="{cModel>amt}"/>
 								</t:template>
 							</t:Column>
-						
 						</t:columns>
 					</t:Table>
 				</l:content>
