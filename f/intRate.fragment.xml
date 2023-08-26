@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
-	<Dialog title="Interest Details" class="sapUiContentPadding sapUiSizeCompact" contentWidth="40%" initialFocus="done">
+	<Dialog title="Interest Details" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
 				<l:content>
@@ -8,7 +8,10 @@
 						<Input id="idMnInp" type="Number"/>
 							<Text text="Interest rate"/>
 						<Input id="idRoiInp" type="Number"/>
-						<Button text="Add" press="onAddROI"/>
+						<HBox justifyContent="End">
+							<Button text="Add" press="onAddROI"/>
+						</HBox>
+						
 					<t:Table  rows="{iDialogModel>/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
 						rowActionCount="1" fixedColumnCount="1" enableCellFilter="true">
 						<t:columns>
