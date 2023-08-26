@@ -17,8 +17,8 @@ sap.ui.define([
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
-			this.mainsha;
-			this.custsha;
+			window.mainsha;
+			window.custsha;
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
 			this.getView().setModel(this.oModel, "oModel");
@@ -52,8 +52,8 @@ sap.ui.define([
 				headers: this.headers,
 				success: function(odata) {
 
-					if (!that.custsha) {
-						that.custsha = odata.sha;
+					if (!window.custsha) {
+						window.custsha = odata.sha;
 					}
 
 					var data = atob(odata.content);
@@ -82,8 +82,8 @@ sap.ui.define([
 				headers: this.headers,
 				success: function(odata) {
 
-					if (!that.mainsha) {
-						that.mainsha = odata.sha;
+					if (!window.mainsha) {
+						window.mainsha = odata.sha;
 					}
 
 					var data = atob(odata.content);
@@ -164,7 +164,7 @@ sap.ui.define([
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
-				sha: that.custsha
+				sha: window.custsha
 			};
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
@@ -174,7 +174,7 @@ sap.ui.define([
 				data: JSON.stringify(body),
 				dataType: 'text',
 				success: function(odata) {
-					that.custsha = JSON.parse(odata).content.sha;
+					window.custsha = JSON.parse(odata).content.sha;
 					that.loadCustData();
 					that.onClose();
 					sap.ui.core.BusyIndicator.hide();
@@ -404,7 +404,7 @@ sap.ui.define([
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
-				sha: that.mainsha
+				sha: window.mainsha
 			};
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
@@ -414,7 +414,7 @@ sap.ui.define([
 				data: JSON.stringify(body),
 				dataType: 'text',
 				success: function(odata) {
-					that.mainsha = JSON.parse(odata).content.sha;
+					window.mainsha = JSON.parse(odata).content.sha;
 					sap.ui.core.BusyIndicator.hide();
 					MessageBox.success("Updated Successfully.")
 				},
@@ -487,7 +487,7 @@ sap.ui.define([
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
-				sha: that.mainsha
+				sha: window.mainsha
 			};
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
@@ -497,7 +497,7 @@ sap.ui.define([
 				data: JSON.stringify(body),
 				dataType: 'text',
 				success: function(odata) {
-					that.mainsha = JSON.parse(odata).content.sha;
+					window.mainsha = JSON.parse(odata).content.sha;
 					sap.ui.core.BusyIndicator.hide();
 					MessageBox.success("Updated Successfully.")
 				},
