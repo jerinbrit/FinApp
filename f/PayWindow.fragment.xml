@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
-	<Dialog title="Payment Window" class="sapUiContentPadding sapUiSizeCompact" contentWidth="40%" initialFocus="done">
+	<Dialog title="Payment Window" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
 				<l:content>
@@ -12,35 +12,27 @@
 						<Input id="idDt" type="Number"/>
 						<Text text="Month Count"/>
 						<Input id="idMC" type="Number"/>
-						<Button text="Add" press="onAddPW"/>
+							<HBox justifyContent="End">
+							<Button text="Add" press="onAddPW"/>
+						</HBox>
+						
 					
 					<t:Table  rows="{pwDialogModel>/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
 						rowActionCount="1" fixedColumnCount="1" enableCellFilter="true">
 						<t:columns>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
-								<Text text="Day From" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<Text text="Day Range" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
-									<Text text="{pwDialogModel>frm}" />
+									<Text text="{pwDialogModel>frm} - {pwDialogModel>to}" />
 								</t:template>
 							</t:Column>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
-								<Text text="Day To" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{pwDialogModel>to}"/>
-								</t:template>
-							</t:Column>
-								<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
 								<Text text="Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
-									<Text text="{pwDialogModel>dt}"/>
+									<Text text="{pwDialogModel>dt} ({pwDialogModel>mc})"/>
 								</t:template>
 							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
-								<Text text="Month Count" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{pwDialogModel>mc}"/>
-								</t:template>
-							</t:Column>
+							
 						
 						</t:columns>
 						<t:rowActionTemplate>
