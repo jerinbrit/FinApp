@@ -1,9 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
-	<Dialog title="{oDialogModel>/title}" class="sapUiContentPadding sapUiSizeCompact" contentWidth="70%" initialFocus="done">
+	<Dialog title="Customer Details" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="1" hSpacing="1">
 				<l:content>
-					<Title text="Customer Details"/>
 					<VBox>
 						<Text text="Customer Name:"/>
 						<Input value="{oDialogModel>/name}"/>
@@ -45,12 +44,12 @@
 					</VBox>
 					<VBox>
 						<Text text="Address:"/>
-						<TextArea value="{oDialogModel>/addr}"/>
+						<TextArea value="{oDialogModel>/addr}" width="100%"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
-					<Title text="Loan Details"/>
+					<Title text="Loan Details" class="bold"/>
 					<VBox>
 						<Text text="Loan Type:"/>
 						<Select selectedKey="{oDialogModel>/type}" width="100%">
@@ -92,7 +91,7 @@
 					</VBox>
 					<VBox visible="false">
 						<Text text="Installment Months:"/>
-						<Input type="Number" value="{oDialogModel>/months}" />
+						<Input type="Number" value="{oDialogModel>/months}"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
@@ -104,72 +103,18 @@
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
-					<!--	<VBox>
-						<Text text="EMI:"/>
-						<Input value="{oDialogModel>/emi}"/>
-						<layoutData>
-								<l:GridData span="L3 M4 S12"/>
-						</layoutData>
-					</VBox>-->
-						<Title text="Installment Details"/>
-					
-						<t:Table rows="{oDialogModel>/instDet/}" enableColumnReordering="false" visibleRowCount="14" selectionMode="None" showNoData="true"
-						rowActionCount="0" fixedColumnCount="1" enableCellFilter="true">
-						<t:columns>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="5.5rem">
-								<Text text="Installment" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{oDialogModel>no}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Principal" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{oDialogModel>prA}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Interest" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{oDialogModel>int}"/>
-								</t:template>
-							</t:Column>
-						
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Int. Period From" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'oDialogModel>intFrm', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Int. Period To" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'oDialogModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-						
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Payment Window" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text
-										text="{path: 'oDialogModel>instStDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}} to {path: 'oDialogModel>fnPayDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-							
-							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" width="8rem">
-								<Text text="Installment Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{path: 'oDialogModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'dd-MM-YYYY'}}"/>
-								</t:template>
-							</t:Column>
-						
-						</t:columns>
-					
-					</t:Table>
-						
-						
-					
-					
+				
+					<Title text="Installment Details" class="bold"/>
+					<List items="{oDialogModel>/instDet/}">
+						<ObjectListItem title="{oDialogModel>no}" number="{oDialogModel>int}" numberUnit="INR">
+								<ObjectAttribute text="Installment Date" class="bold"/>
+									<ObjectAttribute text="{path: 'oDialogModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd, YYYY'}}"/>
+							<ObjectAttribute text="Interest Period" class="bold"/>
+							<ObjectAttribute
+								text="{path: 'oDialogModel>intFrm', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd, YYYY'}} - {path: 'oDialogModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd, YYYY'}}"/>
+						</ObjectListItem>
+					</List>
+				
 				</l:content>
 			</l:Grid>
 		</content>
