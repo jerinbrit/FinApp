@@ -30,6 +30,16 @@ sap.ui.define([
 		_onObjectMatched: function(evt) {
 			this.loadCustData();
 		},
+		handleRefresh:function()
+			{
+				
+			setTimeout(function () {
+				this.byId("pullToRefresh").hide();
+			this.loadCustData();
+			}.bind(this), 10);
+		
+				
+			},
 
 		loadCustData: function() {
 			var that = this;
