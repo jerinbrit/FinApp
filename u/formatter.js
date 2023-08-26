@@ -16,23 +16,27 @@ sap.ui.define([], function() {
 
 				var currDate = new Date(new Date().toDateString());
 				if (lnCls) {
+					this.setState("Success");
 					return "Lone Closed";
 				}
 
 				if (odDat1 && odDat2 && odDat3) {
 					if (currDate > new Date(odDat3)) {
-						return "Payment Overdue for 3+ months";
+						this.setState("Error");
+						return "Overdue for 3+ months";
 					}
 
 					if (currDate > new Date(odDat2)) {
-						return "Payment Overdue for 2+ months";
+						this.setState("Error");
+						return "Overdue for 2+ months";
 					}
 
 					if (currDate > new Date(odDat1)) {
+						this.setState("Error");
 						if (partPay) {
-							return "Partial Payment Overdue for 1+ months";
+							return "Partially Overdue for 1+ months";
 						} else {
-							return "Payment Overdue for 1+ months";
+							return "Overdue for 1+ months";
 						}
 
 					}
@@ -41,6 +45,7 @@ sap.ui.define([], function() {
 				var pendPayDate = new Date(new Date(instDt).getTime() - (5 * 24 * 60 * 60 * 1000));
 
 				if (currDate >= pendPayDate && currDate <= new Date(instDt)) {
+					this.setState("Warning");
 					return "Payment pending";
 				}
 
