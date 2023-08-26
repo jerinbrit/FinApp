@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"FabFinV3/u/formatter"
-], function(Controller, JSONModel, formatter) {
+	"FabFinV3/u/formatter",
+	"sap/m/MessageBox"
+], function(Controller, JSONModel, formatter, MessageBox) {
 	"use strict";
 
 	return Controller.extend("FabFinV3.c.View1", {
@@ -16,6 +17,8 @@ sap.ui.define([
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
+			this.mainsha;
+			this.custsha;
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
 			this.getView().setModel(this.oModel, "oModel");
@@ -28,29 +31,35 @@ sap.ui.define([
 			this.loadCustData();
 		},
 
-		/*downloadObjectAsJson(data, "new");
-				function downloadObjectAsJson(exportObj, exportName) {
-					var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
-					var downloadAnchorNode = document.createElement('a');
-					downloadAnchorNode.setAttribute("href", dataStr);
-					downloadAnchorNode.setAttribute("download", exportName + ".json");
-					document.body.appendChild(downloadAnchorNode); // required for firefox
-					downloadAnchorNode.click();
-					downloadAnchorNode.remove();
-				}*/
-
 		loadCustData: function() {
 			var that = this;
 			var i = $.Deferred();
 			var j = $.Deferred();
-
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
 				type: 'GET',
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
 				headers: this.headers,
 				success: function(odata) {
+
+					if (!that.custsha) {
+						that.custsha = odata.sha;
+					}
+
 					var data = atob(odata.content);
 					data = data.trim() ? JSON.parse(data) : [];
+					data.forEach(function(e) {
+						e.lnDt = new Date(e.lnDt).toDateString().split(" ").splice(1, 4).join(' ');
+						if (e.nxtInstsDate) {
+							e.nxtInstsDate = new Date(e.nxtInstsDate).toDateString().split(" ").splice(1, 4).join(' ');
+						}
+
+					});
+					
+					data.sort((a, b) => {
+					return b.key - a.key;
+				});
+
 					that.oModel.setData(data);
 					that.oModel.refresh();
 					i.resolve();
@@ -62,6 +71,11 @@ sap.ui.define([
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
 				headers: this.headers,
 				success: function(odata) {
+
+					if (!that.mainsha) {
+						that.mainsha = odata.sha;
+					}
+
 					var data = atob(odata.content);
 					data = data.trim() ? JSON.parse(data) : {
 						roi: [{
@@ -77,7 +91,7 @@ sap.ui.define([
 			});
 
 			$.when(i, j).done(function() {
-
+				sap.ui.core.BusyIndicator.hide();
 			});
 		},
 
@@ -135,86 +149,34 @@ sap.ui.define([
 			data = JSON.stringify(data);
 			var that = this;
 
-			/*	$.ajax({
-					type: 'PUT',
-					headers: {
-						'X-Requested-With': 'XMLHttpRequest',
-						'Access-Control-Allow-Origin': '*'
-					},
-					url: '/britmanjerin/FinApp/main/m/cust.json',
-
-					data: data,
-					success: function(e) {
-						that.loadCustData();
-						that.onClose();
-					}
-				});*/
-				
-		
-
 			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: that.custsha
+			};
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
-				type: 'GET',
+				type: 'PUT',
 				url: url,
 				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
 				success: function(odata) {
+					that.custsha = JSON.parse(odata).content.sha;
+					that.loadCustData();
+					that.onClose();
+					sap.ui.core.BusyIndicator.hide();
+					MessageBox.success("Customer Added Successfully.")
+				},
+				error: function(odata) {
 
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: odata.sha
-					};
+					that.loadCustData();
+					that.onClose();
 
-					$.ajax({
-						type: 'PUT',
-						url: url,
-						headers: that.headers,
-						data: JSON.stringify(body),
-						dataType: 'text',
-						success: function(odata) {
-
-							that.loadCustData();
-						that.onClose();
-
-						},	error: function(odata) {
-
-							that.loadCustData();
-						that.onClose();
-
-						}
-					});
 				}
 			});
-
-		/*	fetch(url, {
-					that.headers
-				})
-				.then(response => response.json())
-				.then(fileDetails => {
-
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: fileDetails.sha
-					};
-
-					return fetch(url, {
-						method: 'PUT',
-						headers,
-						body: JSON.stringify(data)
-					});
-				})
-				.then(response => {
-					if (response.status === 200) {
-						that.loadCustData();
-						that.onClose();
-					} else {
-						console.log("Failed to update file:", response.statusText);
-					}
-				})
-				.catch(error => {
-					console.error("An error occurred:", error);
-				});*/
 
 		},
 
@@ -384,15 +346,15 @@ sap.ui.define([
 			if (this._iDialog) {
 				this._iDialog.destroy();
 			}
-			this._iDialog = sap.ui.xmlfragment("FabFinV3.f.intRate", this);
+			this._iDialog = sap.ui.xmlfragment("idIT", "FabFinV3.f.intRate", this);
 			this.getView().addDependent(this._iDialog);
 			this._iDialog.setModel(new JSONModel($.extend(true, [], this.mModel.getData().roi)), "iDialogModel");
 			this._iDialog.open();
 		},
 
 		onAddROI: function() {
-			var month = Math.round(sap.ui.getCore().byId("idMnInp").getValue());
-			var roi = sap.ui.getCore().byId("idRoiInp").getValue();
+			var month = Math.round(sap.ui.getCore().byId("idIT--idMnInp").getValue());
+			var roi = sap.ui.getCore().byId("idIT--idRoiInp").getValue();
 
 			if (month && roi) {
 				var model = this._iDialog.getModel("iDialogModel").getData();
@@ -425,41 +387,30 @@ sap.ui.define([
 			var that = this;
 			this.mModel.getData().roi = this._iDialog.getModel("iDialogModel").getData();
 			this.mModel.getData().modDt = Date.now().toString();
-		/*	$.ajax({
-				type: 'PUT',
-				url: '/britmanjerin/FinApp/main/m/main.json',
 
-				data: JSON.stringify(this.mModel.getData()),
-				success: function(e) {}
-			});*/
-			
-			var data=JSON.stringify(this.mModel.getData());
-			
+			var data = JSON.stringify(this.mModel.getData());
+
 			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: that.mainsha
+			};
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
-				type: 'GET',
+				type: 'PUT',
 				url: url,
 				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
 				success: function(odata) {
-
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: odata.sha
-					};
-
-					$.ajax({
-						type: 'PUT',
-						url: url,
-						headers: that.headers,
-						data: JSON.stringify(body),
-						dataType: 'text',
-						success: function(odata) {},	error: function(odata) {}
-					});
-				}
+					that.mainsha = JSON.parse(odata).content.sha;
+					sap.ui.core.BusyIndicator.hide();
+					MessageBox.success("Updated Successfully.")
+				},
+				error: function(odata) {}
 			});
-			
-			
+
 			this.onClose();
 		},
 
@@ -518,42 +469,31 @@ sap.ui.define([
 		cUpdatePW: function() {
 			this.mModel.getData().pw = this._pwDialog.getModel("pwDialogModel").getData();
 			this.mModel.getData().modDt = Date.now().toString();
-		/*	$.ajax({
-				type: 'PUT',
-				url: '/britmanjerin/FinApp/main/m/main.json',
 
-				data: JSON.stringify(this.mModel.getData()),
-				success: function(e) {}
-			});*/
-			
-			
-				var that=this;
-				var data=JSON.stringify(this.mModel.getData());
-			
+			var that = this;
+			var data = JSON.stringify(this.mModel.getData());
+
 			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: that.mainsha
+			};
+			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
-				type: 'GET',
+				type: 'PUT',
 				url: url,
 				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
 				success: function(odata) {
-
-					var body = {
-						message: "Updating file",
-						content: btoa(data),
-						sha: odata.sha
-					};
-
-					$.ajax({
-						type: 'PUT',
-						url: url,
-						headers: that.headers,
-						data: JSON.stringify(body),
-						dataType: 'text',
-						success: function(odata) {},	error: function(odata) {}
-					});
-				}
+					that.mainsha = JSON.parse(odata).content.sha;
+					sap.ui.core.BusyIndicator.hide();
+					MessageBox.success("Updated Successfully.")
+				},
+				error: function(odata) {}
 			});
-			
+
 			this.onClose();
 		},
 
@@ -571,6 +511,7 @@ sap.ui.define([
 			}
 			if (this._iDialog) {
 				this._iDialog.destroy();
+				this._iDialog.destroyContent()
 			}
 			if (this._pwDialog) {
 				this._pwDialog.destroy();
