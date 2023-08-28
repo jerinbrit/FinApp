@@ -37,7 +37,7 @@
 						</t:columns>
 						<t:rowActionTemplate>
 							<t:RowAction>
-								<t:RowActionItem icon="sap-icon://delete" text="{i18n>delete}" press="onDelIntMonth"
+								<t:RowActionItem icon="sap-icon://delete" text="{i18n>delete}" press="onDelPW"
 									visible="{=(${pwDialogModel>month}!==1&amp;&amp;${pwDialogModel>month}!=='1')}"/>
 							</t:RowAction>
 						</t:rowActionTemplate>
