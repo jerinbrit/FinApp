@@ -4,40 +4,33 @@
 		<pages>
 			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
 				<content>
+					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
 					<ObjectHeader binding="{/ProductCollection/0}" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
 						<statuses>
 							<ObjectStatus text="{cModel>/goldGms} gms"/>
-							<ObjectStatus	
-							text="{ parts: [{ path: 'cModel>/lnCls' },
-							{ path: 'cModel>/nxtInstsDate' }, 
-							{ path: 'cModel>/odDat_1' }, 
-							{ path: 'cModel>/odDat_2' },
-							{ path: 'cModel>/odDat_3' }, 
-							{ path: 'cModel>/odAmt_1' }, 
-							{ path: 'cModel>/odAmt_2' },
-							{ path: 'cModel>/odAmt_3' },
-							{ path: 'cModel>/partPay' }],
-							formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
-								<ObjectStatus text="Due on: {cModel>/nxtInstsDate}"/>
+							<ObjectStatus
+								text="{ parts: [{ path: 'cModel>/lnCls' }, { path: 'cModel>/nxtInstsDate' }, { path: 'cModel>/odDat_1' }, { path: 'cModel>/odDat_2' }, { path: 'cModel>/odDat_3' }, { path: 'cModel>/odAmt_1' }, { path: 'cModel>/odAmt_2' }, { path: 'cModel>/odAmt_3' }, { path: 'cModel>/partPay' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
+							<ObjectStatus text="{ parts: [{ path: 'cModel>/instDet' }, { path: 'cModel>/nxtInstsDate' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAmtDue' }" id="idAmtDue" visible="{=${cModel>/nxtInstsDate}?true:false}" class="bold"/>
+							<ObjectStatus text="{ path: 'cModel>/nxtInstsDate' , formatter: 'FabFinV3.c.View2.prototype.formatter.setNxtInstDate' }"
+								visible="{=${cModel>/nxtInstsDate}?true:false}"/>
 						</statuses>
 						<ObjectAttribute text="Loan Date: {cModel>/lnDt}"/>
 						<ObjectAttribute text="Phone: {cModel>/mob}"/>
 						<ObjectAttribute text="Email: {cModel>/mail}"/>
 						<ObjectAttribute text="Address: {cModel>/addr}"/>
 					</ObjectHeader>
-				
-					<Table width="96%" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders,HeaderToolbar" class="sapUiTinyMarginBegin">
+					<Table id="idInstTab" width="96%" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders,HeaderToolbar" class="sapUiTinyMarginBegin">
 						<headerToolbar>
 							<OverflowToolbar>
 								<content>
 									<ToolbarSpacer/>
 									<Button type="Accept" text="Interest rate" press="onUpdateInt" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
-									<Button type="Accept" text="Add Payment" press="onAddInst" visible="{=${cModel>/lnCls}=== 'X' ? false : true}" />
+									<Button type="Accept" text="Add Payment" press="onAddInst" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
 								</content>
 							</OverflowToolbar>
 						</headerToolbar>
 						<columns>
-							<Column width="12em">
+							<Column>
 								<Text text="Installment" class="white_c bold"/>
 							</Column>
 							<Column minScreenWidth="Tablet" demandPopin="true">
@@ -50,22 +43,25 @@
 								<Text text="Payment Date" class="white_c bold"/>
 							</Column>
 							<Column hAlign="End">
+								<Text text="Amount Due" class="white_c bold"/>
+							</Column>
+							<Column hAlign="End">
 								<Text text="Amount Paid" class="white_c bold"/>
 							</Column>
 						</columns>
 						<items>
 							<ColumnListItem vAlign="Middle" type="Active" press=".onShowHistory($event)">
 								<cells>
-									<Text text="{cModel>no}"/>
+									<Text text="{parts:[{ path: 'cModel>no'},{path:'refreshModel>/r'}] , formatter: 'FabFinV3.c.View2.prototype.formatter.highlightRow' }" class="bold"/>
 									<Text text="{cModel>prA}"/>
-									<Text text="{cModel>int}"/>
+									<Text text="{=${cModel>int}-${cModel>cfInt}}"/>
 									<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+									<ObjectIdentifier title="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}" text="INR"/>
 									<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>
 								</cells>
 							</ColumnListItem>
 						</items>
 					</Table>
-				
 				</content>
 			</Page>
 		</pages>
