@@ -30,6 +30,7 @@ sap.ui.define([
 		_onObjectMatched: function(evt) {
 			this.loadCustData();
 		},
+		
 		handleRefresh:function()
 			{
 				
@@ -54,6 +55,17 @@ sap.ui.define([
 
 					if (!window.custsha) {
 						window.custsha = odata.sha;
+					}
+					else
+					{
+						if(window.custsha != odata.sha)
+							{
+								$.sap.delayedCall(10000, this, function() {
+									that.loadCustData();
+								});
+								
+								return;
+							}
 					}
 
 					var data = atob(odata.content);
@@ -84,6 +96,17 @@ sap.ui.define([
 
 					if (!window.mainsha) {
 						window.mainsha = odata.sha;
+					}
+					else
+					{
+						if(window.mainsha != odata.sha)
+							{
+								$.sap.delayedCall(10000, this, function() {
+									that.loadCustData();
+								});
+								
+								return;
+							}
 					}
 
 					var data = atob(odata.content);
@@ -175,15 +198,14 @@ sap.ui.define([
 				dataType: 'text',
 				success: function(odata) {
 					window.custsha = JSON.parse(odata).content.sha;
+					sap.ui.core.BusyIndicator.hide();
 					that.loadCustData();
 					that.onClose();
-					sap.ui.core.BusyIndicator.hide();
 					MessageBox.success("Customer Added Successfully.")
 				},
 				error: function(odata) {
 
-					that.loadCustData();
-					that.onClose();
+					MessageBox.error("Failed to update.")
 
 				}
 			});
@@ -416,9 +438,12 @@ sap.ui.define([
 				success: function(odata) {
 					window.mainsha = JSON.parse(odata).content.sha;
 					sap.ui.core.BusyIndicator.hide();
+					that.loadCustData();
 					MessageBox.success("Updated Successfully.")
 				},
-				error: function(odata) {}
+				error: function(odata) {
+						MessageBox.error("Failed to update.")
+				}
 			});
 
 			this.onClose();
@@ -499,19 +524,21 @@ sap.ui.define([
 				success: function(odata) {
 					window.mainsha = JSON.parse(odata).content.sha;
 					sap.ui.core.BusyIndicator.hide();
+					that.loadCustData();
 					MessageBox.success("Updated Successfully.")
 				},
-				error: function(odata) {}
+				error: function(odata) {
+						MessageBox.error("Failed to update.")
+				}
 			});
 
 			this.onClose();
 		},
 
-		onDelIntMonth: function(oEvent) {
+		onDelPW: function(oEvent) {
 
-			this._pwDialog.getModel("pwDialogModel").getData().splice(oEvent.getSource().getBindingContext("pwDialogModel").getPath().slice("/")[
-					1],
-				1);
+			this._pwDialog.getModel("pwDialogModel").getData()
+				.splice(oEvent.getSource().getBindingContext("pwDialogModel").getPath().slice("/")[1],1);
 			this._pwDialog.getModel("pwDialogModel").refresh();
 		},
 
