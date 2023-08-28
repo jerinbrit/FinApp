@@ -16,7 +16,7 @@
 						<Text text="{path: 'cModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 					</HBox>
 					
-						<Text text="Balace Principal" class="sapUiSmallMarginTop bold" />
+						<Text text="Balance Principal" class="sapUiSmallMarginTop bold" />
 					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
 						<Text text="{cModel>bPrA}"/>
 					
