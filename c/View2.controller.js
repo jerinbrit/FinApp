@@ -12,26 +12,60 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function() {
-			var key =  ["6enRw4bUwG8","LpfiGejXcVa","aOa6OwNI","ghp_exUr2M"];
+			var key = ["6enRw4bUwG8", "LpfiGejXcVa", "aOa6OwNI", "ghp_exUr2M"];
 			key = key.reverse().join('');
 			this.headers = {
-				"Authorization": 'Bearer '+key,
+				"Authorization": 'Bearer ' + key,
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
 			window.custsha;
+			this.getView().setModel(new JSONModel({}),"refreshModel")
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
+
+			this.byId("idInstTab").addEventDelegate({
+				onAfterRendering: function() {
+					this.highlightRow();
+				}
+			}, this);
+			
+			
 
 			//this.getMonthRange()
 		},
 		_onObjectMatched: function(evt) {
+			this.custId = evt.getParameter("arguments").custId;
 			this.loadCustData(evt.getParameter("arguments").custId);
 			this.oModel = new JSONModel();
 			this.getView().setModel(this.oModel, "oModel");
 			this.cModel = new JSONModel();
 			this.getView().setModel(this.cModel, "cModel");
+				this.getView().getModel("refreshModel").getData().r=false;
 		},
+		handleRefresh: function() {
+			setTimeout(function() {
+				this.byId("pullToRefresh").hide();
+				this.loadCustData(this.custId);
+			}.bind(this), 10);
+		},
+		highlightRow: function() {
+			if (FabFinV3.currRow) {
+				var items = this.byId("idInstTab").getItems();
+				items.forEach(function(e) {
+					e.removeStyleClass("classHighlightGreen");
+					try {
+						$("#" + e.getId() + "-sub").css("background", "#FFFFFF");
+					} catch (err) {}
+					if (FabFinV3.currRow == e.getId()) {
+						e.addStyleClass("classHighlightGreen");
+						try {
+							$("#" + e.getId() + "-sub").css("background", "#c5ffc5");
+						} catch (err) {}
 
+					}
+				});
+			}
+		},
 		loadCustData: function(custId) {
 			var that = this;
 			sap.ui.core.BusyIndicator.show(0);
@@ -42,6 +76,14 @@ sap.ui.define([
 				success: function(odata) {
 					if (!window.custsha) {
 						window.custsha = odata.sha;
+					} else {
+						if (window.custsha != odata.sha) {
+							$.sap.delayedCall(10000, this, function() {
+								that.loadCustData(custId);
+							});
+
+							return;
+						}
 					}
 
 					var data = atob(odata.content);
@@ -81,6 +123,9 @@ sap.ui.define([
 
 			var curDtObj = {};
 
+			FabFinV3.currInst = 0;
+			FabFinV3.currRow = "";
+			var that=this;
 			cModel.instDet = generateLoanData(cModel.lnDt);
 
 			try {
@@ -91,16 +136,6 @@ sap.ui.define([
 				cModel.intTD = curDtObj;
 
 			} catch (err) {}
-
-			/*	try {
-					cModel.intTD = {
-						"int": Math.round(cModel.instDet[cModel.instDet.length - 1].bPrA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
-							currRoi / 100 * 1 / 365),
-						"day": new Date().toDateString(),
-						"prA": cModel.instDet[cModel.instDet.length - 1].bPrA
-					};
-
-				} catch (err) {}*/
 
 			function generateLoanData(dat) {
 
@@ -158,12 +193,9 @@ sap.ui.define([
 					pObj = {
 						no: i,
 						prA: prA,
-						int: Math.round((Number(prA) * roi) + cfInt),
+						int: Math.round((Number(prA) * roi)+ cfInt), 
 						lPay: 0,
 						payDate: "",
-						//	intFrm: tmpDate,
-						//	intTo: new Date(new Date(tmpDate).getTime() + (30 * 24 * 60 * 60 * 1000)).toDateString(),
-						//	fnPayDt: new Date(new Date(tmpDate).getTime() + (61 * 24 * 60 * 60 * 1000)).toDateString(),
 						amtPaid: 0,
 						hist: [],
 						roi: tRoi
@@ -228,6 +260,13 @@ sap.ui.define([
 						iEnd = i + 5;
 						currRoi = tRoi;
 						curDtObj = pObj;
+
+						FabFinV3.currInst = pObj.no;
+							that.getView().getModel("refreshModel").getData().r=true;
+						that.getView().getModel("refreshModel").refresh();
+						
+					//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
+						
 					}
 
 					pObj.intFrm = new Date(pObj.intFrm);
@@ -239,6 +278,9 @@ sap.ui.define([
 					if (isLnClsd) {
 						pObj.int = Number(pObj.amtPaid) - Number(pObj.prA);
 						pObj.bPrA = 0;
+						FabFinV3.currInst = 0;
+						
+					
 					}
 
 					pArr.push(pObj);
@@ -246,7 +288,7 @@ sap.ui.define([
 					if (isLnClsd) {
 						break;
 					}
-
+				
 				}
 
 				return pArr;
@@ -349,38 +391,99 @@ sap.ui.define([
 				}
 
 			}
-
-			if (cData.lstPayDate) {
-				if (new Date(cData.lstPayDate) < new Date(payDate)) {
+			/*
+				if(Number(payAmt)<0 && (new Date(payDate) < new Date(cData.lstPayDate) ))
+							{
+									MessageBox.error("Reversal not possible as there is already a future payment made on "+cData.lstPayDate+".");
+									return;
+							}
+			*/
+			if (Number(payAmt) > 0) {
+				if (cData.lstPayDate) {
+					if (new Date(cData.lstPayDate) < new Date(payDate)) {
+						cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
+					}
+				} else {
 					cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
 				}
-			} else {
-				cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
 			}
 
 			if (!lnClsr) {
+				var amtPaid;
 				for (var i = cData.instDet.length - 1; i >= 0; i--) {
-					if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
+					if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
 
-						var amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
-						var ctr = i;
-						if (amtPaid < cData.instDet[i].int) {
-							cData.partPay = "X";
-						} else {
-							cData.partPay = "";
-							ctr = i + 1;
+						if (Number(payAmt) < 0) {
+							if ((-Number(payAmt)) > cData.instDet[i].amtPaid) {
+								MessageBox.error("Reversal amount greater than paid amount " + cData.instDet[i].amtPaid + ".");
+								return;
+							}
 						}
 
-						cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
-						cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
-						cData.odAmt_2 = cData.instDet[ctr + 1].int;
-						cData.odAmt_3 = cData.instDet[ctr + 2].int;
-						cData.odDat_1 = this.formatter.dateFormat(cData.instDet[ctr].fnPayDt);
-						cData.odDat_2 = this.formatter.dateFormat(cData.instDet[ctr + 1].fnPayDt);
-						cData.odDat_3 = this.formatter.dateFormat(cData.instDet[ctr + 2].fnPayDt);
+					}
+				}
+
+				for (var i = cData.instDet.length - 1; i >= 0; i--) {
+
+					if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
+						amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+						if (amtPaid == 0) {
+							cData.lstPayDate = "";
+							var histAmt = 0,
+								prvPyDt;
+							for (var j = i - 1; j >= 0; j--) {
+								histAmt = 0;
+								cData.instDet[j].hist.sort((a, b) => {
+									return new Date(a.payDate) - new Date(b.payDate);
+								});
+								for (var k = 0; k < cData.instDet[j].hist.length; k++) {
+									histAmt += Number(cData.instDet[j].hist[k].amt)
+									if (Number(cData.instDet[j].hist[k].amt) > 0) {
+										prvPyDt = cData.instDet[j].hist[k].payDate;
+									}
+								}
+								if (histAmt > 0) {
+									cData.lstPayDate = prvPyDt;
+									break;
+								}
+							}
+						}
 						break;
 					}
 				}
+
+				if (cData.lstPayDate) {
+					for (var i = cData.instDet.length - 1; i >= 0; i--) {
+						if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
+							amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+							var ctr = i;
+							if (amtPaid < cData.instDet[i].int) {
+								cData.partPay = "X";
+							} else {
+								cData.partPay = "";
+								ctr = i + 1;
+							}
+
+							cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
+							cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
+							cData.odAmt_2 = cData.instDet[ctr + 1].int;
+							cData.odAmt_3 = cData.instDet[ctr + 2].int;
+							cData.odDat_1 = this.formatter.dateFormat(cData.instDet[ctr].fnPayDt);
+							cData.odDat_2 = this.formatter.dateFormat(cData.instDet[ctr + 1].fnPayDt);
+							cData.odDat_3 = this.formatter.dateFormat(cData.instDet[ctr + 2].fnPayDt);
+							break;
+						}
+					}
+				} else {
+					cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[0].instDt);
+					cData.odAmt_1 = cData.instDet[0].int;
+					cData.odAmt_2 = cData.instDet[1].int;
+					cData.odAmt_3 = cData.instDet[2].int;
+					cData.odDat_1 = this.formatter.dateFormat(cData.instDet[0].fnPayDt);
+					cData.odDat_2 = this.formatter.dateFormat(cData.instDet[1].fnPayDt);
+					cData.odDat_3 = this.formatter.dateFormat(cData.instDet[2].fnPayDt);
+				}
+
 			} else {
 				cData.nxtInstsDate = "";
 				cData.odAmt_1 = "";
@@ -431,14 +534,13 @@ sap.ui.define([
 					dataType: 'text',
 					success: function(odata) {
 						window.custsha = JSON.parse(odata).content.sha;
+						sap.ui.core.BusyIndicator.hide();
 						that.loadCustData(cData.key);
 						that.onCl();
-						sap.ui.core.BusyIndicator.hide();
 						MessageBox.success("Updated Successfully.")
 					},
 					error: function(odata) {
-						that.loadCustData(cData.key);
-						that.onCl();
+						MessageBox.error("Failed to update.")
 					}
 				});
 
@@ -521,14 +623,12 @@ sap.ui.define([
 				dataType: 'text',
 				success: function(odata) {
 					window.custsha = JSON.parse(odata).content.sha;
-					that.loadCustData(cData.key);
-					that.onCl();
 					sap.ui.core.BusyIndicator.hide();
+					that.loadCustData(cData.key);
 					MessageBox.success("Updated Successfully.")
 				},
 				error: function(odata) {
-					that.loadCustData(cData.key);
-					that.onCl();
+					MessageBox.error("Failed to update.")
 				}
 			});
 
@@ -537,9 +637,11 @@ sap.ui.define([
 
 		onDelIntMonth: function(oEvent) {
 
-			this._iDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().slice("/")[1],
+			this._itDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().slice(
+					"/")[
+					1],
 				1);
-			this._iDialog.getModel("iDialogModel").refresh();
+			this._itDialog.getModel("iDialogModel").refresh();
 		},
 
 		onShowHistory: function(oEvent) {
