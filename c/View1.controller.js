@@ -51,6 +51,7 @@ sap.ui.define([
 				type: 'GET',
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
 				headers: this.headers,
+				cache: false,
 				success: function(odata) {
 
 					if (!window.custsha) {
@@ -92,6 +93,7 @@ sap.ui.define([
 
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
 				headers: this.headers,
+				cache: false,
 				success: function(odata) {
 
 					if (!window.mainsha) {
