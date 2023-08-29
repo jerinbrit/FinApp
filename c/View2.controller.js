@@ -109,6 +109,10 @@ sap.ui.define([
 						}
 					}
 					sap.ui.core.BusyIndicator.hide();
+				},
+				error: function(oError) {
+					MessageBox.error(oError.responseJSON.message);
+					sap.ui.core.BusyIndicator.hide();
 				}
 			});
 		},
