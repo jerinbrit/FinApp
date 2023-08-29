@@ -79,7 +79,7 @@ sap.ui.define([
 						window.custsha = odata.sha;
 					} else {
 						if (window.custsha != odata.sha) {
-							$.sap.delayedCall(10000, this, function() {
+							$.sap.delayedCall(3000, this, function() {
 								that.loadCustData(custId);
 							});
 
@@ -99,6 +99,12 @@ sap.ui.define([
 						AmtPaid;
 					for (var i in data) {
 						if (data[i].key === custId) {
+							
+							if(data[i].lnCls)
+								{
+									that.calcSummary(data[i]);
+								}
+							
 							that.cModel.setData(data[i]);
 							that.calPayData();
 							that.cModel.refresh();
@@ -109,6 +115,19 @@ sap.ui.define([
 				}
 			});
 		},
+		
+		calcSummary:function(data)
+			{
+				var totAmt = 0,intAmt=0,defAmt=Number(data.defAmt) > 0 ? Number(data.defAmt) : 0;
+				data.payDet.forEach(function(e){
+					totAmt+=Number(e.amt);
+				});
+				intAmt = totAmt - Number(data.lnAmt);
+				
+				this.byId("idTotPaid").setText("Total Amount Paid: "+totAmt);
+				this.byId("idIntEarn").setText("Interest Earned: "+intAmt);
+				this.byId("idDefAmt").setText("Default Amount: "+defAmt);
+			},
 
 		calPayData: function() {
 
