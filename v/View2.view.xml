@@ -60,7 +60,7 @@
 								<cells>
 									<Text text="{parts:[{ path: 'cModel>no'},{path:'refreshModel>/r'}] , formatter: 'FabFinV3.c.View2.prototype.formatter.highlightRow' }" class="bold"/>
 									<Text text="{cModel>prA}"/>
-									<Text text="{=${cModel>int}-${cModel>cfInt}}"/>
+									<Text text="{=${cModel>/lnCls}=== 'X' ?  ${cModel>int} : ${cModel>int}-${cModel>cfInt}}"/>
 									<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 									<ObjectIdentifier title="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}" text="INR"/>
 									<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>
