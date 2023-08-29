@@ -61,7 +61,7 @@ sap.ui.define([
 					{
 						if(window.custsha != odata.sha)
 							{
-								$.sap.delayedCall(10000, this, function() {
+								$.sap.delayedCall(3000, this, function() {
 									that.loadCustData();
 								});
 								
@@ -103,7 +103,7 @@ sap.ui.define([
 					{
 						if(window.mainsha != odata.sha)
 							{
-								$.sap.delayedCall(10000, this, function() {
+								$.sap.delayedCall(3000, this, function() {
 									that.loadCustData();
 								});
 								
