@@ -81,6 +81,10 @@ sap.ui.define([
 					that.oModel.setData(data);
 					that.oModel.refresh();
 					i.resolve();
+				},
+				error: function(oError) {
+					MessageBox.error(oError.responseJSON.message);
+					i.resolve();
 				}
 			});
 			$.ajax({
@@ -113,6 +117,10 @@ sap.ui.define([
 					};
 					that.mModel.setData(data);
 					that.mModel.refresh();
+					j.resolve();
+				},
+				error: function(oError) {
+					MessageBox.error(oError.responseJSON.message);
 					j.resolve();
 				}
 			});
