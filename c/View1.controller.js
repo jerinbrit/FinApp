@@ -10,10 +10,10 @@ sap.ui.define([
 	return Controller.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
-			var key =  ["6enRw4bUwG8","LpfiGejXcVa","aOa6OwNI","ghp_exUr2M"];
+			var key = ["6enRw4bUwG8", "LpfiGejXcVa", "aOa6OwNI", "ghp_exUr2M"];
 			key = key.reverse().join('');
 			this.headers = {
-				"Authorization": 'Bearer '+key,
+				"Authorization": 'Bearer ' + key,
 				"Accept": "application/vnd.github.v3+json",
 				"Content-Type": "application/json"
 			};
@@ -30,17 +30,15 @@ sap.ui.define([
 		_onObjectMatched: function(evt) {
 			this.loadCustData();
 		},
-		
-		handleRefresh:function()
-			{
-				
-			setTimeout(function () {
+
+		handleRefresh: function() {
+
+			setTimeout(function() {
 				this.byId("pullToRefresh").hide();
-			this.loadCustData();
+				this.loadCustData();
 			}.bind(this), 10);
-		
-				
-			},
+
+		},
 
 		loadCustData: function() {
 			var that = this;
@@ -56,17 +54,14 @@ sap.ui.define([
 
 					if (!window.custsha) {
 						window.custsha = odata.sha;
-					}
-					else
-					{
-						if(window.custsha != odata.sha)
-							{
-								$.sap.delayedCall(3000, this, function() {
-									that.loadCustData();
-								});
-								
-								return;
-							}
+					} else {
+						if (window.custsha != odata.sha) {
+							$.sap.delayedCall(3000, this, function() {
+								that.loadCustData();
+							});
+
+							return;
+						}
 					}
 
 					var data = atob(odata.content);
@@ -78,10 +73,10 @@ sap.ui.define([
 						}
 
 					});
-					
+
 					data.sort((a, b) => {
-					return b.key - a.key;
-				});
+						return b.key - a.key;
+					});
 
 					that.oModel.setData(data);
 					that.oModel.refresh();
@@ -98,17 +93,14 @@ sap.ui.define([
 
 					if (!window.mainsha) {
 						window.mainsha = odata.sha;
-					}
-					else
-					{
-						if(window.mainsha != odata.sha)
-							{
-								$.sap.delayedCall(3000, this, function() {
-									that.loadCustData();
-								});
-								
-								return;
-							}
+					} else {
+						if (window.mainsha != odata.sha) {
+							$.sap.delayedCall(3000, this, function() {
+								that.loadCustData();
+							});
+
+							return;
+						}
 					}
 
 					var data = atob(odata.content);
@@ -288,7 +280,7 @@ sap.ui.define([
 					mc = 1;
 				for (var i in pwArr) {
 					if (date.getDate() >= pwArr[i].frm && date.getDate() <= pwArr[i].to) {
-						fInstMnth = date.getMonth() + pwArr[i].mc;
+						fInstMnth = (date.getMonth() + pwArr[i].mc) % 12;
 						fInstDay = pwArr[i].dt;
 						mc = pwArr[i].mc;
 						break;
@@ -444,7 +436,7 @@ sap.ui.define([
 					MessageBox.success("Updated Successfully.")
 				},
 				error: function(odata) {
-						MessageBox.error("Failed to update.")
+					MessageBox.error("Failed to update.")
 				}
 			});
 
@@ -453,7 +445,7 @@ sap.ui.define([
 
 		onDelIntMonth: function(oEvent) {
 
-			this._iDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().slice("/")[1],
+			this._iDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().split("/")[1],
 				1);
 			this._iDialog.getModel("iDialogModel").refresh();
 		},
@@ -530,7 +522,7 @@ sap.ui.define([
 					MessageBox.success("Updated Successfully.")
 				},
 				error: function(odata) {
-						MessageBox.error("Failed to update.")
+					MessageBox.error("Failed to update.")
 				}
 			});
 
@@ -540,7 +532,7 @@ sap.ui.define([
 		onDelPW: function(oEvent) {
 
 			this._pwDialog.getModel("pwDialogModel").getData()
-				.splice(oEvent.getSource().getBindingContext("pwDialogModel").getPath().slice("/")[1],1);
+				.splice(oEvent.getSource().getBindingContext("pwDialogModel").getPath().split("/")[1], 1);
 			this._pwDialog.getModel("pwDialogModel").refresh();
 		},
 
