@@ -657,7 +657,7 @@ sap.ui.define([
 
 		onDelIntMonth: function(oEvent) {
 
-			this._itDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().slice(
+			this._itDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().split(
 					"/")[
 					1],
 				1);
