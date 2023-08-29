@@ -59,7 +59,7 @@ sap.ui.define([
 					if (FabFinV3.currRow == e.getId()) {
 						e.addStyleClass("classHighlightGreen");
 						try {
-							$("#" + e.getId() + "-sub").css("background", "#c5ffc5");
+							$("#" + e.getId() + "-sub").css("background", "#ebffeb");
 						} catch (err) {}
 
 					}
