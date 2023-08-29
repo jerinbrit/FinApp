@@ -17,7 +17,7 @@ sap.ui.define([], function() {
 			var currDate = new Date(new Date().toDateString());
 			if (lnCls) {
 				this.setState("Success");
-				return "Lone Closed";
+				return "Loan Closed";
 			}
 
 			if (odDat1 && odDat2 && odDat3) {
