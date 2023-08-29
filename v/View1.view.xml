@@ -30,7 +30,7 @@
 							</secondStatus>
 							
 							<ObjectAttribute text="Loan Date: {oModel>lnDt}"/>
-							<ObjectAttribute text="Due on: {oModel>nxtInstsDate}"/>
+							<ObjectAttribute text="Due on: {oModel>nxtInstsDate}" visible="{=${oModel>nxtInstsDate} ? true : false}"/>
 							
 						</ObjectListItem>
 					</List>
