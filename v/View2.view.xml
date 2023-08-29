@@ -5,7 +5,7 @@
 			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
 				<content>
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
-					<ObjectHeader binding="{/ProductCollection/0}" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
+					<ObjectHeader title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
 						<statuses>
 							<ObjectStatus text="{cModel>/goldGms} gms"/>
 							<ObjectStatus
@@ -13,19 +13,25 @@
 							<ObjectStatus text="{ parts: [{ path: 'cModel>/instDet' }, { path: 'cModel>/nxtInstsDate' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAmtDue' }" id="idAmtDue" visible="{=${cModel>/nxtInstsDate}?true:false}" class="bold"/>
 							<ObjectStatus text="{ path: 'cModel>/nxtInstsDate' , formatter: 'FabFinV3.c.View2.prototype.formatter.setNxtInstDate' }"
 								visible="{=${cModel>/nxtInstsDate}?true:false}"/>
+							
+								<ObjectStatus id="idTotPaid" class="bold" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
+								<ObjectStatus id="idIntEarn"  state="Success" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
+								<ObjectStatus id="idDefAmt"  state="Error" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
+								
 						</statuses>
 						<ObjectAttribute text="Loan Date: {cModel>/lnDt}"/>
 						<ObjectAttribute text="Phone: {cModel>/mob}"/>
 						<ObjectAttribute text="Email: {cModel>/mail}"/>
 						<ObjectAttribute text="Address: {cModel>/addr}"/>
 					</ObjectHeader>
+					
 					<Table id="idInstTab" width="96%" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders,HeaderToolbar" class="sapUiTinyMarginBegin">
 						<headerToolbar>
-							<OverflowToolbar>
+							<OverflowToolbar visible="{=${cModel>/lnCls}=== 'X' ? false : true}">
 								<content>
 									<ToolbarSpacer/>
-									<Button type="Accept" text="Interest rate" press="onUpdateInt" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
-									<Button type="Accept" text="Add Payment" press="onAddInst" visible="{=${cModel>/lnCls}=== 'X' ? false : true}"/>
+									<Button type="Accept" text="Interest rate" press="onUpdateInt" />
+									<Button type="Accept" text="Add Payment" press="onAddInst" />
 								</content>
 							</OverflowToolbar>
 						</headerToolbar>
