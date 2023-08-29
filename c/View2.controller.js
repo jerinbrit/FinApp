@@ -20,7 +20,7 @@ sap.ui.define([
 				"Content-Type": "application/json"
 			};
 			window.custsha;
-			this.getView().setModel(new JSONModel({}),"refreshModel")
+			this.getView().setModel(new JSONModel({}), "refreshModel")
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
 
 			this.byId("idInstTab").addEventDelegate({
@@ -28,8 +28,6 @@ sap.ui.define([
 					this.highlightRow();
 				}
 			}, this);
-			
-			
 
 			//this.getMonthRange()
 		},
@@ -40,7 +38,7 @@ sap.ui.define([
 			this.getView().setModel(this.oModel, "oModel");
 			this.cModel = new JSONModel();
 			this.getView().setModel(this.cModel, "cModel");
-				this.getView().getModel("refreshModel").getData().r=false;
+			this.getView().getModel("refreshModel").getData().r = false;
 		},
 		handleRefresh: function() {
 			setTimeout(function() {
@@ -99,12 +97,11 @@ sap.ui.define([
 						AmtPaid;
 					for (var i in data) {
 						if (data[i].key === custId) {
-							
-							if(data[i].lnCls)
-								{
-									that.calcSummary(data[i]);
-								}
-							
+
+							if (data[i].lnCls) {
+								that.calcSummary(data[i]);
+							}
+
 							that.cModel.setData(data[i]);
 							that.calPayData();
 							that.cModel.refresh();
@@ -115,19 +112,22 @@ sap.ui.define([
 				}
 			});
 		},
-		
-		calcSummary:function(data)
-			{
-				var totAmt = 0,intAmt=0,defAmt=Number(data.defAmt) > 0 ? Number(data.defAmt) : 0;
-				data.payDet.forEach(function(e){
-					totAmt+=Number(e.amt);
-				});
-				intAmt = totAmt - Number(data.lnAmt);
-				
-				this.byId("idTotPaid").setText("Total Amount Paid: "+totAmt);
-				this.byId("idIntEarn").setText("Interest Earned: "+intAmt);
-				this.byId("idDefAmt").setText("Default Amount: "+defAmt);
-			},
+
+		calcSummary: function(data) {
+			var totAmt = 0,
+				intAmt = 0,
+				defAmt = Number(data.defAmt) < 0 ? Math.abs(data.defAmt) : 0;
+			data.payDet.forEach(function(e) {
+				totAmt += Number(e.amt);
+			});
+			intAmt = totAmt - Number(data.lnAmt);
+
+			intAmt = intAmt > 0 ? intAmt : 0;
+
+			this.byId("idTotPaid").setText("Total Amount Paid: " + totAmt);
+			this.byId("idIntEarn").setText("Interest Earned: " + intAmt);
+			this.byId("idDefAmt").setText("Default Amount: " + defAmt);
+		},
 
 		calPayData: function() {
 
@@ -145,7 +145,7 @@ sap.ui.define([
 
 			FabFinV3.currInst = 0;
 			FabFinV3.currRow = "";
-			var that=this;
+			var that = this;
 			cModel.instDet = generateLoanData(cModel.lnDt);
 
 			try {
@@ -213,7 +213,7 @@ sap.ui.define([
 					pObj = {
 						no: i,
 						prA: prA,
-						int: Math.round((Number(prA) * roi)+ cfInt), 
+						int: Math.round((Number(prA) * roi) + cfInt),
 						lPay: 0,
 						payDate: "",
 						amtPaid: 0,
@@ -282,11 +282,11 @@ sap.ui.define([
 						curDtObj = pObj;
 
 						FabFinV3.currInst = pObj.no;
-							that.getView().getModel("refreshModel").getData().r=true;
+						that.getView().getModel("refreshModel").getData().r = true;
 						that.getView().getModel("refreshModel").refresh();
-						
-					//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
-						
+
+						//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
+
 					}
 
 					pObj.intFrm = new Date(pObj.intFrm);
@@ -297,10 +297,10 @@ sap.ui.define([
 
 					if (isLnClsd) {
 						pObj.int = Number(pObj.amtPaid) - Number(pObj.prA);
+						pObj.int = pObj.int > 0 ? pObj.int : 0;
 						pObj.bPrA = 0;
 						FabFinV3.currInst = 0;
-						
-					
+
 					}
 
 					pArr.push(pObj);
@@ -308,7 +308,7 @@ sap.ui.define([
 					if (isLnClsd) {
 						break;
 					}
-				
+
 				}
 
 				return pArr;
