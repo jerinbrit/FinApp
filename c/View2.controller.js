@@ -73,6 +73,7 @@ sap.ui.define([
 				type: 'GET',
 				headers: this.headers,
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
+				cache: false,
 				success: function(odata) {
 					if (!window.custsha) {
 						window.custsha = odata.sha;
