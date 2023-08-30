@@ -4,15 +4,15 @@
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="1" hSpacing="1">
 				<l:content>
 					<VBox>
-						<Text text="Customer Name:"/>
-						<Input value="{oDialogModel>/name}"/>
+						<Label text="Customer Name:" labelFor="idCustName"/>
+						<Input id="idCustName" value="{oDialogModel>/name}" required="true"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="ID Type:"/>
-						<Select selectedKey="{oDialogModel>/idTyp}" width="100%">
+						<Label text="ID Type:" labelFor="idIDTyp"/>
+						<Select id="idIDTyp" selectedKey="{oDialogModel>/idTyp}" width="100%" required="true">
 							<core:Item key="0" text="--Select--"/>
 							<core:Item key="1" text="Aadhar"/>
 							<core:Item key="2" text="Voter ID"/>
@@ -22,28 +22,28 @@
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="ID Number:"/>
-						<Input value="{oDialogModel>/id}"/>
+						<Label text="ID Number:" labelFor="idID"/>
+						<Input id="idID" required="true" value="{oDialogModel>/id}"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Mobile:"/>
-						<Input value="{oDialogModel>/mob}"/>
+						<Label text="Mobile:" labelFor="idMob"/>
+						<Input id="idMob" required="true" value="{oDialogModel>/mob}"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Email:"/>
+						<Label text="Email:"/>
 						<Input value="{oDialogModel>/mail}"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Address:"/>
+						<Label text="Address:"/>
 						<TextArea value="{oDialogModel>/addr}" width="100%"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
@@ -51,7 +51,7 @@
 					</VBox>
 					<Title text="Loan Details" class="bold"/>
 					<VBox>
-						<Text text="Loan Type:"/>
+						<Label text="Loan Type:"/>
 						<Select selectedKey="{oDialogModel>/type}" width="100%">
 							<core:Item key="0" text="--Select--"/>
 							<core:Item key="1" text="Gold"/>
@@ -62,42 +62,42 @@
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Loan Date:"/>
-						<DatePicker id="idLnDt" class="classDt" value="{oDialogModel>/lnDt}" valueFormat="MMM dd,yyyy" change="calculateEMI"/>
+						<Label text="Loan Date:" labelFor="idLnDt"/>
+						<DatePicker id="idLnDt"  required="true" class="classDt" value="{oDialogModel>/lnDt}" valueFormat="MMM dd,yyyy" change="calculateEMI"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Gold (gms):"/>
-						<Input type="Number" value="{oDialogModel>/goldGms}" change=".calculateEMI('G')"/>
+						<Label text="Gold (gms):" labelFor="idGoldgm"/>
+						<Input  id="idGoldgm" required="true" type="Number" value="{oDialogModel>/goldGms}" change=".calculateEMI('G')"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Gold Rate (gms):"/>
-						<Input type="Number" value="{oDialogModel>/goldRt}" change=".calculateEMI('G')"/>
+						<Label text="Gold Rate (gms):" labelFor="idGoldRt"/>
+						<Input id="idGoldRt" required="true" type="Number" value="{oDialogModel>/goldRt}" change=".calculateEMI('G')"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Loan Amount:"/>
-						<Input type="Number" value="{oDialogModel>/lnAmt}" change=".calculateEMI('A')"/>
+						<Label text="Loan Amount:" labelFor="idLnAmt"/>
+						<Input id="idLnAmt" required="true" type="Number" value="{oDialogModel>/lnAmt}" change=".calculateEMI('A')"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox visible="false">
-						<Text text="Installment Months:"/>
+						<Label text="Installment Months:"/>
 						<Input type="Number" value="{oDialogModel>/months}"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
 						</layoutData>
 					</VBox>
 					<VBox visible="false">
-						<Text text="ROI:"/>
+						<Label text="ROI:"/>
 						<Input type="Number" value="{oDialogModel>/roi}" change="calculateEMI"/>
 						<layoutData>
 							<l:GridData span="L3 M4 S12"/>
