@@ -81,9 +81,15 @@
                 },
                 "async": true
             },
-            "routes": [
-                {
+            "routes": [{
                     "pattern": "",
+                    "name": "login",
+                    "target": [
+                        "login"
+                    ]
+                },
+                {
+                    "pattern": "home",
                     "name": "home",
                     "target": [
                         "home"
@@ -98,21 +104,26 @@
                 }
             ],
             "targets": {
+            	"login": {
+                    "viewName": "Login",
+                    "viewId": "login",
+                    "viewLevel": 1
+                },
                 "home": {
                     "viewName": "View1",
                     "viewId": "home",
-                    "viewLevel": 1
+                    "viewLevel": 2
                 },
                 "customer": {
                     "viewName": "View2",
                     "viewId": "cust",
-                    "viewLevel": 2
+                    "viewLevel": 3
                 }
             }
         },
 		"resources": {
 			"css": [{
-				"uri": "cs/style.css"
+				"uri": "style.css"
 			}]
 		}
 	}
