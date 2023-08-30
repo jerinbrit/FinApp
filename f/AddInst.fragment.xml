@@ -1,7 +1,7 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
 	<Dialog title="Installment Details" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
-			<l:Grid defaultSpan="L12 M12 S12" vSpacing="1" hSpacing="1">
+			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="1">
 				<l:content>
 					<VBox>
 						<Text text="Payment Date:"/>
@@ -12,12 +12,19 @@
 					</VBox>
 					<VBox>
 						<Text text="Amount Paid:"/>
-						<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
+							<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
+							
+							<HBox justifyContent="End">
+							<CheckBox id="idNtve" text="Negative" visible="{uModel>/adm}"/>
+						
+						</HBox>
+
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
-					<VBox>
+					
+					<VBox visible="{uModel>/adm}">
 						<Text text="Loan Closure:"/>
 						<CheckBox id="idCB" select="onSelLC"/>
 						<layoutData>
