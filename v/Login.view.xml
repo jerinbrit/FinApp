@@ -1,0 +1,20 @@
+<mvc:View controllerName="FabFinV3.c.Login" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true" xmlns="sap.m" >
+	<App>
+		<pages>
+			<Page title="Login" class="sapUiSizeCompact">
+				<content>
+					
+					<VBox justifyContent="Center" alignItems="Center" class="sapUiLargeMarginTop">
+						<Title text="User ID" titleStyle="H4"/>
+						<Input id="idInpUsr"/>
+						<Title text="Password" titleStyle="H4"/>
+						<Input id="idInpPswd" type="Password"/>
+						<Button type="Accept" text="Login" press="onLogin" class="sapUiTinyMarginTop" />
+					</VBox>
+				
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
