@@ -1,34 +1,61 @@
 /*global XLSX:true*/
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"FabFinV3/c/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"FabFinV3/u/formatter",
-	"sap/m/MessageBox"
-], function(Controller, JSONModel, formatter, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(BaseController, JSONModel, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.c.View1", {
+	return BaseController.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
-			var key = ["6enRw4bUwG8", "LpfiGejXcVa", "aOa6OwNI", "ghp_exUr2M"];
-			key = key.reverse().join('');
-			this.headers = {
-				"Authorization": 'Bearer ' + key,
-				"Accept": "application/vnd.github.v3+json",
-				"Content-Type": "application/json"
-			};
+			this.getOwnerComponent().getRouter().getRoute("home").attachPatternMatched(this._onObjectMatched, this);
+
 			window.mainsha;
 			window.custsha;
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
+
 			this.getView().setModel(this.oModel, "oModel");
 			this.getView().setModel(this.mModel, "mModel");
-			//this.loadCustData();
-			this.getOwnerComponent().getRouter().getRoute("home").attachPatternMatched(this._onObjectMatched, this);
+			this.uModel = new JSONModel();
+			this.getView().setModel(this.uModel, "uModel");
 
 		},
 		_onObjectMatched: function(evt) {
+
+			if (!this.headers) {
+				var aKey = this.validateCookie("aKey");
+
+				if (!aKey) {
+					this.onNavLP();
+					return;
+				}
+				this.headers = {
+					"Authorization": 'Bearer ' + aKey,
+					"Accept": "application/vnd.github.v3+json",
+					"Content-Type": "application/json"
+				};
+			}
+
 			this.loadCustData();
+			this.setUModel();
+			this.onFilterData();
+			
+		},
+		setUModel: function() {
+			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
+			this.uModel.setData({
+				"adm": adm
+			});
+			if(!adm)
+				{
+					this.byId("idFilter").setSelected(false);
+				}
 		},
 
 		handleRefresh: function() {
@@ -38,6 +65,38 @@ sap.ui.define([
 				this.loadCustData();
 			}.bind(this), 10);
 
+		},
+
+		onPressUser: function(oEvent) {
+
+			if (this._oPopover) {
+				this._oPopover.destroy();
+			}
+
+			this._oPopover = sap.ui.xmlfragment("FabFinV3.f.User", this);
+			this.getView().addDependent(this._oPopover);
+
+			sap.ui.getCore().byId("idUserLogged").setText(this.validateCookie("user"));
+
+			this._oPopover.openBy(oEvent.getSource());
+		},
+
+		onLogOut: function() {
+			document.cookie = 'aKey=; Max-Age=-99999999;';
+			this.headers = false;
+			MessageToast.show("Logged in Successfully.");
+			this.onNavLP();
+		},
+
+		onFilterData: function(oEvent) {
+			var filterArray = [];
+			if (this.byId("idFilter").getSelected()) {
+				filterArray.push(new Filter("key", FilterOperator.Contains, ""));
+			} else {
+				filterArray.push(new Filter("lnCls", FilterOperator.NotContains, "X"));
+			}
+
+			this.byId("idList").getBinding("items").filter(filterArray);
 		},
 
 		loadCustData: function() {
@@ -165,7 +224,8 @@ sap.ui.define([
 					"payDet": [],
 					"roiDet": this.mModel.getData().roi,
 					"pwDet": this.mModel.getData().pw,
-					"crtDt": ""
+					"crtDt": "",
+					"lnCls": ""
 				};
 			}
 
@@ -176,8 +236,19 @@ sap.ui.define([
 		},
 
 		cAddCust: function() {
+			
+			
+		
 
 			var nwData = this._oDialog.getModel("oDialogModel").getData();
+			
+				if(!nwData.name.trim()||!nwData.id.trim()||!nwData.mob.trim()||!nwData.goldGms.trim()||!nwData.lnAmt.trim())
+					{
+						MessageBox.error("Please fill all the required fields");
+						return;
+					}
+			
+			
 			nwData.key = nwData.crtDt = nwData.modDt = Date.now().toString();
 			this.oModel.getData().push(this._oDialog.getModel("oDialogModel").getData());
 			var data = this.oModel.getData();
@@ -562,6 +633,9 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().navTo("customer", {
 				custId: obj.key
 			});
+		},
+		onNavLP: function(obj) {
+			this.getOwnerComponent().getRouter().navTo("login");
 		}
 
 	});
