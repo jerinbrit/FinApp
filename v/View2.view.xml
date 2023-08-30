@@ -1,10 +1,11 @@
 <mvc:View controllerName="FabFinV3.c.View2" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout">
+	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout" >
 	<App>
 		<pages>
 			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
 				<content>
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
+					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
 					<ObjectHeader title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
 						<statuses>
 							<ObjectStatus text="{cModel>/goldGms} gms"/>
@@ -24,14 +25,13 @@
 						<ObjectAttribute text="Email: {cModel>/mail}"/>
 						<ObjectAttribute text="Address: {cModel>/addr}"/>
 					</ObjectHeader>
-					
-					<Table id="idInstTab" width="96%" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders,HeaderToolbar" class="sapUiTinyMarginBegin">
+						<Table id="idInstTab"  inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders" >
 						<headerToolbar>
-							<OverflowToolbar visible="{=${cModel>/lnCls}=== 'X' ? false : true}">
+							<OverflowToolbar height="2.5rem" visible="{=${cModel>/lnCls}=== 'X' ? false : true}" design="Info">
 								<content>
 									<ToolbarSpacer/>
-									<Button type="Accept" text="Interest rate" press="onUpdateInt" />
-									<Button type="Accept" text="Add Payment" press="onAddInst" />
+									<Button type="Accept" icon="sap-icon://waiver" text="Interest" press="onUpdateInt" visible="{uModel>/adm}"/>
+									<Button type="Accept" icon="sap-icon://paid-leave" text="Add" press="onAddInst" />
 								</content>
 							</OverflowToolbar>
 						</headerToolbar>
@@ -68,6 +68,8 @@
 							</ColumnListItem>
 						</items>
 					</Table>
+
+					</l:Grid>
 				</content>
 			</Page>
 		</pages>
