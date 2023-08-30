@@ -1,24 +1,18 @@
 /*global XLSX:true*/
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"FabFinV3/c/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"FabFinV3/u/formatter",
 	"sap/m/MessageBox"
-], function(Controller, JSONModel, formatter, MessageBox) {
+], function(BaseController, JSONModel, formatter, MessageBox) {
 	"use strict";
 
-	return Controller.extend("FabFinV3.c.View2", {
+	return BaseController.extend("FabFinV3.c.View2", {
 
 		formatter: formatter,
 
 		onInit: function() {
-			var key = ["6enRw4bUwG8", "LpfiGejXcVa", "aOa6OwNI", "ghp_exUr2M"];
-			key = key.reverse().join('');
-			this.headers = {
-				"Authorization": 'Bearer ' + key,
-				"Accept": "application/vnd.github.v3+json",
-				"Content-Type": "application/json"
-			};
+
 			window.custsha;
 			this.getView().setModel(new JSONModel({}), "refreshModel")
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
@@ -32,6 +26,21 @@ sap.ui.define([
 			//this.getMonthRange()
 		},
 		_onObjectMatched: function(evt) {
+
+			if (!this.headers) {
+				var aKey = this.validateCookie("aKey");
+
+				if (!aKey) {
+					this.onNavLP();
+					return;
+				}
+				this.headers = {
+					"Authorization": 'Bearer ' + aKey,
+					"Accept": "application/vnd.github.v3+json",
+					"Content-Type": "application/json"
+				};
+			}
+
 			this.custId = evt.getParameter("arguments").custId;
 			this.loadCustData(evt.getParameter("arguments").custId);
 			this.oModel = new JSONModel();
@@ -39,7 +48,18 @@ sap.ui.define([
 			this.cModel = new JSONModel();
 			this.getView().setModel(this.cModel, "cModel");
 			this.getView().getModel("refreshModel").getData().r = false;
+
+			this.uModel = new JSONModel();
+			this.getView().setModel(this.uModel, "uModel");
+			this.setUModel();
 		},
+		setUModel: function() {
+			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
+			this.uModel.setData({
+				"adm": adm
+			});
+		},
+
 		handleRefresh: function() {
 			setTimeout(function() {
 				this.byId("pullToRefresh").hide();
@@ -98,7 +118,7 @@ sap.ui.define([
 					for (var i in data) {
 						if (data[i].key === custId) {
 
-							if (data[i].lnCls) {
+							if (data[i].lnCls && that.uModel.getData().adm) {
 								that.calcSummary(data[i]);
 							}
 
@@ -393,6 +413,15 @@ sap.ui.define([
 			var lnClsr = sap.ui.getCore().byId("idCB").getSelected();
 			var othrAmt = Number(sap.ui.getCore().byId("idOthrAmt").getValue());
 
+			var isNeg = sap.ui.getCore().byId("idNtve").getSelected();
+
+			if (Number(payAmt) < 0) {
+				MessageBox.error("Amount cannot be negative");
+				return;
+			}
+
+			payAmt = isNeg ? -Number(payAmt) : payAmt;
+
 			var cData = this.cModel.getData();
 
 			if (lnClsr) {
@@ -415,13 +444,7 @@ sap.ui.define([
 				}
 
 			}
-			/*
-				if(Number(payAmt)<0 && (new Date(payDate) < new Date(cData.lstPayDate) ))
-							{
-									MessageBox.error("Reversal not possible as there is already a future payment made on "+cData.lstPayDate+".");
-									return;
-							}
-			*/
+
 			if (Number(payAmt) > 0) {
 				if (cData.lstPayDate) {
 					if (new Date(cData.lstPayDate) < new Date(payDate)) {
@@ -730,6 +753,9 @@ sap.ui.define([
 		},
 		onNavBack: function() {
 			this.getOwnerComponent().getRouter().navTo("home");
+		},
+		onNavLP: function(obj) {
+			this.getOwnerComponent().getRouter().navTo("login");
 		}
 
 	});
