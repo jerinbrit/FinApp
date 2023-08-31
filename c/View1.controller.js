@@ -45,17 +45,24 @@ sap.ui.define([
 			this.loadCustData();
 			this.setUModel();
 			this.onFilterData();
-			
+
 		},
 		setUModel: function() {
 			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
 			this.uModel.setData({
 				"adm": adm
 			});
-			if(!adm)
-				{
+			if (!adm) {
+
+				if (this.getView().getModel("config")) {
+					if (!this.getView().getModel("config").getData().filter) {
+						this.byId("idFilter").setSelected(false);
+					}
+				} else {
 					this.byId("idFilter").setSelected(false);
 				}
+
+			}
 		},
 
 		handleRefresh: function() {
@@ -81,11 +88,26 @@ sap.ui.define([
 			this._oPopover.openBy(oEvent.getSource());
 		},
 
-		onLogOut: function() {
+		onLogOut: function(evt, flg) {
 			document.cookie = 'aKey=; Max-Age=-99999999;';
 			this.headers = false;
-			MessageToast.show("Logged in Successfully.");
+			if (!flg) {
+				MessageToast.show("Logged out Successfully.");
+			}
+
 			this.onNavLP();
+		},
+
+		onUserConfig: function() {
+
+			if (this._ucDialog) {
+				this._ucDialog.destroy();
+			}
+
+			this._ucDialog = sap.ui.xmlfragment("FabFinV3.f.UserConfig", this);
+			this.getView().addDependent(this._ucDialog);
+			this._ucDialog.setModel(new JSONModel($.extend(true, {}, this.mModel.getData().uc)), "ucDialogModel");
+			this._ucDialog.open();
 		},
 
 		onFilterData: function(oEvent) {
@@ -174,6 +196,39 @@ sap.ui.define([
 						}],
 						pw: []
 					};
+
+					if (!data.uc) {
+						data.uc = {
+							filter: "",
+							paySchl: "",
+							intRt: "",
+							intRt_c: "",
+							lc: "",
+							ls: "",
+							not: "",
+							reversal:"",
+							bkp:"",
+							frmSes: null,
+							toSes: null
+						}
+					}
+
+					var frmSes = data.uc.frmSes ? new Date(Number(data.uc.frmSes)) : null;
+					var toSes = data.uc.toSes ? new Date(Number(data.uc.toSes)) : null;
+
+					Object.keys(data.uc).forEach(function(e) {
+						data.uc[e] = data.uc[e] == "X" ? true : false;
+					});
+
+					data.uc.frmSes = frmSes;
+					data.uc.toSes = toSes;
+
+					data.uc.frmSes = data.uc.frmSes ? new Date(Number(data.uc.frmSes)) : data.uc.frmSes;
+					data.uc.toSes = data.uc.toSes ? new Date(Number(data.uc.toSes)) : data.uc.toSes;
+
+					sap.ui.getCore().setModel(new JSONModel(data.uc), "config");
+					that.getView().setModel(new JSONModel(data.uc), "config");
+
 					that.mModel.setData(data);
 					that.mModel.refresh();
 					j.resolve();
@@ -186,6 +241,27 @@ sap.ui.define([
 
 			$.when(i, j).done(function() {
 				sap.ui.core.BusyIndicator.hide();
+				if (!that.uModel.getData().adm) {
+					var config = that.getView().getModel("config").getData();
+					if (config.frmSes && config.toSes) {
+						var cd = new Date();
+						var ctm = Number(String(cd.getHours()) +
+							(String(cd.getMinutes()).length < 2 ? "0" + String(cd.getMinutes()) : String(cd.getMinutes())) +
+							(String(cd.getSeconds()).length < 2 ? "0" + String(cd.getSeconds()) : String(cd.getSeconds())));
+						var frmSes = Number(String(config.frmSes.getHours()) +
+							(String(config.frmSes.getMinutes()).length < 2 ? "0" + String(config.frmSes.getMinutes()) : String(config.frmSes.getMinutes())) +
+							(String(config.frmSes.getSeconds()).length < 2 ? "0" + String(config.frmSes.getSeconds()) : String(config.frmSes.getSeconds()))
+						);
+						var toSes = Number(String(config.toSes.getHours()) +
+							(String(config.toSes.getMinutes()).length < 2 ? "0" + String(config.toSes.getMinutes()) : String(config.toSes.getMinutes())) +
+							(String(config.toSes.getSeconds()).length < 2 ? "0" + String(config.toSes.getSeconds()) : String(config.toSes.getSeconds()))
+						);
+
+						if (ctm < frmSes || ctm > toSes) {
+							that.onLogOut(1, 1);
+						}
+					}
+				}
 			});
 		},
 
@@ -224,6 +300,7 @@ sap.ui.define([
 					"payDet": [],
 					"roiDet": this.mModel.getData().roi,
 					"pwDet": this.mModel.getData().pw,
+					"ucDet": this.mModel.getData().uc,
 					"crtDt": "",
 					"lnCls": ""
 				};
@@ -236,19 +313,14 @@ sap.ui.define([
 		},
 
 		cAddCust: function() {
-			
-			
-		
 
 			var nwData = this._oDialog.getModel("oDialogModel").getData();
-			
-				if(!nwData.name.trim()||!nwData.id.trim()||!nwData.mob.trim()||!nwData.goldGms.trim()||!nwData.lnAmt.trim())
-					{
-						MessageBox.error("Please fill all the required fields");
-						return;
-					}
-			
-			
+
+			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || !nwData.goldGms.trim() || !nwData.lnAmt.trim()) {
+				MessageBox.error("Please fill all the required fields");
+				return;
+			}
+
 			nwData.key = nwData.crtDt = nwData.modDt = Date.now().toString();
 			this.oModel.getData().push(this._oDialog.getModel("oDialogModel").getData());
 			var data = this.oModel.getData();
@@ -626,8 +698,71 @@ sap.ui.define([
 			if (this._pwDialog) {
 				this._pwDialog.destroy();
 			}
+			if (this._ucDialog) {
+				this._ucDialog.destroy();
+			}
 
 		},
+
+		cUpdateUC: function() {
+
+			var modData = this._ucDialog.getModel("ucDialogModel").getData();
+			var frmSes = modData.frmSes ? String(modData.frmSes.getTime()) : "",
+				toSes = modData.toSes ? String(modData.toSes.getTime()) : ""
+			Object.keys(modData).forEach(function(e) {
+				modData[e] = modData[e] ? "X" : "";
+			});
+
+			modData.frmSes = frmSes;
+			modData.toSes = toSes;
+
+			this.mModel.getData().uc = modData;
+			this.mModel.getData().modDt = Date.now().toString();
+
+			var that = this;
+			var data = JSON.stringify(this.mModel.getData());
+
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: window.mainsha
+			};
+			sap.ui.core.BusyIndicator.show(0);
+			$.ajax({
+				type: 'PUT',
+				url: url,
+				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
+				success: function(odata) {
+					window.mainsha = JSON.parse(odata).content.sha;
+					sap.ui.core.BusyIndicator.hide();
+					that.loadCustData();
+					MessageBox.success("Updated Successfully.")
+				},
+				error: function(odata) {
+					MessageBox.error("Failed to update.")
+				}
+			});
+
+			this.onClose();
+
+		},
+		
+		onBkpFile:function()
+			{
+				downloadObjectAsJson(this.oModel.getData(), "new");
+				function downloadObjectAsJson(exportObj, exportName) {
+					var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+					var downloadAnchorNode = document.createElement('a');
+					downloadAnchorNode.setAttribute("href", dataStr);
+					downloadAnchorNode.setAttribute("download", exportName + ".json");
+					document.body.appendChild(downloadAnchorNode); // required for firefox
+					downloadAnchorNode.click();
+					downloadAnchorNode.remove();
+				}
+			},
 
 		onNav: function(obj) {
 			this.getOwnerComponent().getRouter().navTo("customer", {
