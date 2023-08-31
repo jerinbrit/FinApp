@@ -5,7 +5,7 @@ sap.ui.define([
 	"FabFinV3/u/formatter",
 	"sap/m/MessageBox",
 	"sap/m/library"
-], function(BaseController, JSONModel, formatter, MessageBox,mobileLibrary) {
+], function(BaseController, JSONModel, formatter, MessageBox, mobileLibrary) {
 	"use strict";
 	FabFinV3.URLHelper = mobileLibrary.URLHelper;
 	return BaseController.extend("FabFinV3.c.View2", {
@@ -55,17 +55,15 @@ sap.ui.define([
 			this.getView().getModel("refreshModel").getData().r = false;
 
 		},
-		
-		clickPhone:function(oEvent)
-			{
-				FabFinV3.URLHelper.triggerTel(oEvent.getSource().getText());
-			},
-		
-		clickEmail:function(oEvent)
-			{
-				FabFinV3.URLHelper.triggerEmail(oEvent.getSource().getText(), "Info Request", false, false, false, true);
-			},	
-		
+
+		clickPhone: function(oEvent) {
+			FabFinV3.URLHelper.triggerTel(oEvent.getSource().getText());
+		},
+
+		clickEmail: function(oEvent) {
+			FabFinV3.URLHelper.triggerEmail(oEvent.getSource().getText(), "Info Request", false, false, false, true);
+		},
+
 		setUModel: function() {
 			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
 			this.uModel.setData({
@@ -99,14 +97,12 @@ sap.ui.define([
 			}
 		},
 		loadCustData: function(custId) {
-			var config={};
+			var config = {};
 			if (!this.uModel.getData().adm) {
 				if (!sap.ui.getCore().getModel("config")) {
 					this.onNavBack();
 					return;
-				}
-				else
-				{
+				} else {
 					config = sap.ui.getCore().getModel("config").getData();
 				}
 			}
@@ -201,7 +197,7 @@ sap.ui.define([
 			cModel.instDet = generateLoanData(cModel.lnDt);
 
 			try {
-
+				this.byId("idInstTab").rerender()
 				curDtObj.intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
 					currRoi / 100 * 1 / 365);
 
