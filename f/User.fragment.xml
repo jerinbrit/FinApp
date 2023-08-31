@@ -2,7 +2,11 @@
 	<Popover placement="Bottom" showHeader="false">
 		<VBox justifyContent="Center" alignItems="Center" height="5rem">
 			<Text id="idUserLogged"  class="sapUiTinyMarginTop"/>
-			<Button type="Ghost" class="sapUiTinyMarginTop" text="Log Out" press="onLogOut"/>
+			<FlexBox jsutifyContent="Center" class="sapUiTinyMarginTop" >
+				<Button type="Ghost" icon="sap-icon://key-user-settings" press="onUserConfig"  visible="{uModel>/adm}" class="sapUiSmallMarginEnd"/>
+			<Button type="Ghost" icon="sap-icon://log"  text="" press="onLogOut"/>
+			</FlexBox>
+			
 		</VBox>
 	
 	</Popover>
