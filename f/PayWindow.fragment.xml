@@ -3,27 +3,44 @@
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
 				<l:content>
+					<VBox>
 						<Text text="Day From"/>
 						<Input id="idFrm" type="Number"/>
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+					<VBox>
 						<Text text="Day To"/>
 						<Input id="idTo" type="Number"/>
-					
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+					<VBox>
 						<Text text="Date"/>
 						<Input id="idDt" type="Number"/>
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+					<VBox>
 						<Text text="Month Count"/>
 						<Input id="idMC" type="Number"/>
-							<HBox justifyContent="End">
-							<Button text="Add" press="onAddPW"/>
-						</HBox>
-						
-					
-					<t:Table  rows="{pwDialogModel>/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
-						rowActionCount="1" fixedColumnCount="1" enableCellFilter="true">
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+					<HBox justifyContent="End">
+						<Button type="Accept" icon="sap-icon://add-calendar" text="Add" press="onAddPW"/>
+					</HBox>
+					<t:Table rows="{pwDialogModel>/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
+						rowActionCount="1" enableCellFilter="true">
 						<t:columns>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
 								<Text text="Day Range" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
-									<Text text="{pwDialogModel>frm} - {pwDialogModel>to}" />
+									<Text text="{pwDialogModel>frm} - {pwDialogModel>to}"/>
 								</t:template>
 							</t:Column>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
@@ -32,8 +49,6 @@
 									<Text text="{pwDialogModel>dt} ({pwDialogModel>mc})"/>
 								</t:template>
 							</t:Column>
-							
-						
 						</t:columns>
 						<t:rowActionTemplate>
 							<t:RowAction>
