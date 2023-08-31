@@ -197,7 +197,10 @@ sap.ui.define([
 			cModel.instDet = generateLoanData(cModel.lnDt);
 
 			try {
-				this.byId("idInstTab").rerender()
+					$.sap.delayedCall(100, this, function() {
+							that.byId("idInstTab").rerender()
+							});
+				
 				curDtObj.intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
 					currRoi / 100 * 1 / 365);
 
