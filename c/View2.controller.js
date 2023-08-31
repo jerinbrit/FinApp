@@ -3,10 +3,11 @@ sap.ui.define([
 	"FabFinV3/c/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"FabFinV3/u/formatter",
-	"sap/m/MessageBox"
-], function(BaseController, JSONModel, formatter, MessageBox) {
+	"sap/m/MessageBox",
+	"sap/m/library"
+], function(BaseController, JSONModel, formatter, MessageBox,mobileLibrary) {
 	"use strict";
-
+	FabFinV3.URLHelper = mobileLibrary.URLHelper;
 	return BaseController.extend("FabFinV3.c.View2", {
 
 		formatter: formatter,
@@ -41,6 +42,10 @@ sap.ui.define([
 				};
 			}
 
+			this.uModel = new JSONModel();
+			this.getView().setModel(this.uModel, "uModel");
+			this.setUModel();
+
 			this.custId = evt.getParameter("arguments").custId;
 			this.loadCustData(evt.getParameter("arguments").custId);
 			this.oModel = new JSONModel();
@@ -49,10 +54,18 @@ sap.ui.define([
 			this.getView().setModel(this.cModel, "cModel");
 			this.getView().getModel("refreshModel").getData().r = false;
 
-			this.uModel = new JSONModel();
-			this.getView().setModel(this.uModel, "uModel");
-			this.setUModel();
 		},
+		
+		clickPhone:function(oEvent)
+			{
+				FabFinV3.URLHelper.triggerTel(oEvent.getSource().getText());
+			},
+		
+		clickEmail:function(oEvent)
+			{
+				FabFinV3.URLHelper.triggerEmail(oEvent.getSource().getText(), "Info Request", false, false, false, true);
+			},	
+		
 		setUModel: function() {
 			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
 			this.uModel.setData({
@@ -77,7 +90,8 @@ sap.ui.define([
 					if (FabFinV3.currRow == e.getId()) {
 						e.addStyleClass("classHighlightGreen");
 						try {
-							$("#" + e.getId() + "-sub").css("background", "#ebffeb");
+							//	$("#" + e.getId() + "-sub").css("background", "#ebffeb");
+							$("#" + e.getId() + "-sub").attr('style', 'background: rgb(171 226 171 / 40%)!important');
 						} catch (err) {}
 
 					}
@@ -85,6 +99,20 @@ sap.ui.define([
 			}
 		},
 		loadCustData: function(custId) {
+			var config={};
+			if (!this.uModel.getData().adm) {
+				if (!sap.ui.getCore().getModel("config")) {
+					this.onNavBack();
+					return;
+				}
+				else
+				{
+					config = sap.ui.getCore().getModel("config").getData();
+				}
+			}
+
+			this.getView().setModel(new JSONModel(config), "config");
+
 			var that = this;
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
@@ -118,7 +146,7 @@ sap.ui.define([
 					for (var i in data) {
 						if (data[i].key === custId) {
 
-							if (data[i].lnCls && that.uModel.getData().adm) {
+							if (data[i].lnCls && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
 								that.calcSummary(data[i]);
 							}
 
@@ -149,7 +177,7 @@ sap.ui.define([
 			intAmt = intAmt > 0 ? intAmt : 0;
 
 			this.byId("idTotPaid").setText("Total Amount Paid: " + totAmt);
-			this.byId("idIntEarn").setText("Interest Earned: " + intAmt);
+			this.byId("idIntEarn").setText("Profit: " + intAmt);
 			this.byId("idDefAmt").setText("Default Amount: " + defAmt);
 		},
 
@@ -449,6 +477,12 @@ sap.ui.define([
 				if (cData.lstPayDate) {
 					if (new Date(cData.lstPayDate) < new Date(payDate)) {
 						cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
+					} else {
+						if (new Date(cData.lstPayDate).toDateString() != new Date(payDate).toDateString()) {
+							MessageBox.error("There is already a payment made on future date " + cData.lstPayDate);
+							return;
+						}
+
 					}
 				} else {
 					cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
@@ -500,16 +534,41 @@ sap.ui.define([
 				}
 
 				if (cData.lstPayDate) {
+					var ci, amtDue, ctr;
 					for (var i = cData.instDet.length - 1; i >= 0; i--) {
 						if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
+							ctr = i;
 							amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
-							var ctr = i;
+
 							if (amtPaid < cData.instDet[i].int) {
-								cData.partPay = "X";
+								for (var j = i - 1; j >= 0; j--) {
+									amtDue = (cData.instDet[j].int - cData.instDet[j].amtPaid) > 0 ? (cData.instDet[j].int - cData.instDet[j].amtPaid) : 0;
+
+									if (amtPaid >= amtDue) {
+										ctr = j + 1;
+										cData.partPay = amtPaid > amtDue ? "X" : "";
+										break;
+									}
+
+									if (j == 0) {
+										cData.partPay = "X";
+										ctr = j;
+									}
+
+								}
 							} else {
 								cData.partPay = "";
 								ctr = i + 1;
 							}
+
+							/*	amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+								var ctr = i;
+								if (amtPaid < cData.instDet[i].int) {
+									cData.partPay = "X";
+								} else {
+									cData.partPay = "";
+									ctr = i + 1;
+								}*/
 
 							cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
 							cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
