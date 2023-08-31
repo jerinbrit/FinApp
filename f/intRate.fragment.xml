@@ -3,28 +3,39 @@
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
 				<l:content>
-
+	<VBox>
 						<Text text="Month"/>
 						<Input id="idMnInp" type="Number"/>
-							<Text text="Interest rate"/>
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+						<VBox>
+						<Text text="Interest rate"/>
 						<Input id="idRoiInp" type="Number"/>
+						<layoutData>
+							<l:GridData span="L6 M6 S6"/>
+						</layoutData>
+					</VBox>
+					
+						
 						<HBox justifyContent="End">
-							<Button text="Add" press="onAddROI"/>
+							<Button type="Accept" icon="sap-icon://add-activity-2" text="Add" press="onAddROI"/>
 						</HBox>
 						
 					<t:Table  rows="{iDialogModel>/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
-						rowActionCount="1" fixedColumnCount="1" enableCellFilter="true">
+						rowActionCount="1"  enableCellFilter="true">
 						<t:columns>
 						
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" >
-								<Text text="Month" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<Text text="Month" class="white bold" textAlign="Begin" wrapping="false"/>
 								<t:template>
 									<Text text="{iDialogModel>month}" press=".onNav(${oModel>})"/>
 								</t:template>
 							</t:Column>
 						
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" >
-								<Text text="Interest rate" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<Text text="Interest" class="white bold" textAlign="Begin" wrapping="false" />
 								<t:template>
 									<Text text="{iDialogModel>roi}"/>
 								</t:template>
