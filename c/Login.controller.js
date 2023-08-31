@@ -81,16 +81,16 @@ sap.ui.define([
 
 			aKey = aKey.reverse().join("").replace("@#$", "_");
 
-			this.validateUser(userid, aKey);
+			this.validateUser(userid, aKey, aflg);
 
 		},
 
-		validateUser: function(user, key) {
+		validateUser: function(user, key, aflg) {
 			sap.ui.core.BusyIndicator.show(0);
 			var that = this;
 			$.ajax({
 				type: 'GET',
-				url: 'https://api.github.com/repos/britmanjerin/tst/contents/new.json',
+				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
 				headers: {
 					"Authorization": 'Bearer ' + key,
 					"Accept": "application/vnd.github.v3+json",
@@ -99,8 +99,47 @@ sap.ui.define([
 				cache: false,
 				success: function(odata) {
 					sap.ui.core.BusyIndicator.hide();
+
+					var data = atob(odata.content);
+					data = data.trim() ? JSON.parse(data) : {};
+
+					if (!aflg) {
+						if (data.uc) {
+
+							var frmSes = data.uc.frmSes ? new Date(Number(data.uc.frmSes)) : null;
+							var toSes = data.uc.toSes ? new Date(Number(data.uc.toSes)) : null;
+
+							if (frmSes && toSes) {
+								var cd = new Date();
+								var ctm = Number(String(cd.getHours()) +
+									(String(cd.getMinutes()).length < 2 ? "0" + String(cd.getMinutes()) : String(cd.getMinutes())) +
+									(String(cd.getSeconds()).length < 2 ? "0" + String(cd.getSeconds()) : String(cd.getSeconds())));
+								var frmSes = Number(String(frmSes.getHours()) +
+									(String(frmSes.getMinutes()).length < 2 ? "0" + String(frmSes.getMinutes()) : String(frmSes.getMinutes())) +
+									(String(frmSes.getSeconds()).length < 2 ? "0" + String(frmSes.getSeconds()) : String(frmSes.getSeconds()))
+								);
+								var toSes = Number(String(toSes.getHours()) +
+									(String(toSes.getMinutes()).length < 2 ? "0" + String(toSes.getMinutes()) : String(toSes.getMinutes())) +
+									(String(toSes.getSeconds()).length < 2 ? "0" + String(toSes.getSeconds()) : String(toSes.getSeconds()))
+								);
+
+								if (ctm < frmSes || ctm > toSes) {
+									MessageBox.error("Session not available.");
+									return;
+								}
+							}
+						}
+					}
+
 					MessageToast.show("Logged in Successfully.");
 					that.setCookie(user, key);
+					if(window.mainsha){
+						window.mainsha="";
+					}
+					if(window.custsha){
+						window.custsha="";
+					}
+					
 					that.onNav();
 				},
 				error: function(oError) {
