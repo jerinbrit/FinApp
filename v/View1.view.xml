@@ -2,35 +2,41 @@
 	displayBlock="true" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
 	<App>
 		<pages>
-			<Page title="Finance" class="sapUiSizeCompact" >
+			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
+							<contentLeft>
+								<VBox visible="{=!${mModel>/roi} ? false : true}">
+									<core:Icon src="sap-icon://save" press="onBkpFile" class="sapUiTinyMarginBegin" visible="{=${uModel>/adm} || ${config>/bkp}}"/>
+								</VBox>
+								
+							</contentLeft>
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
-							<contentRight>
-								<core:Icon src="sap-icon://person-placeholder" 	press="onPressUser" class="sapUiTinyMarginEnd"/>
-								
-							</contentRight>
+						<contentRight>
+							<core:Icon src="sap-icon://person-placeholder" press="onPressUser" class="sapUiTinyMarginEnd"/>
+						</contentRight>
 					</Bar>
 				</customHeader>
 				<content>
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
-						<Toolbar height="2.5rem">
-							<CheckBox id="idFilter" text="All" selected="false" select="onFilterData" visible="{uModel>/adm}"/>
+						<OverflowToolbar height="2.5rem" visible="{=!${mModel>/roi} ? false : true}">
+							<CheckBox id="idFilter" text="All" selected="false" select="onFilterData" visible="{=${uModel>/adm} || ${config>/filter}}"/>
 							<ToolbarSpacer/>
-							<Button type="Accept" icon="sap-icon://appointment" text="Schedule" press="onUpdatePW" visible="{uModel>/adm}"/>
-							<Button type="Accept"  icon="sap-icon://waiver" text="Interest" press="onUpdateInt" visible="{uModel>/adm}"/>
+							
+							<Button type="Accept" icon="sap-icon://appointment" text="Schedule" press="onUpdatePW" visible="{=${uModel>/adm} || ${config>/paySchl}}"/>
+							<Button type="Accept" icon="sap-icon://waiver" text="Interest" press="onUpdateInt" visible="{=${uModel>/adm} || ${config>/intRt}}"/>
 							<Button type="Accept" icon="sap-icon://add-employee" text="Add" press=".onAddCust(false)"/>
-						</Toolbar>
-						<List id="idList" items="{oModel>/}">
+						</OverflowToolbar>
+						<List id="idList" items="{oModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
 							<ObjectListItem title="{oModel>name}" type="Active" press=".onNav(${oModel>})" number="{oModel>lnAmt}" numberUnit="INR">
 								<firstStatus>
 									<ObjectStatus text="{oModel>goldGms} gms"/>
 								</firstStatus>
 								<secondStatus>
-									<ObjectStatus
+									<ObjectStatus inverted="true"
 										text="{ parts: [{ path: 'oModel>lnCls' }, { path: 'oModel>nxtInstsDate' }, { path: 'oModel>odDat_1' }, { path: 'oModel>odDat_2' }, { path: 'oModel>odDat_3' }, { path: 'oModel>odAmt_1' }, { path: 'oModel>odAmt_2' }, { path: 'oModel>odAmt_3' }, { path: 'oModel>partPay' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setStatus' }"/>
 								</secondStatus>
 								<ObjectAttribute text="Loan Date: {oModel>lnDt}"/>
