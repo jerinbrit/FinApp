@@ -316,7 +316,7 @@ sap.ui.define([
 
 			var nwData = this._oDialog.getModel("oDialogModel").getData();
 
-			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || !nwData.goldGms.trim() || !nwData.lnAmt.trim()) {
+			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || Number(nwData.goldGms)<=0 || Number(nwData.lnAmt)<=0) {
 				MessageBox.error("Please fill all the required fields");
 				return;
 			}
