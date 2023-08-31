@@ -1,0 +1,62 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
+	<Dialog title="User Config" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
+		<content>
+			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
+				<l:content>
+					<VBox justifyContent="Center">
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Filter"/>
+							<CheckBox selected="{ucDialogModel>/filter}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Payment Schedule"/>
+							<CheckBox selected="{ucDialogModel>/paySchl}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Interest Rate"/>
+							<CheckBox selected="{ucDialogModel>/intRt}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Interest Rate(Customer Specific)"/>
+							<CheckBox selected="{ucDialogModel>/intRt_c}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Loan Closure"/>
+							<CheckBox selected="{ucDialogModel>/lc}"/>
+						</HBox>
+							<HBox justifyContent="SpaceBetween">
+							<Text text="Amount Reversal"/>
+							<CheckBox selected="{ucDialogModel>/reversal}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="View Loan Summary"/>
+							<CheckBox selected="{ucDialogModel>/ls}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Notice" selected="{ucDialogModel>/not}"/>
+							<CheckBox/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Data Backup"/>
+							<CheckBox selected="{ucDialogModel>/bkp}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="Session" />
+							
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<TimePicker	width="95%" placeholder="From" dateValue="{ucDialogModel>/frmSes}"/>
+							<TimePicker	width="95%" placeholder="To" dateValue="{ucDialogModel>/toSes}"/>
+						</HBox>
+					</VBox>
+				</l:content>
+			</l:Grid>
+		</content>
+		<buttons>
+			<Button type="Ghost" text="Close" press="onClose" class="sapUiTinyMarginEnd"/>
+			<Button type="Accept" text="Update" press="cUpdateUC" class="sapUiTinyMarginEnd"/>
+		</buttons>
+		<beginButton></beginButton>
+		<endButton></endButton>
+	</Dialog>
+</core:FragmentDefinition>
