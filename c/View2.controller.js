@@ -1,8 +1,8 @@
 /*global XLSX:true*/
 sap.ui.define([
-	"FabFinV3/controller/BaseController",
+	"FabFinV3/c/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"FabFinV3/util/formatter",
+	"FabFinV3/u/formatter",
 	"sap/m/MessageBox",
 	"sap/m/library"
 ], function(BaseController, JSONModel, formatter, MessageBox, mobileLibrary) {
