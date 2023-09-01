@@ -12,31 +12,46 @@ sap.ui.define([], function() {
 			return date[1] + " " + date[2] + "," + date[3];
 		},
 
-		setStatus: function(lnCls, instDt, odDat1, odDat2, odDat3, odAmt1, odAmt2, odAmt3, partPay) {
+		setStatus: function(lnCls, instDt, odDat1, odDat2, odDat3, odAmt1, odAmt2, odAmt3, partPay, ctrl) {
 
 			var currDate = new Date(new Date().toDateString());
 			if (lnCls) {
-				this.setState("Success");
-				return "Loan Closed";
+				if (!ctrl) {
+					this.setState("Success");
+					return "Loan Closed";
+				}
+
 			}
 
 			if (odDat1 && odDat2 && odDat3) {
 				if (currDate > new Date(odDat3)) {
-					this.setState("Error");
-					return "Overdue for 3+ months";
+					if (!ctrl) {
+						this.setState("Error");
+						return "Overdue for 3+ months";
+					} else {
+						return true;
+					}
+
 				}
 
 				if (currDate > new Date(odDat2)) {
-					this.setState("Error");
-					return "Overdue for 2+ months";
+					if (!ctrl) {
+						this.setState("Error");
+						return "Overdue for 2+ months";
+					} else {
+						return true;
+					}
+
 				}
 
 				if (currDate > new Date(odDat1)) {
-					this.setState("Error");
-					if (partPay) {
-						return "Partially Overdue for 1+ months";
-					} else {
-						return "Overdue for 1+ months";
+					if (!ctrl) {
+						this.setState("Error");
+						if (partPay) {
+							return "Partially Overdue for 1+ months";
+						} else {
+							return "Overdue for 1+ months";
+						}
 					}
 
 				}
@@ -45,23 +60,43 @@ sap.ui.define([], function() {
 			var pendPayDate = new Date(new Date(instDt).getTime() - (5 * 24 * 60 * 60 * 1000));
 
 			if (currDate >= pendPayDate && currDate <= new Date(instDt)) {
-				this.setState("Warning");
-				return "Payment pending";
+				if (!ctrl) {
+					this.setState("Warning");
+					return "Payment pending";
+				}
+
 			}
 
 		},
 
-		highlightRow: function(inst,r) {
+		setNotStatus: function(not, dat) {
+			if (not && dat) {
+				switch (String(not)) {
+					case "1":
+						return "1st Notice Sent " + "on " + dat;
+
+					case "2":
+						return "2nd Notice Sent " + "on " + dat;
+					case "3":
+						return "3rd Notice Sent " + "on " + dat;
+
+					default:
+					return String(not)+ "th Notice Sent " + "on " + dat;
+
+				}
+			}
+		},
+
+		highlightRow: function(inst, r) {
 			if (inst) {
 				if (FabFinV3.currInst) {
 					if (FabFinV3.currInst == inst) {
 
 						FabFinV3.currRow = this.getParent().getId();
 
-					}else if(inst > FabFinV3.currInst)
-						{
-							FabFinV3.nxtRow.push(this.getParent().getId());
-						}
+					} else if (inst > FabFinV3.currInst) {
+						FabFinV3.nxtRow.push(this.getParent().getId());
+					}
 				}
 				return inst;
 			}
