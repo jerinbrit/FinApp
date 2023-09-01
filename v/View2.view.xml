@@ -6,11 +6,14 @@
 				<content>
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
-						<ObjectHeader  icon="sap-icon://customer" imageShape="Circle" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
+						<ObjectHeader icon="sap-icon://customer" imageShape="Circle" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
 							<statuses>
 								<ObjectStatus text="{cModel>/goldGms} gms"/>
-								<ObjectStatus  inverted="true"
-									text="{ parts: [{ path: 'cModel>/lnCls' }, { path: 'cModel>/nxtInstsDate' }, { path: 'cModel>/odDat_1' }, { path: 'cModel>/odDat_2' }, { path: 'cModel>/odDat_3' }, { path: 'cModel>/odAmt_1' }, { path: 'cModel>/odAmt_2' }, { path: 'cModel>/odAmt_3' }, { path: 'cModel>/partPay' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
+								<ObjectStatus inverted="true"
+									text="{ parts: [{ path: 'cModel>/lnCls' }, { path: 'cModel>/nxtInstsDate' }, 
+									{ path: 'cModel>/odDat_1' }, { path: 'cModel>/odDat_2' }, { path: 'cModel>/odDat_3' }, 
+									{ path: 'cModel>/odAmt_1' }, { path: 'cModel>/odAmt_2' }, { path: 'cModel>/odAmt_3' }, 
+									{ path: 'cModel>/partPay' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
 								<ObjectStatus
 									text="{ parts: [{ path: 'cModel>/instDet' }, { path: 'cModel>/nxtInstsDate' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAmtDue' }"
 									id="idAmtDue" visible="{=${cModel>/nxtInstsDate}?true:false}" class="bold"/>
@@ -24,12 +27,14 @@
 							<ObjectAttribute title="Phone" text="{cModel>/mob}" active="true" press="clickPhone"/>
 							<ObjectAttribute title="Email" text="{cModel>/mail}" active="true" press="clickEmail"/>
 							<ObjectAttribute title="Address" text="{cModel>/addr}"/>
+							<ObjectAttribute class="classNotAttr" text="{ parts: [{ path: 'cModel>/notice' }, { path: 'cModel>/notDat' }], formatter: '.formatter.setNotStatus' }" visible="{=${cModel>/notice} ? true : false}"/>
 						</ObjectHeader>
-						<Table id="idInstTab" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders" class="sapUiTinyMarginTop"
-							growing="true" growingThreshold="25" growingScrollToLoad="true">
+						<Table id="idInstTab" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders" class="sapUiTinyMarginTop" growing="true"
+							growingThreshold="25" growingScrollToLoad="true">
 							<headerToolbar>
 								<OverflowToolbar height="2.5rem" visible="{=${cModel>/lnCls}=== 'X' ? false : true}" design="Info">
 									<content>
+										<Button id="idNotBtn" type="Accept" icon="sap-icon://marketing-campaign" text="Notice" press="onUpdateNot" visible="false"/>
 										<ToolbarSpacer/>
 										<Button type="Accept" icon="sap-icon://waiver" text="Interest" press="onUpdateInt" visible="{=${uModel>/adm} || ${config>/intRt_c}}"/>
 										<Button type="Accept" icon="sap-icon://paid-leave" text="Add" press="onAddInst"/>
@@ -46,7 +51,7 @@
 								<Column minScreenWidth="Tablet" demandPopin="true">
 									<Text text="Interest" class="white_c bold"/>
 								</Column>
-							<!--	<Column minScreenWidth="Tablet" demandPopin="true">
+								<!--	<Column minScreenWidth="Tablet" demandPopin="true">
 									<Text text="Payment Date" class="white_c bold"/>
 								</Column>-->
 								<Column hAlign="End">
@@ -63,25 +68,22 @@
 											class="bold"/>
 										<Text text="{cModel>prA}"/>
 										<Text text="{=${cModel>/lnCls}=== 'X' ? ${cModel>int} : ${cModel>int}-${cModel>cfInt}}"/>
-									<!--	<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>-->
+										<!--	<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>-->
 										<!--<ObjectIdentifier title="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}" text="INR"/>-->
-										<ObjectHeader class="classObjHdrTab"
-											number="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}"
+										<ObjectHeader class="classObjHdrTab" number="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}"
 											numberUnit="INR">
 											<statuses>
-												<ObjectStatus text="{path: 'cModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+												<ObjectStatus
+													text="{path: 'cModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 											</statuses>
-										
 										</ObjectHeader>
-										<ObjectHeader class="classObjHdrTab"
-											number="{cModel>amtPaid}"
-											numberUnit="INR">
+										<ObjectHeader class="classObjHdrTab" number="{cModel>amtPaid}" numberUnit="INR">
 											<statuses>
-												<ObjectStatus text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
+												<ObjectStatus
+													text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 											</statuses>
-										
 										</ObjectHeader>
-									<!--	<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>-->
+										<!--	<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>-->
 									</cells>
 								</ColumnListItem>
 							</items>
