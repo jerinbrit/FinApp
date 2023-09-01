@@ -752,7 +752,7 @@ sap.ui.define([
 		
 		onBkpFile:function()
 			{
-				downloadObjectAsJson(this.oModel.getData(), "new");
+				downloadObjectAsJson(this.oModel.getData(), "Backup");
 				function downloadObjectAsJson(exportObj, exportName) {
 					var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
 					var downloadAnchorNode = document.createElement('a');
