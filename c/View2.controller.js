@@ -98,7 +98,7 @@ sap.ui.define([
 							if (el == e.getId()) {
 								e.addStyleClass("classOpacity");
 								try {
-										$("#" + e.getId() + "-sub").css("opacity", "0.3");
+									$("#" + e.getId() + "-sub").css("opacity", "0.3");
 								} catch (err) {}
 							}
 
@@ -491,17 +491,19 @@ sap.ui.define([
 					if (new Date(cData.lstPayDate) < new Date(payDate)) {
 						cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
 					} else {
-						if (new Date(cData.lstPayDate).toDateString() != new Date(payDate).toDateString()) {
-							MessageBox.error("There is already a payment made on future date " + cData.lstPayDate);
-							return;
-						}
+						/*
+												if (new Date(cData.lstPayDate).toDateString() != new Date(payDate).toDateString()) {
+													MessageBox.error("There is already a payment made on future date " + cData.lstPayDate);
+													return;
+												}
 
+											*/
 					}
 				} else {
 					cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
 				}
 			}
-
+			var curPayInst;
 			if (!lnClsr) {
 				var amtPaid;
 				for (var i = cData.instDet.length - 1; i >= 0; i--) {
@@ -513,14 +515,15 @@ sap.ui.define([
 								return;
 							}
 						}
-
+						curPayInst = i;
+						break;
 					}
 				}
 
 				for (var i = cData.instDet.length - 1; i >= 0; i--) {
 
 					if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
-						amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+						amtPaid = curPayInst == i ? (cData.instDet[i].amtPaid + Number(payAmt)) : cData.instDet[i].amtPaid;
 						if (amtPaid == 0) {
 							cData.lstPayDate = "";
 							var histAmt = 0,
@@ -551,7 +554,7 @@ sap.ui.define([
 					for (var i = cData.instDet.length - 1; i >= 0; i--) {
 						if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
 							ctr = i;
-							amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
+							amtPaid = curPayInst == i ? (cData.instDet[i].amtPaid + Number(payAmt)) : cData.instDet[i].amtPaid;
 
 							if (amtPaid < cData.instDet[i].int) {
 								for (var j = i - 1; j >= 0; j--) {
@@ -574,14 +577,7 @@ sap.ui.define([
 								ctr = i + 1;
 							}
 
-							/*	amtPaid = cData.instDet[i].amtPaid + Number(payAmt);
-								var ctr = i;
-								if (amtPaid < cData.instDet[i].int) {
-									cData.partPay = "X";
-								} else {
-									cData.partPay = "";
-									ctr = i + 1;
-								}*/
+						
 
 							cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
 							cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
