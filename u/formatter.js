@@ -58,7 +58,10 @@ sap.ui.define([], function() {
 
 						FabFinV3.currRow = this.getParent().getId();
 
-					}
+					}else if(inst > FabFinV3.currInst)
+						{
+							FabFinV3.nxtRow.push(this.getParent().getId());
+						}
 				}
 				return inst;
 			}
