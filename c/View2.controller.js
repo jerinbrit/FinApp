@@ -82,17 +82,29 @@ sap.ui.define([
 				var items = this.byId("idInstTab").getItems();
 				items.forEach(function(e) {
 					e.removeStyleClass("classHighlightGreen");
-					try {
-						$("#" + e.getId() + "-sub").css("background", "#FFFFFF");
-					} catch (err) {}
+					e.removeStyleClass("classOpacity");
+
 					if (FabFinV3.currRow == e.getId()) {
 						e.addStyleClass("classHighlightGreen");
 						try {
 							//	$("#" + e.getId() + "-sub").css("background", "#ebffeb");
 							$("#" + e.getId() + "-sub").attr('style', 'background: rgb(171 226 171 / 40%)!important');
 						} catch (err) {}
-
 					}
+
+					if (FabFinV3.nxtRow.length > 0) {
+						FabFinV3.nxtRow.forEach(function(el) {
+
+							if (el == e.getId()) {
+								e.addStyleClass("classOpacity");
+								try {
+										$("#" + e.getId() + "-sub").css("opacity", "0.3");
+								} catch (err) {}
+							}
+
+						});
+					}
+
 				});
 			}
 		},
@@ -193,14 +205,15 @@ sap.ui.define([
 
 			FabFinV3.currInst = 0;
 			FabFinV3.currRow = "";
+			FabFinV3.nxtRow = [];
 			var that = this;
 			cModel.instDet = generateLoanData(cModel.lnDt);
 
 			try {
-					$.sap.delayedCall(100, this, function() {
-							that.byId("idInstTab").rerender()
-							});
-				
+				$.sap.delayedCall(100, this, function() {
+					that.byId("idInstTab").rerender()
+				});
+
 				curDtObj.intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
 					currRoi / 100 * 1 / 365);
 
@@ -333,8 +346,6 @@ sap.ui.define([
 						curDtObj = pObj;
 
 						FabFinV3.currInst = pObj.no;
-						that.getView().getModel("refreshModel").getData().r = true;
-						that.getView().getModel("refreshModel").refresh();
 
 						//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
 
@@ -353,6 +364,9 @@ sap.ui.define([
 						FabFinV3.currInst = 0;
 
 					}
+
+					that.getView().getModel("refreshModel").getData().r = pObj.no;
+					that.getView().getModel("refreshModel").refresh();
 
 					pArr.push(pObj);
 
