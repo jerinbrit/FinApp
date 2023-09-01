@@ -41,6 +41,7 @@
 								</secondStatus>
 								<ObjectAttribute text="Loan Date: {oModel>lnDt}"/>
 								<ObjectAttribute text="Due on: {oModel>nxtInstsDate}" visible="{=${oModel>nxtInstsDate} ? true : false}"/>
+								<ObjectAttribute class="classNotAttr" text="{ parts: [{ path: 'oModel>notice' }, { path: 'oModel>notDat' }], formatter: '.formatter.setNotStatus' }" visible="{=${oModel>notice} ? true : false}"/>
 							</ObjectListItem>
 						</List>
 					</l:Grid>
