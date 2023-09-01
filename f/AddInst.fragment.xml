@@ -15,7 +15,7 @@
 							<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
 							
 							<HBox justifyContent="End">
-							<CheckBox id="idNtve" text="Negative" visible="{=${uModel>/adm} || ${config>/reversal}}"/>
+							<CheckBox id="idNtve" text="Reversal" visible="{=${uModel>/adm} || ${config>/reversal}}"/>
 						
 						</HBox>
 
@@ -31,14 +31,21 @@
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
+					
 					<VBox id="idOthrAmtVB" visible="false">
 						<Text text="Other charges (if any):"/>
 						<Input id="idOthrAmt" value="" type="Number" change="calAmtTD"/>
-						<HBox class="sapUiTinyMarginTop"><Text text="Total Amount to pay"/> <Text class="sapUiTinyMarginBegin" id="idTot" text=""/></HBox>
+						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay"/> <Text class="sapUiTinyMarginBegin" id="idTot" text=""/></HBox>
+						
+						<HBox alignItems="Center" class="sapUiTinyMarginTop">
+							<Text text="Gold Auction: "/>
+							<CheckBox id="idGA"/>
+						</HBox>
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
+					
 				</l:content>
 			</l:Grid>
 		</content>
