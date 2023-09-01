@@ -1,4 +1,4 @@
-<mvc:View controllerName="FabFinV3.c.View2" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+<mvc:View controllerName="FabFinV3.controller.View2" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout">
 	<App>
 		<pages>
@@ -23,6 +23,9 @@
 								<ObjectStatus id="idIntEarn" state="Success" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
 								<ObjectStatus id="idDefAmt" state="Error" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
 							</statuses>
+								<markers>
+									<ObjectMarker type="Flagged" visible="{=${cModel>/goldAuctn} ? true : false}"/>
+								</markers>
 							<ObjectAttribute title="Loan Date" text="{cModel>/lnDt}"/>
 							<ObjectAttribute title="Phone" text="{cModel>/mob}" active="true" press="clickPhone"/>
 							<ObjectAttribute title="Email" text="{cModel>/mail}" active="true" press="clickEmail"/>
