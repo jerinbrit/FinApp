@@ -5,12 +5,11 @@
 			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
-							<contentLeft>
-								<VBox visible="{=!${mModel>/roi} ? false : true}">
-									<core:Icon src="sap-icon://save" press="onBkpFile" class="sapUiTinyMarginBegin" visible="{=${uModel>/adm} || ${config>/bkp}}"/>
-								</VBox>
-								
-							</contentLeft>
+						<contentLeft>
+							<VBox visible="{=!${mModel>/roi} ? false : true}">
+								<core:Icon src="sap-icon://save" press="onBkpFile" class="sapUiTinyMarginBegin" visible="{=${uModel>/adm} || ${config>/bkp}}"/>
+							</VBox>
+						</contentLeft>
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
@@ -25,7 +24,6 @@
 						<OverflowToolbar height="2.5rem" visible="{=!${mModel>/roi} ? false : true}">
 							<CheckBox id="idFilter" text="All" selected="false" select="onFilterData" visible="{=${uModel>/adm} || ${config>/filter}}"/>
 							<ToolbarSpacer/>
-							
 							<Button type="Accept" icon="sap-icon://appointment" text="Schedule" press="onUpdatePW" visible="{=${uModel>/adm} || ${config>/paySchl}}"/>
 							<Button type="Accept" icon="sap-icon://waiver" text="Interest" press="onUpdateInt" visible="{=${uModel>/adm} || ${config>/intRt}}"/>
 							<Button type="Accept" icon="sap-icon://add-employee" text="Add" press=".onAddCust(false)"/>
@@ -41,7 +39,12 @@
 								</secondStatus>
 								<ObjectAttribute text="Loan Date: {oModel>lnDt}"/>
 								<ObjectAttribute text="Due on: {oModel>nxtInstsDate}" visible="{=${oModel>nxtInstsDate} ? true : false}"/>
-								<ObjectAttribute class="classNotAttr" text="{ parts: [{ path: 'oModel>notice' }, { path: 'oModel>notDat' }], formatter: '.formatter.setNotStatus' }" visible="{=${oModel>notice} ? true : false}"/>
+								<ObjectAttribute class="classNotAttr"
+									text="{ parts: [{ path: 'oModel>notice' }, { path: 'oModel>notDat' }], formatter: '.formatter.setNotStatus' }"
+									visible="{=${oModel>notice} ? true : false}"/>
+								<markers>
+									<ObjectMarker type="Flagged" visible="{=${oModel>goldAuctn} ? true : false}"/>
+								</markers>
 							</ObjectListItem>
 						</List>
 					</l:Grid>
