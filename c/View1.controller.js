@@ -300,7 +300,6 @@ sap.ui.define([
 					"payDet": [],
 					"roiDet": this.mModel.getData().roi,
 					"pwDet": this.mModel.getData().pw,
-					"ucDet": this.mModel.getData().uc,
 					"crtDt": "",
 					"lnCls": ""
 				};
