@@ -206,8 +206,8 @@ sap.ui.define([
 							lc: "",
 							ls: "",
 							not: "",
-							reversal:"",
-							bkp:"",
+							reversal: "",
+							bkp: "",
 							frmSes: null,
 							toSes: null
 						}
@@ -316,12 +316,13 @@ sap.ui.define([
 
 			var nwData = this._oDialog.getModel("oDialogModel").getData();
 
-			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || Number(nwData.goldGms)<=0 || Number(nwData.lnAmt)<=0) {
+			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || Number(nwData.goldGms) <= 0 || Number(nwData.lnAmt) <= 0) {
 				MessageBox.error("Please fill all the required fields");
 				return;
 			}
 
 			nwData.key = nwData.crtDt = nwData.modDt = Date.now().toString();
+			delete nwData.instDet;
 			this.oModel.getData().push(this._oDialog.getModel("oDialogModel").getData());
 			var data = this.oModel.getData();
 			data = JSON.stringify(data);
@@ -389,8 +390,9 @@ sap.ui.define([
 			var data = cModel.payDet;
 			var roiArr = this.mModel.getData().roi;
 			var pwArr = this.mModel.getData().pw;
+			var pwDet;
 			cModel.instDet = generateLoanData(cModel.lnDt);
-
+			cModel.pwDet = pwDet ? [pwDet] : [];
 			cModel.lstPayDate = "";
 			cModel.nxtInstsDate = this.formatter.dateFormat(cModel.instDet[0].instDt);
 			//	cModel.nxtInsteDate = this.formatter.dateFormat(cModel.instDet[0].fnPayDt);
@@ -434,6 +436,9 @@ sap.ui.define([
 						fInstMnth = (date.getMonth() + pwArr[i].mc) % 12;
 						fInstDay = pwArr[i].dt;
 						mc = pwArr[i].mc;
+
+						pwDet = pwArr[i];
+
 						break;
 					}
 				}
@@ -460,11 +465,9 @@ sap.ui.define([
 						int: Math.round((Number(prA) * roi) + cfInt),
 						lPay: 0,
 						payDate: "",
-						//	intFrm: tmpDate,
-						//	intTo: new Date(new Date(tmpDate).getTime() + (30 * 24 * 60 * 60 * 1000)).toDateString(),
-						//	fnPayDt: new Date(new Date(tmpDate).getTime() + (61 * 24 * 60 * 60 * 1000)).toDateString(),
 						amtPaid: 0,
 						hist: []
+
 					};
 
 					month = month % 12;
@@ -749,20 +752,20 @@ sap.ui.define([
 			this.onClose();
 
 		},
-		
-		onBkpFile:function()
-			{
-				downloadObjectAsJson(this.oModel.getData(), "Backup");
-				function downloadObjectAsJson(exportObj, exportName) {
-					var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
-					var downloadAnchorNode = document.createElement('a');
-					downloadAnchorNode.setAttribute("href", dataStr);
-					downloadAnchorNode.setAttribute("download", exportName + ".json");
-					document.body.appendChild(downloadAnchorNode); // required for firefox
-					downloadAnchorNode.click();
-					downloadAnchorNode.remove();
-				}
-			},
+
+		onBkpFile: function() {
+			downloadObjectAsJson(this.oModel.getData(), "Backup");
+
+			function downloadObjectAsJson(exportObj, exportName) {
+				var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+				var downloadAnchorNode = document.createElement('a');
+				downloadAnchorNode.setAttribute("href", dataStr);
+				downloadAnchorNode.setAttribute("download", exportName + ".json");
+				document.body.appendChild(downloadAnchorNode); // required for firefox
+				downloadAnchorNode.click();
+				downloadAnchorNode.remove();
+			}
+		},
 
 		onNav: function(obj) {
 			this.getOwnerComponent().getRouter().navTo("customer", {
