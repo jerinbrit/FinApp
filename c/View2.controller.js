@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"FabFinV3/u/formatter",
 	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/m/library"
-], function(BaseController, JSONModel, formatter, MessageBox, mobileLibrary) {
+], function(BaseController, JSONModel, formatter, MessageBox,MessageToast, mobileLibrary) {
 	"use strict";
 	FabFinV3.URLHelper = mobileLibrary.URLHelper;
 	return BaseController.extend("FabFinV3.c.View2", {
@@ -974,6 +975,64 @@ sap.ui.define([
 			}
 			return arr;
 		},
+
+		onPressCustDel: function() {
+			sap.m.MessageBox.confirm(
+				"Are you sure want to delete?", {
+					actions: ["Cancel", "Confirm"],
+					onClose: function(sAction) {
+						if (sAction === "Confirm") {
+							delCust();
+						}
+					}
+				}
+			);
+			var that = this;
+
+			function delCust() {
+				
+				var cData = that.cModel.getData();
+
+				var oData = that.oModel.getData();
+
+				for (var j in oData) {
+					if (oData[j].key === cData.key) {
+						oData.splice(j, 1);
+						break;
+					}
+				}
+
+				var data = JSON.stringify(oData);
+
+				var body = {
+					message: "Updating file",
+					content: btoa(data),
+					sha: window.custsha
+				};
+
+				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+				sap.ui.core.BusyIndicator.show(0);
+				$.ajax({
+					type: 'PUT',
+					url: url,
+					headers: that.headers,
+					data: JSON.stringify(body),
+					dataType: 'text',
+					success: function(odata) {
+						window.custsha = JSON.parse(odata).content.sha;
+						MessageToast.show("Deleted Successfully.")
+						that.onNavBack();
+						
+					},
+					error: function(odata) {
+						MessageBox.error("Failed to delete.")
+					}
+				});
+
+
+			}
+		},
+
 		onNavBack: function() {
 			this.getOwnerComponent().getRouter().navTo("home");
 		},
