@@ -5,11 +5,7 @@
 			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
-						<contentLeft>
-							<VBox visible="{=!${mModel>/roi} ? false : true}">
-								<core:Icon src="sap-icon://save" press="onBkpFile" class="sapUiTinyMarginBegin" visible="{=${uModel>/adm} || ${config>/bkp}}"/>
-							</VBox>
-						</contentLeft>
+					
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
