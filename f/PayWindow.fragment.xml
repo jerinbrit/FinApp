@@ -57,6 +57,12 @@
 							</t:RowAction>
 						</t:rowActionTemplate>
 					</t:Table>
+					
+					<HBox alignItems="Center" class="sapUiTinyMarginTop">
+						<Text text="Lone Duration :" class="sapUiTinyMarginEnd" wrapping="false"/>
+						<Input  id="idLnDur"  description="months"/>
+					</HBox>
+					
 				</l:content>
 			</l:Grid>
 		</content>
