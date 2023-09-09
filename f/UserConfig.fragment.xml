@@ -25,6 +25,10 @@
 							<CheckBox selected="{ucDialogModel>/lc}"/>
 						</HBox>
 							<HBox justifyContent="SpaceBetween">
+							<Text text="Loan Renewal"/>
+							<CheckBox selected="{ucDialogModel>/lr}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
 							<Text text="Amount Reversal"/>
 							<CheckBox selected="{ucDialogModel>/reversal}"/>
 						</HBox>
@@ -41,12 +45,11 @@
 							<CheckBox selected="{ucDialogModel>/bkp}"/>
 						</HBox>
 						<HBox justifyContent="SpaceBetween">
-							<Text text="Session" />
-							
+							<Text text="Session"/>
 						</HBox>
 						<HBox justifyContent="SpaceBetween">
-							<TimePicker	width="95%" placeholder="From" dateValue="{ucDialogModel>/frmSes}"/>
-							<TimePicker	width="95%" placeholder="To" dateValue="{ucDialogModel>/toSes}"/>
+							<TimePicker width="95%" placeholder="From" dateValue="{ucDialogModel>/frmSes}"/>
+							<TimePicker width="95%" placeholder="To" dateValue="{ucDialogModel>/toSes}"/>
 						</HBox>
 					</VBox>
 				</l:content>
