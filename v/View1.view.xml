@@ -1,11 +1,10 @@
-<mvc:View controllerName="FabFinV3.c.View1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+<mvc:View controllerName="FabFinV3.controller.View1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
 	<App>
 		<pages>
 			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
-					
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
@@ -30,16 +29,22 @@
 									<ObjectStatus text="{oModel>goldGms} gms"/>
 								</firstStatus>
 								<secondStatus>
-									<ObjectStatus inverted="true"
-										text="{ parts: [{ path: 'oModel>lnCls' }, { path: 'oModel>nxtInstsDate' }, { path: 'oModel>odDat_1' }, { path: 'oModel>odDat_2' }, { path: 'oModel>odDat_3' }, { path: 'oModel>odAmt_1' }, { path: 'oModel>odAmt_2' }, { path: 'oModel>odAmt_3' }, { path: 'oModel>partPay' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setStatus' }"/>
+									<ObjectStatus inverted="true" class="classStatuslist"
+										text="{ parts: [ { path: 'oModel>' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setStatus_h' }"/>
 								</secondStatus>
 								<ObjectAttribute text="Loan Date: {oModel>lnDt}"/>
-								<ObjectAttribute text="Due on: {oModel>nxtInstsDate}" visible="{=${oModel>nxtInstsDate} ? true : false}"/>
+								<ObjectAttribute text=""/>
+								<ObjectAttribute
+									text="{ parts: [{ path: 'oModel>lnDt' },{ path: 'oModel>lnDur' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setLnExpTxt' }"
+									visible="{=(${oModel>lnCls}=== 'X'||${oModel>lnRen}=== 'X') ? false : true}"/>
 								<ObjectAttribute class="classNotAttr"
 									text="{ parts: [{ path: 'oModel>notice' }, { path: 'oModel>notDat' }], formatter: '.formatter.setNotStatus' }"
 									visible="{=${oModel>notice} ? true : false}"/>
 								<markers>
-									<ObjectMarker type="Flagged" visible="{=${oModel>goldAuctn} ? true : false}"/>
+									<ObjectMarker type="Unsaved"
+										visible="{ parts: [{ path: 'oModel>preKey' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setAttrMarkerRen' }"/>
+									<ObjectMarker class="classGoldAuc" type="Flagged"
+										visible="{ parts: [{ path: 'oModel>goldAuctn' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setAttrMarkerAuc' }"/>
 								</markers>
 							</ObjectListItem>
 						</List>
