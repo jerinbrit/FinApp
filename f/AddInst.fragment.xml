@@ -12,32 +12,48 @@
 					</VBox>
 					<VBox>
 						<Text text="Amount Paid:"/>
-							<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
-							
-							<HBox justifyContent="End">
-							<CheckBox id="idNtve" text="Reversal" visible="{=${uModel>/adm} || ${config>/reversal}}"/>
-						
+						<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
+						<HBox justifyContent="End">
+							<CheckBox id="idNtve" text="Reversal" visible="{=${uModel>/adm} || ${config>/reversal}}" select="calAmtTD"/>
 						</HBox>
-
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
-					
+					<VBox visible="false">
+						<VBox id="idIntDetVB" visible="false">
+							<Text id="idIntDetTxt"/>
+							<RadioButtonGroup id="idRB" columns="1">
+								<RadioButton id="idAIP" text="Advance Interest Payment" selected="true"/>
+								<RadioButton id="idPR" text="Principal Reduction" selected="false"/>
+							</RadioButtonGroup>
+							<layoutData>
+								<l:GridData span="L12 M12 S12"/>
+							</layoutData>
+						</VBox>
+					</VBox>
 					<VBox visible="{=${uModel>/adm} || ${config>/lc}}">
-						<Text text="Loan Closure:"/>
-						<CheckBox id="idCB" select="onSelLC"/>
+						<Text text="Loan Closure:" class="bold"/>
+						<CheckBox id="idCB" select=".onSelLC($event,'C')"/>
 						<layoutData>
-							<l:GridData span="L12 M12 S12"/>
+							<l:GridData span="L4 M6 S6"/>
 						</layoutData>
 					</VBox>
-					
+					<VBox id="idLRVB">
+						<VBox visible="{=${uModel>/adm} || ${config>/lr}}">
+							<Text text="Loan Renewal:" class="bold"/>
+							<CheckBox id="idCBR" select=".onSelLC($event,'R')"/>
+						</VBox>
+						<layoutData>
+							<l:GridData span="L4 M6 S6"/>
+						</layoutData>
+					</VBox>
 					<VBox id="idOthrAmtVB" visible="false">
 						<Text text="Other charges (if any):"/>
 						<Input id="idOthrAmt" value="" type="Number" change="calAmtTD"/>
-						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay"/> <Text class="sapUiTinyMarginBegin" id="idTot" text=""/></HBox>
-						
-						<HBox alignItems="Center" class="sapUiTinyMarginTop">
+						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay"/>
+							<Text class="sapUiTinyMarginBegin" id="idTot" text=""/></HBox>
+						<HBox alignItems="Center" class="sapUiTinyMarginTop" id="idGAHB">
 							<Text text="Gold Auction: "/>
 							<CheckBox id="idGA"/>
 						</HBox>
@@ -45,7 +61,6 @@
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
-					
 				</l:content>
 			</l:Grid>
 		</content>
