@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/m/library"
-], function(BaseController, JSONModel, formatter, MessageBox,MessageToast, mobileLibrary) {
+], function(BaseController, JSONModel, formatter, MessageBox, MessageToast, mobileLibrary) {
 	"use strict";
 	FabFinV3.URLHelper = mobileLibrary.URLHelper;
 	return BaseController.extend("FabFinV3.c.View2", {
@@ -84,7 +84,7 @@ sap.ui.define([
 				items.forEach(function(e) {
 					e.removeStyleClass("classHighlightGreen");
 					e.removeStyleClass("classOpacity");
-
+					e.removeStyleClass("classHideRow");
 					if (FabFinV3.currRow == e.getId()) {
 						e.addStyleClass("classHighlightGreen");
 						try {
@@ -100,6 +100,19 @@ sap.ui.define([
 								e.addStyleClass("classOpacity");
 								try {
 									$("#" + e.getId() + "-sub").css("opacity", "0.3");
+								} catch (err) {}
+							}
+
+						});
+					}
+
+					if (FabFinV3.hideRow.length > 0) {
+						FabFinV3.hideRow.forEach(function(el) {
+
+							if (el == e.getId()) {
+								e.addStyleClass("classHideRow");
+								try {
+									$("#" + e.getId() + "-sub").css("display", "none");
 								} catch (err) {}
 							}
 
@@ -156,7 +169,12 @@ sap.ui.define([
 						if (data[i].key === custId) {
 
 							that.byId("idNotBtn").setVisible(false);
+							if ((data[i].lnCls || data[i].lnRen) && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
+								that.calcSummary(data[i]);
+							}
 
+							that.cModel.setData(data[i]);
+							that.calPayData();
 							if ((that.uModel.getData().adm || that.getView().getModel("config").getData().not)) {
 								var visNotBtn;
 
@@ -166,9 +184,7 @@ sap.ui.define([
 									}
 								} catch (err) {}
 
-								visNotBtn = !visNotBtn ? that.formatter.setStatus(data[i].lnCls, data[i].nxtInstsDate,
-									data[i].odDat_1, data[i].odDat_2, data[i].odDat_3,
-									data[i].odAmt_1, data[i].odAmt_2, data[i].odAmt_3, data[i].partPay, true) : visNotBtn;
+								visNotBtn = !visNotBtn ? that.formatter.setStatus_f(data[i], data[i].instDet).notVis : visNotBtn;
 
 								if (visNotBtn) {
 									if (!data[i].notDet) {
@@ -179,12 +195,6 @@ sap.ui.define([
 
 							}
 
-							if (data[i].lnCls && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
-								that.calcSummary(data[i]);
-							}
-
-							that.cModel.setData(data[i]);
-							that.calPayData();
 							that.cModel.refresh();
 							break;
 						}
@@ -201,11 +211,18 @@ sap.ui.define([
 		calcSummary: function(data) {
 			var totAmt = 0,
 				intAmt = 0,
-				defAmt = Number(data.defAmt) < 0 ? Math.abs(data.defAmt) : 0;
+				defAmt = data.defAmt;
 			data.payDet.forEach(function(e) {
 				totAmt += Number(e.amt);
 			});
-			intAmt = totAmt - Number(data.lnAmt);
+
+			var lnAmt = Number(data.lnAmt);
+
+			if (data.lnRen) {
+				lnAmt = lnAmt - Number(data.trPra || data.lnAmt);
+			}
+
+			intAmt = totAmt - Number(lnAmt);
 
 			intAmt = intAmt > 0 ? intAmt : 0;
 
@@ -218,21 +235,28 @@ sap.ui.define([
 
 			var cModel = this.cModel.getData();
 
-			var roiArr = cModel.roiDet;
+			/*	
+				var roiArr = cModel.roiDet;
+				var pwArr = cModel.pwDet;
+				var data = cModel.payDet;
+				data.sort((a, b) => {
+					return new Date(a.payDate) - new Date(b.payDate);
+				});
 
-			var pwArr = cModel.pwDet;
-
-			var data = cModel.payDet;
-
-			var currRoi = Number(cModel.roi);
-
-			var curDtObj = {};
+				var currRoi = Number(cModel.roi);
+				var curDtObj = {};*/
 
 			FabFinV3.currInst = 0;
 			FabFinV3.currRow = "";
 			FabFinV3.nxtRow = [];
+			FabFinV3.hideRow = [];
 			var that = this;
-			cModel.instDet = generateLoanData(cModel.lnDt);
+
+			var lnData = this.formatter.generateLoanData(cModel, true, this);
+
+			cModel.instDet = lnData.arr;
+			var currRoi = lnData.currRoi;
+			var curDtObj = lnData.curDtObj;
 
 			try {
 				$.sap.delayedCall(100, this, function() {
@@ -246,168 +270,11 @@ sap.ui.define([
 
 			} catch (err) {}
 
-			function generateLoanData(dat) {
-
-				var pObj, obj, pArr = [],
-					tmpDate = dat,
-					cDate = new Date().toDateString(),
-					iEnd = 1000,
-					prA = Number(cModel.lnAmt),
-					//	roi = Number(cModel.roi) / 12 / 100,
-					roi, tRoi,
-					bPrA = prA,
-					cfInt = 0;
-
-				var date = new Date(dat);
-				var instStDt = new Date(dat);
-				var day = date.getDate();
-				var year = date.getFullYear();
-				var month = date.getMonth() + 1;
-				var isLnClsd;
-
-				if (new Date(cDate) < new Date(dat)) {
-					iEnd = 6;
-				}
-
-				var fInstDat,
-					fInstMnth = (date.getMonth() + 1) % 12,
-					fInstYr = !((date.getMonth() + 1) % 12) ? date.getFullYear() + 1 : date.getFullYear(),
-					fInstDay = 5,
-					mc = 1;;
-				for (var i in pwArr) {
-					if (date.getDate() >= pwArr[i].frm && date.getDate() <= pwArr[i].to) {
-						fInstMnth = date.getMonth() + pwArr[i].mc;
-						fInstDay = pwArr[i].dt;
-						mc = pwArr[i].mc;
-						break;
-					}
-				}
-				fInstDat = new Date(fInstYr, fInstMnth, fInstDay);
-				if ((date.getMonth() + mc) % 12 != fInstDat.getMonth()) {
-					fInstDat = new Date((!((date.getMonth() + mc) % 12) ? date.getFullYear() + 1 : date.getFullYear()), fInstDat.getMonth(), 0);
-				}
-
-				for (var i = 1; i < iEnd; i++) {
-
-					for (var k in roiArr) {
-						if (roiArr[k].month == i) {
-							roi = Number(roiArr[k].roi) / 12 / 100;
-							tRoi = Number(roiArr[k].roi);
-							break;
-						}
-					}
-
-					prA = bPrA;
-
-					pObj = {
-						no: i,
-						prA: prA,
-						int: Math.round((Number(prA) * roi) + cfInt),
-						lPay: 0,
-						payDate: "",
-						amtPaid: 0,
-						hist: [],
-						roi: tRoi
-					};
-
-					pObj.cfInt = cfInt;
-
-					month = month % 12;
-					year = !(month) ? year + 1 : year;
-					obj = {
-						sDt: date,
-						eDt: new Date(year, month, day)
-					};
-					if (month != obj.eDt.getMonth()) {
-						obj.eDt = new Date(year, obj.eDt.getMonth(), 0);
-					}
-					obj.eDt = new Date(obj.eDt.getTime() - (1 * 24 * 60 * 60 * 1000));
-
-					date = new Date(obj.eDt.getTime() + (1 * 24 * 60 * 60 * 1000));
-					month += 1;
-
-					pObj.intFrm = obj.sDt.toDateString();
-					pObj.intTo = obj.eDt.toDateString();
-					pObj.fnPayDt = obj.eDt.toDateString();
-
-					pObj.instDt = fInstDat;
-					pObj.fnPayDt = (fInstDat >= obj.eDt ? fInstDat : obj.eDt).toDateString();
-					fInstDat = new Date((!((fInstDat.getMonth() + 1) % 12) ? fInstDat.getFullYear() + 1 : fInstDat.getFullYear()), ((fInstDat.getMonth() +
-						1) % 12), fInstDay);
-					if ((pObj.instDt.getMonth() + 1) % 12 != fInstDat.getMonth()) {
-						fInstDat = new Date((!((pObj.instDt.getMonth() + 1) % 12) ? pObj.instDt.getFullYear() + 1 : pObj.instDt.getFullYear()), (
-							fInstDat.getMonth()), 0);
-					}
-
-					pObj.instStDt = instStDt.toDateString();
-
-					for (var j in data) {
-						if (new Date(data[j].payDate) <= new Date(pObj.fnPayDt) && new Date(data[j].payDate) >= new Date(pObj.instStDt)) {
-							pObj.amtPaid += Number(data[j].amt);
-							pObj.payDate = Number(data[j].amt) > 0 ? data[j].payDate : pObj.payDate;
-							pObj.hist.push(data[j]);
-							isLnClsd = data[j].lnClsr ? true : false;
-
-						}
-					}
-
-					instStDt = new Date(new Date(pObj.fnPayDt).getTime() + (1 * 24 * 60 * 60 * 1000));
-
-					if (pObj.amtPaid > pObj.int) {
-						bPrA -= (pObj.amtPaid - pObj.int);
-					}
-					cfInt = 0;
-					if (pObj.amtPaid < pObj.int) {
-						cfInt = (pObj.int - pObj.amtPaid);
-					}
-
-					pObj.bPrA = bPrA;
-
-					//	tmpDate = new Date(new Date(pObj.intTo).getTime() + (1 * 24 * 60 * 60 * 1000)).toDateString();
-
-					if (new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm)) {
-						iEnd = i + 5;
-						currRoi = tRoi;
-						curDtObj = pObj;
-
-						FabFinV3.currInst = pObj.no;
-
-						//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
-
-					}
-
-					pObj.intFrm = new Date(pObj.intFrm);
-					pObj.intTo = new Date(pObj.intTo);
-					pObj.payDate = pObj.payDate ? new Date(pObj.payDate) : "";
-					pObj.fnPayDt = new Date(pObj.fnPayDt);
-					pObj.instStDt = new Date(pObj.instStDt);
-
-					if (isLnClsd) {
-						pObj.int = Number(pObj.amtPaid) - Number(pObj.prA);
-						pObj.int = pObj.int > 0 ? pObj.int : 0;
-						pObj.bPrA = 0;
-						FabFinV3.currInst = 0;
-
-					}
-
-					that.getView().getModel("refreshModel").getData().r = pObj.no;
-					that.getView().getModel("refreshModel").refresh();
-
-					pArr.push(pObj);
-
-					if (isLnClsd) {
-						break;
-					}
-
-				}
-
-				return pArr;
-
-			}
+		
 
 		},
 
-		onSelLC: function(oEvent) {
+		onSelLC: function(oEvent, act) {
 			var cData = this.cModel.getData();
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
 			var lstPayDate;
@@ -424,6 +291,9 @@ sap.ui.define([
 				return;
 			}
 
+			act === "R" ? sap.ui.getCore().byId("idCB").setSelected(false) : sap.ui.getCore().byId("idCBR").setSelected(false);
+
+			sap.ui.getCore().byId("idGAHB").setVisible(sap.ui.getCore().byId("idCB").getSelected());
 			sap.ui.getCore().byId("idOthrAmtVB").setVisible(oEvent.getSource().getSelected());
 			this.calAmtTD();
 
@@ -433,28 +303,89 @@ sap.ui.define([
 			if (flg === '1') {
 				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
 				sap.ui.getCore().byId("idCB").setSelected(false);
+				sap.ui.getCore().byId("idCBR").setSelected(false);
 			}
+
+			if (sap.ui.getCore().byId("idNtve").getSelected()) {
+				sap.ui.getCore().byId("idCB").setSelected(false);
+				sap.ui.getCore().byId("idCBR").setSelected(false);
+				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
+			}
+
 			var cData = this.cModel.getData();
 			var othrAmt = sap.ui.getCore().byId("idOthrAmt").getValue();
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
+			var amtToPay;
 			var curDtObj;
 			for (var i = cData.instDet.length - 1; i >= 0; i--) {
-				if (new Date(payDate) <= new Date(cData.instDet[i].intTo) && new Date(payDate) >= new Date(cData.instDet[i].intFrm)) {
+				if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
 					curDtObj = cData.instDet[i];
 					break;
 				}
 			}
+			if (sap.ui.getCore().byId("idCB").getSelected()) {
 
-			cData.intTD = curDtObj;
-			var intCurMnth = curDtObj.int - curDtObj.cfInt;
-			var intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
-				curDtObj.roi / 100 * 1 / 365);
+				cData.intTD = curDtObj;
+				//	var intCurMnth = curDtObj.int - curDtObj.cfInt;
 
-			var amtToPay = (curDtObj.prA + curDtObj.cfInt + Number(othrAmt) + Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm),
-				new Date(payDate)) * curDtObj.roi / 100 * 1 / 365) - curDtObj.amtPaid);
+				var curIntdays = Math.ceil(Math.abs(new Date(payDate) - curDtObj.intFrm) / (1000 * 60 * 60 * 24)) + 1;
+				var intTD = 0;
+				if (curIntdays > 15) {
+						intTD = curDtObj.int;
+				} else {
+					intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
+						curDtObj.roi / 100 * 1 / 365);
+						
+					intTD = intTD + curDtObj.cfInt;
+				}
+
+				amtToPay = (curDtObj.prA + Number(othrAmt) + intTD - curDtObj.amtPaid);
+			} else {
+				//	var lnEndDate = this.formatter.getLnEdDt(new Date(cData.lnDt),Number(cData.lnDur));
+				if (!cData.instDet[Number(cData.lnDur) - 1]) {
+					MessageBox.error("Loan renewal not possible");
+					sap.ui.getCore().byId("idCBR").setSelected();
+					sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
+
+					return;
+				}
+				
+				amtToPay = cData.instDet[Number(cData.lnDur) - 1].int - cData.instDet[Number(cData.lnDur) - 1].amtPaid;
+				amtToPay = amtToPay < 0 ? 0 : amtToPay;
+				amtToPay = amtToPay + Number(othrAmt);
+			}
 
 			sap.ui.getCore().byId("idTot").setText(amtToPay);
 
+			this.calcIntDet(curDtObj);
+
+		},
+
+		calcIntDet: function(obj) {
+			sap.ui.getCore().byId("idIntDetVB").setVisible(false);
+			sap.ui.getCore().byId("idRB").setSelectedIndex(0);
+			if (!sap.ui.getCore().byId("idCBR").getSelected() && !sap.ui.getCore().byId("idCB").getSelected() && !sap.ui.getCore().byId(
+					"idNtve").getSelected()) {
+				var pAmt = sap.ui.getCore().byId("idPayAmt").getValue();
+				//	var balAmt = (Number(obj.amtPaid) + Number(pAmt)) - Number(obj.int);
+				var balAmt = 0;
+				var int = obj.int < 0 ? 0 : obj.int;
+				if (Number(pAmt) > 0) {
+					if (Number(obj.amtPaid) > Number(int)) {
+						balAmt = Number(pAmt);
+					} else {
+						balAmt = (Number(obj.amtPaid) + Number(pAmt)) - Number(int);
+					}
+
+					if (balAmt > 0) {
+						sap.ui.getCore().byId("idIntDetVB").setVisible(true);
+						sap.ui.getCore().byId("idIntDetTxt").setText("Total interest to be collected for period from " + this.formatter.dateFormat(obj.intFrm) +
+							" to " + this.formatter.dateFormat(obj.intTo) + " is " + int +
+							".\n\nKindly choose from below option to handle the balance amount " + balAmt + ".");
+					}
+				}
+
+			}
 		},
 
 		onAddInst: function(oEvent) {
@@ -465,6 +396,12 @@ sap.ui.define([
 			this.getView().addDependent(this._iDialog);
 
 			var cModel = this.cModel.getData();
+
+			var lnexp = this.formatter.setLnExpTxt(cModel.lnDt, cModel.lnDur, this);
+
+			if (!lnexp) {
+				sap.ui.getCore().byId("idLRVB").setVisible(false);
+			}
 
 			sap.ui.getCore().byId("idPayDate").setMinDate(new Date(cModel.lnDt));
 			sap.ui.getCore().byId("idPayDate").setMaxDate(new Date());
@@ -477,6 +414,7 @@ sap.ui.define([
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
 			var payAmt = sap.ui.getCore().byId("idPayAmt").getValue();
 			var lnClsr = sap.ui.getCore().byId("idCB").getSelected();
+			var lnRen = sap.ui.getCore().byId("idCBR").getSelected();
 			var othrAmt = Number(sap.ui.getCore().byId("idOthrAmt").getValue());
 
 			var isNeg = sap.ui.getCore().byId("idNtve").getSelected();
@@ -490,159 +428,118 @@ sap.ui.define([
 
 			var cData = this.cModel.getData();
 
-			if (lnClsr) {
+			var lnexp = this.formatter.setLnExpTxt(cData.lnDt, cData.lnDur, this, payDate);
+
+			if (lnexp && lnexp.indexOf("expired") >= 0) {
+				if (!lnClsr && !lnRen) {
+					MessageBox.error("Loan duration expired. Kindly choose Loan closure or Loan renewal to proceed.");
+					return;
+				}
+			}
+
+			if (sap.ui.getCore().byId("idIntDetVB").getVisible() && !sap.ui.getCore().byId("idAIP").getSelected() && !sap.ui.getCore().byId(
+					"idPR").getSelected()) {
+
+				MessageBox.error("Kindly choose from above option to handle the balance amount.");
+				return;
+			}
+
+			if (lnClsr || lnRen) {
 
 				var amtToPay = Number(sap.ui.getCore().byId("idTot").getText());
-				if (Number(payAmt) < amtToPay) {
-					if (amtToPay - Number(payAmt) > 100) {
-						MessageBox.error("Pending Amount to be collected is " + (amtToPay));
+		
+				
+				if(Math.abs(amtToPay - Number(payAmt))>100)
+					{
+							MessageBox.error("Pending Amount to be collected is " + (amtToPay));
 						return;
 					}
-				}
 
-				cData.defAmt = amtToPay - Number(payAmt);
+				cData.defAmt = (amtToPay - Number(payAmt)) > 0 ? (amtToPay - Number(payAmt)) : 0;
 				cData.clsDt = Date.now().toString();
-				cData.lnCls = "X";
+				cData.lnCls = lnClsr ? "X" : "";
+				cData.lnRen = lnRen ? "X" : "";
 				cData.othrAmt = othrAmt;
 				cData.goldAuctn = sap.ui.getCore().byId("idGA").getSelected() ? "X" : "";
 				cData.notice = 0;
 				cData.notDat = "";
 
 				if (othrAmt < 0) {
-					cData.defAmt += othrAmt;
+					cData.defAmt += (-othrAmt);
 				}
 
 			}
 
-			if (Number(payAmt) > 0) {
-				if (cData.lstPayDate) {
-					if (new Date(cData.lstPayDate) < new Date(payDate)) {
-						cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
-					} else {
-						/*
-												if (new Date(cData.lstPayDate).toDateString() != new Date(payDate).toDateString()) {
-													MessageBox.error("There is already a payment made on future date " + cData.lstPayDate);
-													return;
-												}
+	
+			var currInstObj, currInstCt;
 
-											*/
-					}
-				} else {
-					cData.lstPayDate = this.formatter.dateFormat(new Date(payDate));
+			for (var i = 0; i < cData.instDet.length; i++) {
+				if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
+					currInstObj = cData.instDet[i];
+					currInstCt = i;
+					break;
 				}
 			}
-			var curPayInst;
+
 			if (!lnClsr) {
-				var amtPaid;
-				for (var i = cData.instDet.length - 1; i >= 0; i--) {
-					if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
 
-						if (Number(payAmt) < 0) {
-							if ((-Number(payAmt)) > cData.instDet[i].amtPaid) {
-								MessageBox.error("Reversal amount greater than paid amount " + cData.instDet[i].amtPaid + ".");
-								return;
-							}
-						}
-						curPayInst = i;
+				if (Number(payAmt) < 0) {
+					if ((-Number(payAmt)) > currInstObj.amtPaid) {
+						MessageBox.error("Reversal amount greater than paid amount " + cData.instDet[i].amtPaid + ".");
+						return;
+					}
+				}
+
+			}
+
+			if (sap.ui.getCore().byId("idIntDetVB").getVisible() && sap.ui.getCore().byId("idAIP").getSelected()) {
+
+				var fInstAmt = 0;
+
+				for (var k = cData.instDet.length - 1; k >= 0; k--) {
+					if (cData.instDet[k].no == cData.lnDur) {
+						fInstAmt = cData.instDet[k].int;
 						break;
 					}
 				}
 
-				for (var i = cData.instDet.length - 1; i >= 0; i--) {
-
-					if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
-						amtPaid = curPayInst == i ? (cData.instDet[i].amtPaid + Number(payAmt)) : cData.instDet[i].amtPaid;
-						if (amtPaid == 0) {
-							cData.lstPayDate = "";
-							var histAmt = 0,
-								prvPyDt;
-							for (var j = i - 1; j >= 0; j--) {
-								histAmt = 0;
-								cData.instDet[j].hist.sort((a, b) => {
-									return new Date(a.payDate) - new Date(b.payDate);
-								});
-								for (var k = 0; k < cData.instDet[j].hist.length; k++) {
-									histAmt += Number(cData.instDet[j].hist[k].amt)
-									if (Number(cData.instDet[j].hist[k].amt) > 0) {
-										prvPyDt = cData.instDet[j].hist[k].payDate;
-									}
-								}
-								if (histAmt > 0) {
-									cData.lstPayDate = prvPyDt;
-									break;
-								}
-							}
-						}
-						break;
-					}
+				if ((Number(payAmt)+currInstObj.amtPaid) > fInstAmt) {
+					MessageBox.error("You cannot pay amount more than " + fInstAmt + " as interest payment.");
+					return;
 				}
 
-				if (cData.lstPayDate) {
-					var ci, amtDue, ctr;
-					for (var i = cData.instDet.length - 1; i >= 0; i--) {
-						if (new Date(cData.lstPayDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(cData.lstPayDate) >= new Date(cData.instDet[i].instStDt)) {
-							ctr = i;
-							amtPaid = curPayInst == i ? (cData.instDet[i].amtPaid + Number(payAmt)) : cData.instDet[i].amtPaid;
+			}
 
-							if (amtPaid < cData.instDet[i].int) {
-								for (var j = i - 1; j >= 0; j--) {
-									amtDue = (cData.instDet[j].int - cData.instDet[j].amtPaid) > 0 ? (cData.instDet[j].int - cData.instDet[j].amtPaid) : 0;
+		
 
-									if (amtPaid >= amtDue) {
-										ctr = j + 1;
-										cData.partPay = amtPaid > amtDue ? "X" : "";
-										break;
-									}
+			if (lnRen) {
+				var copyData = $.extend(true, {}, cData);
+				delete copyData.instDet;
+				delete copyData.intTD;
 
-									if (j == 0) {
-										cData.partPay = "X";
-										ctr = j;
-									}
+				copyData.lnRen = copyData.clsDt = "";
+				cData.renKey = copyData.crtDt = copyData.key = copyData.modDt = Date.now().toString();
+				copyData.preKey = cData.key;
+				copyData.payDet = [];
+				copyData.roiDet = [copyData.roiDet[copyData.roiDet.length - 1]];
+				copyData.roiDet[0].month = 1;
+				copyData.roiDet[0].modDt = Date.now().toString();
+				copyData.lnDt = this.formatter.dateFormat(this.formatter.getLnEdDt(new Date(cData.lnDt), Number(cData.lnDur), 0));
+				copyData.othrAmt = copyData.defAmt = 0;
+				copyData.lnAmt = cData.trPra = cData.instDet[cData.instDet.length - 1].prA;
+				copyData.goldRt = copyData.lnAmt / Number(copyData.goldGms);
 
-								}
-							} else {
-								cData.partPay = "";
-								ctr = i + 1;
-							}
-
-							cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[ctr].instDt);
-							cData.odAmt_1 = cData.partPay === "X" ? cData.instDet[ctr].int - amtPaid : cData.instDet[ctr].int;
-							cData.odAmt_2 = cData.instDet[ctr + 1].int;
-							cData.odAmt_3 = cData.instDet[ctr + 2].int;
-							cData.odDat_1 = this.formatter.dateFormat(cData.instDet[ctr].fnPayDt);
-							cData.odDat_2 = this.formatter.dateFormat(cData.instDet[ctr + 1].fnPayDt);
-							cData.odDat_3 = this.formatter.dateFormat(cData.instDet[ctr + 2].fnPayDt);
-							break;
-						}
-					}
-				} else {
-					cData.nxtInstsDate = this.formatter.dateFormat(cData.instDet[0].instDt);
-					cData.odAmt_1 = cData.instDet[0].int;
-					cData.odAmt_2 = cData.instDet[1].int;
-					cData.odAmt_3 = cData.instDet[2].int;
-					cData.odDat_1 = this.formatter.dateFormat(cData.instDet[0].fnPayDt);
-					cData.odDat_2 = this.formatter.dateFormat(cData.instDet[1].fnPayDt);
-					cData.odDat_3 = this.formatter.dateFormat(cData.instDet[2].fnPayDt);
-				}
-
-			} else {
-				cData.nxtInstsDate = "";
-				cData.odAmt_1 = "";
-				cData.odAmt_2 = "";
-				cData.odAmt_3 = "";
-				cData.odDat_1 = "";
-				cData.odDat_2 = "";
-				cData.odDat_3 = "";
 			}
 
 			if (payDate && payAmt) {
-
 				cData.payDet.push({
 					payDate: payDate,
 					amt: payAmt,
 					othrAmt: othrAmt,
 					lnClsr: lnClsr ? "X" : "",
-					crtDt: Date.now().toString()
+					lnRen: lnRen ? "X" : "",
+					crtDt: Date.now().toString(),
+					xAmtOp: !sap.ui.getCore().byId("idIntDetVB").getVisible() ? "" : sap.ui.getCore().byId("idAIP").getSelected() ? "1" : "2"
 				});
 
 				cData.modDt = Date.now().toString();
@@ -655,6 +552,10 @@ sap.ui.define([
 						oData.splice(j, 1, cData);
 						break;
 					}
+				}
+
+				if (lnRen) {
+					oData.push(copyData);
 				}
 
 				var that = this;
@@ -816,7 +717,7 @@ sap.ui.define([
 				sap.ui.getCore().byId("idRecalBtn").setVisible(false);
 			}
 
-			if (new Date(cModel.nxtInstsDate) >= new Date(new Date().toDateString())) {
+			if (!this.formatter.setStatus_f(cModel, cModel.instDet).notVis) {
 				sap.ui.getCore().byId("idsendNotBtn").setVisible(false);
 			}
 
@@ -990,7 +891,7 @@ sap.ui.define([
 			var that = this;
 
 			function delCust() {
-				
+
 				var cData = that.cModel.getData();
 
 				var oData = that.oModel.getData();
@@ -1022,13 +923,12 @@ sap.ui.define([
 						window.custsha = JSON.parse(odata).content.sha;
 						MessageToast.show("Deleted Successfully.")
 						that.onNavBack();
-						
+
 					},
 					error: function(odata) {
 						MessageBox.error("Failed to delete.")
 					}
 				});
-
 
 			}
 		},
