@@ -106,7 +106,7 @@ sap.ui.define([
 
 			this._ucDialog = sap.ui.xmlfragment("FabFinV3.f.UserConfig", this);
 			this.getView().addDependent(this._ucDialog);
-			this._ucDialog.setModel(new JSONModel($.extend(true, {}, this.mModel.getData().uc)), "ucDialogModel");
+			this._ucDialog.setModel(new JSONModel($.extend(true, {}, this.getView().getModel("config").getData())), "ucDialogModel");
 			this._ucDialog.open();
 		},
 
@@ -116,6 +116,7 @@ sap.ui.define([
 				filterArray.push(new Filter("key", FilterOperator.Contains, ""));
 			} else {
 				filterArray.push(new Filter("lnCls", FilterOperator.NotContains, "X"));
+				filterArray.push(new Filter("lnRen", FilterOperator.NotContains, "X"));
 			}
 
 			this.byId("idList").getBinding("items").filter(filterArray);
@@ -212,22 +213,26 @@ sap.ui.define([
 							toSes: null
 						}
 					}
+					data.ld = data.ld ? data.ld : 12;
+					
+					
+					var ucDat = $.extend(true, {}, data.uc)
 
-					var frmSes = data.uc.frmSes ? new Date(Number(data.uc.frmSes)) : null;
-					var toSes = data.uc.toSes ? new Date(Number(data.uc.toSes)) : null;
+					var frmSes = ucDat.frmSes ? new Date(Number(ucDat.frmSes)) : null;
+					var toSes = ucDat.toSes ? new Date(Number(ucDat.toSes)) : null;
 
-					Object.keys(data.uc).forEach(function(e) {
-						data.uc[e] = data.uc[e] == "X" ? true : false;
+					Object.keys(ucDat).forEach(function(e) {
+						ucDat[e] = ucDat[e] == "X" ? true : false;
 					});
 
-					data.uc.frmSes = frmSes;
-					data.uc.toSes = toSes;
+					ucDat.frmSes = frmSes;
+					ucDat.toSes = toSes;
 
-					data.uc.frmSes = data.uc.frmSes ? new Date(Number(data.uc.frmSes)) : data.uc.frmSes;
-					data.uc.toSes = data.uc.toSes ? new Date(Number(data.uc.toSes)) : data.uc.toSes;
+					ucDat.frmSes = ucDat.frmSes ? new Date(Number(ucDat.frmSes)) : ucDat.frmSes;
+					ucDat.toSes =ucDat.toSes ? new Date(Number(ucDat.toSes)) : ucDat.toSes;
 
-					sap.ui.getCore().setModel(new JSONModel(data.uc), "config");
-					that.getView().setModel(new JSONModel(data.uc), "config");
+					sap.ui.getCore().setModel(new JSONModel(ucDat), "config");
+					that.getView().setModel(new JSONModel(ucDat), "config");
 
 					that.mModel.setData(data);
 					that.mModel.refresh();
@@ -301,7 +306,9 @@ sap.ui.define([
 					"roiDet": this.mModel.getData().roi,
 					"pwDet": this.mModel.getData().pw,
 					"crtDt": "",
-					"lnCls": ""
+					"lnCls": "",
+					"lnRen":"",
+					"lnDur":this.mModel.getData().ld
 				};
 			}
 
@@ -392,23 +399,22 @@ sap.ui.define([
 			var pwDet;
 			cModel.instDet = generateLoanData(cModel.lnDt);
 			cModel.pwDet = pwDet ? [pwDet] : [];
-			cModel.lstPayDate = "";
+		/*	cModel.lstPayDate = "";
 			cModel.nxtInstsDate = this.formatter.dateFormat(cModel.instDet[0].instDt);
-			//	cModel.nxtInsteDate = this.formatter.dateFormat(cModel.instDet[0].fnPayDt);
 			cModel.partPay = "";
 			cModel.odAmt_1 = cModel.instDet[0].int;
 			cModel.odAmt_2 = cModel.instDet[1].int;
 			cModel.odAmt_3 = cModel.instDet[2].int;
 			cModel.odDat_1 = this.formatter.dateFormat(cModel.instDet[0].fnPayDt);
 			cModel.odDat_2 = this.formatter.dateFormat(cModel.instDet[1].fnPayDt);
-			cModel.odDat_3 = this.formatter.dateFormat(cModel.instDet[2].fnPayDt);
+			cModel.odDat_3 = this.formatter.dateFormat(cModel.instDet[2].fnPayDt);*/
 
 			function generateLoanData(dat) {
 
 				var pObj, obj, pArr = [],
 					tmpDate = dat,
 					cDate = new Date().toDateString(),
-					iEnd = 1000,
+					iEnd = cModel.lnDur,
 					prA = Number(cModel.lnAmt),
 					//	roi = Number(cModel.roi) / 12 / 100,
 					roi, tRoi,
@@ -421,9 +427,9 @@ sap.ui.define([
 				var year = date.getFullYear();
 				var month = date.getMonth() + 1;
 
-				if (new Date(cDate) < new Date(dat)) {
-					iEnd = 6;
-				}
+			/*	if (new Date(cDate) < new Date(dat)) {
+					iEnd = cModel.lnDur;
+				}*/
 
 				var fInstDat,
 					fInstMnth = (date.getMonth() + 1) % 12,
@@ -435,9 +441,7 @@ sap.ui.define([
 						fInstMnth = (date.getMonth() + pwArr[i].mc) % 12;
 						fInstDay = pwArr[i].dt;
 						mc = pwArr[i].mc;
-
 						pwDet = pwArr[i];
-
 						break;
 					}
 				}
@@ -446,7 +450,7 @@ sap.ui.define([
 					fInstDat = new Date((!((date.getMonth() + mc) % 12) ? date.getFullYear() + 1 : date.getFullYear()), fInstDat.getMonth(), 0);
 				}
 
-				for (var i = 1; i < iEnd; i++) {
+				for (var i = 1; i <= iEnd; i++) {
 
 					for (var k in roiArr) {
 						if (roiArr[k].month == i) {
@@ -499,9 +503,9 @@ sap.ui.define([
 					pObj.instStDt = instStDt.toDateString();
 					instStDt = new Date(new Date(pObj.fnPayDt).getTime() + (1 * 24 * 60 * 60 * 1000));
 
-					if ((new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm))) {
+				/*	if ((new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm))) {
 						iEnd = i + 5;
-					}
+					}*/
 
 					pObj.intFrm = new Date(pObj.intFrm);
 					pObj.intTo = new Date(pObj.intTo);
@@ -518,6 +522,9 @@ sap.ui.define([
 			}
 
 		},
+		
+	
+		
 		getNoOfDays: function(sDate, eDate) {
 			return Math.ceil(Math.abs(eDate - sDate) / (1000 * 60 * 60 * 24)) + 1;
 		},
@@ -609,6 +616,7 @@ sap.ui.define([
 			}
 			this._pwDialog = sap.ui.xmlfragment("FabFinV3.f.PayWindow", this);
 			this.getView().addDependent(this._pwDialog);
+			sap.ui.getCore().byId("idLnDur").setValue(this.mModel.getData().ld);
 			this._pwDialog.setModel(new JSONModel($.extend(true, [], this.mModel.getData().pw)), "pwDialogModel");
 			this._pwDialog.open();
 		},
@@ -650,6 +658,7 @@ sap.ui.define([
 
 		cUpdatePW: function() {
 			this.mModel.getData().pw = this._pwDialog.getModel("pwDialogModel").getData();
+			this.mModel.getData().ld = sap.ui.getCore().byId("idLnDur").getValue();
 			this.mModel.getData().modDt = Date.now().toString();
 
 			var that = this;
