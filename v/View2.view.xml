@@ -3,11 +3,11 @@
 	<App>
 		<pages>
 			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
-					<customHeader>
+				<customHeader>
 					<Bar>
 						<contentLeft>
 							<VBox visible="{=!${mModel>/roi} ? false : true}">
-								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiTinyMarginBegin" />
+								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiTinyMarginBegin"/>
 							</VBox>
 						</contentLeft>
 						<contentMiddle>
@@ -24,33 +24,35 @@
 						<ObjectHeader icon="sap-icon://customer" imageShape="Circle" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
 							<statuses>
 								<ObjectStatus text="{cModel>/goldGms} gms"/>
-								<ObjectStatus inverted="true"
-									text="{ parts: [{ path: 'cModel>/lnCls' }, { path: 'cModel>/nxtInstsDate' }, 
-									{ path: 'cModel>/odDat_1' }, { path: 'cModel>/odDat_2' }, { path: 'cModel>/odDat_3' }, 
-									{ path: 'cModel>/odAmt_1' }, { path: 'cModel>/odAmt_2' }, { path: 'cModel>/odAmt_3' }, 
-									{ path: 'cModel>/partPay' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setStatus' }"/>
-								<ObjectStatus
-									text="{ parts: [{ path: 'cModel>/instDet' }, { path: 'cModel>/nxtInstsDate' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAmtDue' }"
-									id="idAmtDue" visible="{=${cModel>/nxtInstsDate}?true:false}" class="bold"/>
-								<ObjectStatus text="{ path: 'cModel>/nxtInstsDate' , formatter: 'FabFinV3.c.View2.prototype.formatter.setNxtInstDate' }"
-									visible="{=${cModel>/nxtInstsDate}?true:false}"/>
-								<ObjectStatus id="idTotPaid" class="bold" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
-								<ObjectStatus id="idIntEarn" state="Success" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
-								<ObjectStatus id="idDefAmt" state="Error" visible="{=${cModel>/lnCls}=== 'X' ? true : false}"/>
+								<ObjectStatus inverted="true" id="idObjStatus"
+									text="{ parts: [{ path: 'cModel>/' }, { path: 'cModel>/instDet' }], formatter: '.formatter.setStatus_c' }"/>
+								<ObjectStatus text="" id="idAmtDue" class="bold" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? false : true}"/>
+								<ObjectStatus id="idObjInstDate" text="" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? false : true}"/>
+								<ObjectStatus id="idTotPaid" class="bold" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? true : false}"/>
+								<ObjectStatus id="idIntEarn" state="Success" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? true : false}"/>
+								<ObjectStatus id="idDefAmt" state="Error" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? true : false}"/>
 							</statuses>
-								<markers>
-									<ObjectMarker type="Flagged" visible="{=${cModel>/goldAuctn} ? true : false}"/>
-								</markers>
+							<markers>
+								<ObjectMarker type="Unsaved"
+									visible="{ parts: [{ path: 'cModel>/preKey' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAttrMarkerRen' }"/>
+								<ObjectMarker class="classGoldAuc" type="Flagged"
+									visible="{ parts: [{ path: 'cModel>/goldAuctn' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAttrMarkerAuc' }"/>
+							</markers>
 							<ObjectAttribute title="Loan Date" text="{cModel>/lnDt}"/>
 							<ObjectAttribute title="Phone" text="{cModel>/mob}" active="true" press="clickPhone"/>
 							<ObjectAttribute title="Email" text="{cModel>/mail}" active="true" press="clickEmail"/>
 							<ObjectAttribute title="Address" text="{cModel>/addr}"/>
-							<ObjectAttribute class="classNotAttr" text="{ parts: [{ path: 'cModel>/notice' }, { path: 'cModel>/notDat' }], formatter: '.formatter.setNotStatus' }" visible="{=${cModel>/notice} ? true : false}"/>
+							<ObjectAttribute
+								text="{ parts: [{ path: 'cModel>/lnDt' },{ path: 'cModel>/lnDur' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setLnExpTxt' }"
+								visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? false : true}"/>
+							<ObjectAttribute class="classNotAttr"
+								text="{ parts: [{ path: 'cModel>/notice' }, { path: 'cModel>/notDat' }], formatter: '.formatter.setNotStatus' }"
+								visible="{=${cModel>/notice} ? true : false}"/>
 						</ObjectHeader>
 						<Table id="idInstTab" inset="false" items="{cModel>/instDet/}" sticky="ColumnHeaders" class="sapUiTinyMarginTop" growing="true"
 							growingThreshold="25" growingScrollToLoad="true">
 							<headerToolbar>
-								<OverflowToolbar height="2.5rem" visible="{=${cModel>/lnCls}=== 'X' ? false : true}" design="Info">
+								<OverflowToolbar height="2.5rem" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? false : true}" design="Info">
 									<content>
 										<Button id="idNotBtn" type="Accept" icon="sap-icon://marketing-campaign" text="Notice" press="onUpdateNot" visible="false"/>
 										<ToolbarSpacer/>
@@ -82,12 +84,11 @@
 							<items>
 								<ColumnListItem vAlign="Middle" type="Active" press=".onShowHistory($event)">
 									<cells>
-										<Text text="{parts:[{ path: 'cModel>no'},{path:'refreshModel>/r'}] , formatter: 'FabFinV3.c.View2.prototype.formatter.highlightRow' }"
+										<Text
+											text="{parts:[{ path: 'cModel>no'},{ path: 'cModel>/lnDur'},{path:'refreshModel>/r'}] , formatter: 'FabFinV3.c.View2.prototype.formatter.highlightRow' }"
 											class="bold"/>
 										<Text text="{cModel>prA}"/>
 										<Text text="{=${cModel>/lnCls}=== 'X' ? ${cModel>int} : ${cModel>int}-${cModel>cfInt}}"/>
-										<!--	<Text text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>-->
-										<!--<ObjectIdentifier title="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}" text="INR"/>-->
 										<ObjectHeader class="classObjHdrTab" number="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}"
 											numberUnit="INR">
 											<statuses>
@@ -101,7 +102,6 @@
 													text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 											</statuses>
 										</ObjectHeader>
-										<!--	<ObjectIdentifier title="{cModel>amtPaid}" text="INR"/>-->
 									</cells>
 								</ColumnListItem>
 							</items>
