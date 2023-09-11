@@ -16,7 +16,7 @@ sap.ui.define([
 		onInit: function() {
 
 			window.custsha;
-			this.rCount=0;
+			this.rCount = 0;
 			this.getView().setModel(new JSONModel({}), "refreshModel")
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
 
@@ -29,6 +29,14 @@ sap.ui.define([
 			//this.getMonthRange()
 		},
 		_onObjectMatched: function(evt) {
+
+			if (window.testRun) {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust.json";
+				this.byId("idStopTR").setVisible(true);
+			} else {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json";
+				this.byId("idStopTR").setVisible(false);
+			}
 
 			this.byId("idInstTab").addStyleClass("classColumnHide");
 
@@ -145,7 +153,7 @@ sap.ui.define([
 			$.ajax({
 				type: 'GET',
 				headers: this.headers,
-				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
+				url: this.custurl,
 				cache: false,
 				success: function(odata) {
 					if (!window.custsha) {
@@ -165,8 +173,8 @@ sap.ui.define([
 
 							return;
 						}
-						
-						that.rCount=0;
+
+						that.rCount = 0;
 					}
 
 					var data = atob(odata.content);
@@ -574,7 +582,7 @@ sap.ui.define([
 					content: btoa(data),
 					sha: window.custsha
 				};
-				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+				var url = this.custurl;
 				sap.ui.core.BusyIndicator.show(0);
 				$.ajax({
 					type: 'PUT',
@@ -663,7 +671,7 @@ sap.ui.define([
 				sha: window.custsha
 			};
 
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			var url = this.custurl;
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
 				type: 'PUT',
@@ -810,7 +818,7 @@ sap.ui.define([
 					sha: window.custsha
 				};
 
-				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+				var url = this.custurl;
 				sap.ui.core.BusyIndicator.show(0);
 				$.ajax({
 					type: 'PUT',
@@ -919,7 +927,7 @@ sap.ui.define([
 					sha: window.custsha
 				};
 
-				var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+				var url = that.custurl;
 				sap.ui.core.BusyIndicator.show(0);
 				$.ajax({
 					type: 'PUT',
@@ -940,7 +948,14 @@ sap.ui.define([
 
 			}
 		},
-
+		
+		onTestRun: function(evt) {
+			window.testRun =false;
+			window.mainsha = null;
+			window.custsha = null;
+			this.onNavBack();
+		},
+		
 		onNavBack: function() {
 			this.getOwnerComponent().getRouter().navTo("home");
 		},
