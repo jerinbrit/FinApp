@@ -1,14 +1,13 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<Popover placement="Bottom" showHeader="false">
 		<VBox justifyContent="Center" alignItems="Center" height="5rem">
-			<Text id="idUserLogged"  class="sapUiTinyMarginTop"/>
-			<FlexBox jsutifyContent="Center" class="sapUiTinyMarginTop sapUiTinyMarginBeginEnd" >
-				<Button type="Ghost" icon="sap-icon://key-user-settings" press="onUserConfig"  visible="{uModel>/adm}" class="sapUiSmallMarginEnd"/>
-				<Button type="Ghost" icon="sap-icon://save" press="onBkpFile"  visible="{=${uModel>/adm} || ${config>/bkp}}" class="sapUiSmallMarginEnd"/>
-			<Button type="Ghost" icon="sap-icon://log"  text="" press="onLogOut"/>
+			<Text id="idUserLogged" class="sapUiTinyMarginTop"/>
+			<FlexBox jsutifyContent="Center" class="sapUiTinyMarginTop sapUiTinyMarginBeginEnd">
+				<Button type="Ghost" icon="sap-icon://key-user-settings" press="onUserConfig" visible="{uModel>/adm}" class="sapUiSmallMarginEnd"/>
+				<Button type="Ghost" icon="sap-icon://save" press="onBkpFile" visible="{=${uModel>/adm} || ${config>/bkp}}" class="sapUiSmallMarginEnd"/>
+				<Button type="Ghost" icon="sap-icon://play" press="onTestRun" visible="{=${uModel>/adm}}" class="sapUiSmallMarginEnd"/>
+				<Button type="Ghost" icon="sap-icon://log" text="" press="onLogOut"/>
 			</FlexBox>
-			
 		</VBox>
-	
 	</Popover>
 </core:FragmentDefinition>
