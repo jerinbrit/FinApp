@@ -9,6 +9,7 @@
 							<VBox visible="{=!${mModel>/roi} ? false : true}">
 								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiTinyMarginBegin"/>
 							</VBox>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press="onTestRun" visible="false" class="sapUiMediumMarginBegin"/>
 						</contentLeft>
 						<contentMiddle>
 							<Title text="Customer" titleStyle="H4"/>
