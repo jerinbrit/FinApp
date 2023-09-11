@@ -5,6 +5,9 @@
 			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
+						<contentLeft>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press=".onTestRun('S')" class="sapUiTinyMarginBegin" visible="false"/>
+						</contentLeft>
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
