@@ -18,7 +18,7 @@ sap.ui.define([
 			window.mainsha;
 			window.custsha;
 			this.rCount1 = 0,
-			this.rCount2 = 0;
+				this.rCount2 = 0;
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
 
@@ -29,6 +29,16 @@ sap.ui.define([
 
 		},
 		_onObjectMatched: function(evt) {
+
+			if (window.testRun) {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust.json";
+				this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/main.json";
+				this.byId("idStopTR").setVisible(true);
+			} else {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json";
+				this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/main_p.json";
+				this.byId("idStopTR").setVisible(false);
+			}
 
 			if (!this.headers) {
 				var aKey = this.validateCookie("aKey");
@@ -129,10 +139,10 @@ sap.ui.define([
 			var i = $.Deferred();
 			var j = $.Deferred();
 			sap.ui.core.BusyIndicator.show(0);
-		
+
 			$.ajax({
 				type: 'GET',
-				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
+				url: this.custurl,
 				headers: this.headers,
 				cache: false,
 				success: function(odata) {
@@ -154,8 +164,8 @@ sap.ui.define([
 
 							return;
 						}
-					that.rCount1=0;	
-						
+						that.rCount1 = 0;
+
 					}
 
 					var data = atob(odata.content);
@@ -184,7 +194,7 @@ sap.ui.define([
 			$.ajax({
 				type: 'GET',
 
-				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
+				url: this.mainurl,
 				headers: this.headers,
 				cache: false,
 				success: function(odata) {
@@ -198,15 +208,15 @@ sap.ui.define([
 								window.location.reload();
 							} else {
 								that.rCount2++
-								$.sap.delayedCall(3000, this, function() {
-									that.loadCustData();
-								});
+									$.sap.delayedCall(3000, this, function() {
+										that.loadCustData();
+									});
 							}
 
 							return;
 						}
-						
-						that.rCount2=0;	
+
+						that.rCount2 = 0;
 					}
 
 					var data = atob(odata.content);
@@ -353,7 +363,7 @@ sap.ui.define([
 			data = JSON.stringify(data);
 			var that = this;
 
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json';
+			var url = this.custurl
 
 			var body = {
 				message: "Updating file",
@@ -593,7 +603,7 @@ sap.ui.define([
 
 			var data = JSON.stringify(this.mModel.getData());
 
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var url = this.mainurl
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
@@ -681,7 +691,7 @@ sap.ui.define([
 			var that = this;
 			var data = JSON.stringify(this.mModel.getData());
 
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var url = this.mainurl
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
@@ -750,7 +760,7 @@ sap.ui.define([
 			var that = this;
 			var data = JSON.stringify(this.mModel.getData());
 
-			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			var url = this.mainurl;
 			var body = {
 				message: "Updating file",
 				content: btoa(data),
@@ -791,6 +801,18 @@ sap.ui.define([
 				downloadAnchorNode.remove();
 			}
 		},
+
+		onTestRun: function(evt) {
+			window.testRun = evt === "S" ? false : true;
+			window.mainsha = null;
+			window.custsha = null;
+			this.byId("idStopTR").setVisible(evt === "S" ? false : true);
+			this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/"+ (evt === "S" ? "cust_p" : "cust") +".json";
+			this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/"+ (evt === "S" ? "main_p" : "main") +".json";
+			this.loadCustData();
+		},
+
+	
 
 		onNav: function(obj) {
 			this.getOwnerComponent().getRouter().navTo("customer", {
