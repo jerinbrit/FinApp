@@ -17,6 +17,8 @@ sap.ui.define([
 
 			window.mainsha;
 			window.custsha;
+			this.rCount1 = 0,
+			this.rCount2 = 0;
 			this.oModel = new JSONModel();
 			this.mModel = new JSONModel();
 
@@ -127,6 +129,7 @@ sap.ui.define([
 			var i = $.Deferred();
 			var j = $.Deferred();
 			sap.ui.core.BusyIndicator.show(0);
+		
 			$.ajax({
 				type: 'GET',
 				url: 'https://api.github.com/repos/britmanjerin/tst/contents/cust.json',
@@ -137,13 +140,22 @@ sap.ui.define([
 					if (!window.custsha) {
 						window.custsha = odata.sha;
 					} else {
+
 						if (window.custsha != odata.sha) {
-							$.sap.delayedCall(3000, this, function() {
-								that.loadCustData();
-							});
+
+							if (that.rCount1 > 2) {
+								window.location.reload();
+							} else {
+								that.rCount1++;
+								$.sap.delayedCall(3000, this, function() {
+									that.loadCustData();
+								});
+							}
 
 							return;
 						}
+					that.rCount1=0;	
+						
 					}
 
 					var data = atob(odata.content);
@@ -181,12 +193,20 @@ sap.ui.define([
 						window.mainsha = odata.sha;
 					} else {
 						if (window.mainsha != odata.sha) {
-							$.sap.delayedCall(3000, this, function() {
-								that.loadCustData();
-							});
+
+							if (that.rCount2 > 2) {
+								window.location.reload();
+							} else {
+								that.rCount2++
+								$.sap.delayedCall(3000, this, function() {
+									that.loadCustData();
+								});
+							}
 
 							return;
 						}
+						
+						that.rCount2=0;	
 					}
 
 					var data = atob(odata.content);
@@ -214,8 +234,7 @@ sap.ui.define([
 						}
 					}
 					data.ld = data.ld ? data.ld : 12;
-					
-					
+
 					var ucDat = $.extend(true, {}, data.uc)
 
 					var frmSes = ucDat.frmSes ? new Date(Number(ucDat.frmSes)) : null;
@@ -229,7 +248,7 @@ sap.ui.define([
 					ucDat.toSes = toSes;
 
 					ucDat.frmSes = ucDat.frmSes ? new Date(Number(ucDat.frmSes)) : ucDat.frmSes;
-					ucDat.toSes =ucDat.toSes ? new Date(Number(ucDat.toSes)) : ucDat.toSes;
+					ucDat.toSes = ucDat.toSes ? new Date(Number(ucDat.toSes)) : ucDat.toSes;
 
 					sap.ui.getCore().setModel(new JSONModel(ucDat), "config");
 					that.getView().setModel(new JSONModel(ucDat), "config");
@@ -307,8 +326,8 @@ sap.ui.define([
 					"pwDet": this.mModel.getData().pw,
 					"crtDt": "",
 					"lnCls": "",
-					"lnRen":"",
-					"lnDur":this.mModel.getData().ld
+					"lnRen": "",
+					"lnDur": this.mModel.getData().ld
 				};
 			}
 
@@ -399,15 +418,15 @@ sap.ui.define([
 			var pwDet;
 			cModel.instDet = generateLoanData(cModel.lnDt);
 			cModel.pwDet = pwDet ? [pwDet] : [];
-		/*	cModel.lstPayDate = "";
-			cModel.nxtInstsDate = this.formatter.dateFormat(cModel.instDet[0].instDt);
-			cModel.partPay = "";
-			cModel.odAmt_1 = cModel.instDet[0].int;
-			cModel.odAmt_2 = cModel.instDet[1].int;
-			cModel.odAmt_3 = cModel.instDet[2].int;
-			cModel.odDat_1 = this.formatter.dateFormat(cModel.instDet[0].fnPayDt);
-			cModel.odDat_2 = this.formatter.dateFormat(cModel.instDet[1].fnPayDt);
-			cModel.odDat_3 = this.formatter.dateFormat(cModel.instDet[2].fnPayDt);*/
+			/*	cModel.lstPayDate = "";
+				cModel.nxtInstsDate = this.formatter.dateFormat(cModel.instDet[0].instDt);
+				cModel.partPay = "";
+				cModel.odAmt_1 = cModel.instDet[0].int;
+				cModel.odAmt_2 = cModel.instDet[1].int;
+				cModel.odAmt_3 = cModel.instDet[2].int;
+				cModel.odDat_1 = this.formatter.dateFormat(cModel.instDet[0].fnPayDt);
+				cModel.odDat_2 = this.formatter.dateFormat(cModel.instDet[1].fnPayDt);
+				cModel.odDat_3 = this.formatter.dateFormat(cModel.instDet[2].fnPayDt);*/
 
 			function generateLoanData(dat) {
 
@@ -427,9 +446,9 @@ sap.ui.define([
 				var year = date.getFullYear();
 				var month = date.getMonth() + 1;
 
-			/*	if (new Date(cDate) < new Date(dat)) {
-					iEnd = cModel.lnDur;
-				}*/
+				/*	if (new Date(cDate) < new Date(dat)) {
+						iEnd = cModel.lnDur;
+					}*/
 
 				var fInstDat,
 					fInstMnth = (date.getMonth() + 1) % 12,
@@ -503,9 +522,9 @@ sap.ui.define([
 					pObj.instStDt = instStDt.toDateString();
 					instStDt = new Date(new Date(pObj.fnPayDt).getTime() + (1 * 24 * 60 * 60 * 1000));
 
-				/*	if ((new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm))) {
-						iEnd = i + 5;
-					}*/
+					/*	if ((new Date(cDate) <= new Date(pObj.intTo) && new Date(cDate) >= new Date(pObj.intFrm))) {
+							iEnd = i + 5;
+						}*/
 
 					pObj.intFrm = new Date(pObj.intFrm);
 					pObj.intTo = new Date(pObj.intTo);
@@ -522,9 +541,7 @@ sap.ui.define([
 			}
 
 		},
-		
-	
-		
+
 		getNoOfDays: function(sDate, eDate) {
 			return Math.ceil(Math.abs(eDate - sDate) / (1000 * 60 * 60 * 24)) + 1;
 		},
