@@ -16,6 +16,7 @@ sap.ui.define([
 		onInit: function() {
 
 			window.custsha;
+			this.rCount=0;
 			this.getView().setModel(new JSONModel({}), "refreshModel")
 			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
 
@@ -28,6 +29,8 @@ sap.ui.define([
 			//this.getMonthRange()
 		},
 		_onObjectMatched: function(evt) {
+
+			this.byId("idInstTab").addStyleClass("classColumnHide");
 
 			if (!this.headers) {
 				var aKey = this.validateCookie("aKey");
@@ -80,6 +83,7 @@ sap.ui.define([
 		},
 		highlightRow: function() {
 			if (FabFinV3.currRow) {
+
 				var items = this.byId("idInstTab").getItems();
 				items.forEach(function(e) {
 					e.removeStyleClass("classHighlightGreen");
@@ -120,6 +124,7 @@ sap.ui.define([
 					}
 
 				});
+
 			}
 		},
 		loadCustData: function(custId) {
@@ -134,7 +139,7 @@ sap.ui.define([
 			}
 
 			this.getView().setModel(new JSONModel(config), "config");
-
+			var rCount = 0;
 			var that = this;
 			sap.ui.core.BusyIndicator.show(0);
 			$.ajax({
@@ -147,12 +152,21 @@ sap.ui.define([
 						window.custsha = odata.sha;
 					} else {
 						if (window.custsha != odata.sha) {
-							$.sap.delayedCall(3000, this, function() {
-								that.loadCustData(custId);
-							});
+
+							if (that.rCount > 2) {
+								window.location.reload();
+							} else {
+								that.rCount++;
+								$.sap.delayedCall(3000, this, function() {
+									that.loadCustData(custId);
+								});
+
+							}
 
 							return;
 						}
+						
+						that.rCount=0;
 					}
 
 					var data = atob(odata.content);
@@ -260,7 +274,8 @@ sap.ui.define([
 
 			try {
 				$.sap.delayedCall(100, this, function() {
-					that.byId("idInstTab").rerender()
+					that.byId("idInstTab").rerender();
+					that.byId("idInstTab").removeStyleClass("classColumnHide");
 				});
 
 				curDtObj.intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
@@ -269,8 +284,6 @@ sap.ui.define([
 				cModel.intTD = curDtObj;
 
 			} catch (err) {}
-
-		
 
 		},
 
@@ -331,11 +344,11 @@ sap.ui.define([
 				var curIntdays = Math.ceil(Math.abs(new Date(payDate) - curDtObj.intFrm) / (1000 * 60 * 60 * 24)) + 1;
 				var intTD = 0;
 				if (curIntdays > 15) {
-						intTD = curDtObj.int;
+					intTD = curDtObj.int;
 				} else {
 					intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
 						curDtObj.roi / 100 * 1 / 365);
-						
+
 					intTD = intTD + curDtObj.cfInt;
 				}
 
@@ -349,7 +362,7 @@ sap.ui.define([
 
 					return;
 				}
-				
+
 				amtToPay = cData.instDet[Number(cData.lnDur) - 1].int - cData.instDet[Number(cData.lnDur) - 1].amtPaid;
 				amtToPay = amtToPay < 0 ? 0 : amtToPay;
 				amtToPay = amtToPay + Number(othrAmt);
@@ -447,13 +460,11 @@ sap.ui.define([
 			if (lnClsr || lnRen) {
 
 				var amtToPay = Number(sap.ui.getCore().byId("idTot").getText());
-		
-				
-				if(Math.abs(amtToPay - Number(payAmt))>100)
-					{
-							MessageBox.error("Pending Amount to be collected is " + (amtToPay));
-						return;
-					}
+
+				if (Math.abs(amtToPay - Number(payAmt)) > 100) {
+					MessageBox.error("Pending Amount to be collected is " + (amtToPay));
+					return;
+				}
 
 				cData.defAmt = (amtToPay - Number(payAmt)) > 0 ? (amtToPay - Number(payAmt)) : 0;
 				cData.clsDt = Date.now().toString();
@@ -470,7 +481,6 @@ sap.ui.define([
 
 			}
 
-	
 			var currInstObj, currInstCt;
 
 			for (var i = 0; i < cData.instDet.length; i++) {
@@ -503,14 +513,12 @@ sap.ui.define([
 					}
 				}
 
-				if ((Number(payAmt)+currInstObj.amtPaid) > fInstAmt) {
+				if ((Number(payAmt) + currInstObj.amtPaid) > fInstAmt) {
 					MessageBox.error("You cannot pay amount more than " + fInstAmt + " as interest payment.");
 					return;
 				}
 
 			}
-
-		
 
 			if (lnRen) {
 				var copyData = $.extend(true, {}, cData);
