@@ -1,4 +1,3 @@
-/*global XLSX:true*/
 sap.ui.define([
 	"FabFinV3/c/BaseController",
 	"sap/ui/model/json/JSONModel",
@@ -84,6 +83,7 @@ sap.ui.define([
 		},
 
 		handleRefresh: function() {
+			this.byId("idInstTab").addStyleClass("classColumnHide");
 			setTimeout(function() {
 				this.byId("pullToRefresh").hide();
 				this.loadCustData(this.custId);
