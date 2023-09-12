@@ -639,36 +639,8 @@ sap.ui.define([], function() {
 			ed.setDate(ed.getDate() - ct);
 
 			return ed;
-		},
-
-		setAttrMarkerRen: function(ren) {
-			if (ren) {
-				try {
-					$.sap.delayedCall(50, this, function() {
-						$("#" + $("#" + this.getId())[0].children[0].id).attr('data-sap-ui-icon-content', '');
-					});
-
-				} catch (err) {}
-
-				return true;
-			}
-
-			return false;
-		},
-		setAttrMarkerAuc: function(auc) {
-			if (auc) {
-				try {
-					$.sap.delayedCall(50, this, function() {
-						$("#" + $("#" + this.getId())[0].children[0].id).attr('data-sap-ui-icon-content', '');
-					});
-
-				} catch (err) {}
-
-				return true;
-			}
-
-			return false;
 		}
+
 
 	};
 
