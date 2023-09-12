@@ -1,22 +1,23 @@
 <mvc:View controllerName="FabFinV3.c.View1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+	displayBlock="true" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:cm="FabFinV3.u">
 	<App>
 		<pages>
 			<Page title="Finance" class="sapUiSizeCompact">
 				<customHeader>
 					<Bar>
 						<contentLeft>
-							<core:Icon id="idStopTR" src="sap-icon://stop" press=".onTestRun('S')" class="sapUiTinyMarginBegin" visible="false"/>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press=".onTestRun('S')" class="sapUiSmallMarginBegin" visible="false"/>
 						</contentLeft>
 						<contentMiddle>
 							<Title text="JJB Finance" titleStyle="H4"/>
 						</contentMiddle>
 						<contentRight>
-							<core:Icon src="sap-icon://person-placeholder" press="onPressUser" class="sapUiTinyMarginEnd"/>
+							<core:Icon src="sap-icon://person-placeholder" press="onPressUser" class="sapUiSmallMarginEnd"/>
 						</contentRight>
 					</Bar>
 				</customHeader>
 				<content>
+					
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
 						<OverflowToolbar height="2.5rem" visible="{=!${mModel>/roi} ? false : true}">
@@ -44,10 +45,11 @@
 									text="{ parts: [{ path: 'oModel>notice' }, { path: 'oModel>notDat' }], formatter: '.formatter.setNotStatus' }"
 									visible="{=${oModel>notice} ? true : false}"/>
 								<markers>
-									<ObjectMarker type="Unsaved"
-										visible="{ parts: [{ path: 'oModel>preKey' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setAttrMarkerRen' }"/>
-									<ObjectMarker class="classGoldAuc" type="Flagged"
-										visible="{ parts: [{ path: 'oModel>goldAuctn' }], formatter: 'FabFinV3.c.View1.prototype.formatter.setAttrMarkerAuc' }"/>
+									<cm:CustomMarker type="Unsaved" 
+										visible="{=(${oModel>preKey}) ? true : false}"/>
+									<cm:CustomMarker class="classGoldAuc" type="Flagged" 
+										visible="{=(${oModel>goldAuctn}) ? true : false}"/>
+								
 								</markers>
 							</ObjectListItem>
 						</List>
