@@ -1,5 +1,5 @@
 <mvc:View controllerName="FabFinV3.c.View2" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+	displayBlock="true" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:cm="FabFinV3.u">
 	<App>
 		<pages>
 			<Page title="Customer" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
@@ -7,7 +7,7 @@
 					<Bar>
 						<contentLeft>
 							<VBox visible="{=!${mModel>/roi} ? false : true}">
-								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiTinyMarginBegin"/>
+								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiSmallMarginBegin"/>
 							</VBox>
 							<core:Icon id="idStopTR" src="sap-icon://stop" press="onTestRun" visible="false" class="sapUiMediumMarginBegin"/>
 						</contentLeft>
@@ -15,7 +15,7 @@
 							<Title text="Customer" titleStyle="H4"/>
 						</contentMiddle>
 						<contentRight>
-							<core:Icon src="sap-icon://delete" press="onPressCustDel" class="sapUiTinyMarginEnd" visible="{=${uModel>/adm}}"/>
+							<core:Icon src="sap-icon://delete" press="onPressCustDel" class="sapUiSmallMarginEnd" visible="{=${uModel>/adm}}"/>
 						</contentRight>
 					</Bar>
 				</customHeader>
@@ -34,10 +34,10 @@
 								<ObjectStatus id="idDefAmt" state="Error" visible="{=(${cModel>/lnCls}=== 'X'||${cModel>/lnRen}=== 'X') ? true : false}"/>
 							</statuses>
 							<markers>
-								<ObjectMarker type="Unsaved"
-									visible="{ parts: [{ path: 'cModel>/preKey' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAttrMarkerRen' }"/>
-								<ObjectMarker class="classGoldAuc" type="Flagged"
-									visible="{ parts: [{ path: 'cModel>/goldAuctn' }], formatter: 'FabFinV3.c.View2.prototype.formatter.setAttrMarkerAuc' }"/>
+								<cm:CustomMarker type="Unsaved" 
+										visible="{=(${cModel>/preKey}) ? true : false}"/>
+									<cm:CustomMarker class="classGoldAuc" type="Flagged" 
+										visible="{=(${cModel>/goldAuctn}) ? true : false}"/>
 							</markers>
 							<ObjectAttribute title="Loan Date" text="{cModel>/lnDt}"/>
 							<ObjectAttribute title="Phone" text="{cModel>/mob}" active="true" press="clickPhone"/>
