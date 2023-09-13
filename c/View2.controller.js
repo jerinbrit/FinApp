@@ -354,8 +354,10 @@ sap.ui.define([
 				if (curIntdays > 15) {
 					intTD = curDtObj.int;
 				} else {
-					intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
-						curDtObj.roi / 100 * 1 / 365);
+					/*intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
+						curDtObj.roi / 100 * 1 / 365);*/
+					
+					intTD = Math.round(curDtObj.prA * 15 *	curDtObj.roi / 100 * 1 / 365);
 
 					intTD = intTD + curDtObj.cfInt;
 				}
