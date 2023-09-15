@@ -1,1 +1,1024 @@
-sap.ui.define(["FabFinV3/c/BaseController","sap/ui/model/json/JSONModel","FabFinV3/u/formatter","sap/m/MessageBox","sap/m/MessageToast","sap/m/library"],function(t,n,e,b,s,i){"use strict";return FabFinV3.URLHelper=i.URLHelper,t.extend("FabFinV3.c.View2",{formatter:e,onInit:function(){window.custsha,this.rCount=0,this.getView().setModel(new n({}),"refreshModel"),this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched,this),this.byId("idInstTab").addEventDelegate({onAfterRendering:function(){this.highlightRow()}},this)},_onObjectMatched:function(t){if(window.testRun?(this.custurl="https://api.github.com/repos/britmanjerin/tst/contents/cust.json",this.byId("idStopTR").setVisible(!0)):(this.custurl="https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json",this.byId("idStopTR").setVisible(!1)),this.byId("idInstTab").addStyleClass("classColumnHide"),!this.headers){var e=this.validateCookie("aKey");if(!e)return void this.onNavLP();this.headers={Authorization:"Bearer "+e,Accept:"application/vnd.github.v3+json","Content-Type":"application/json"}}this.uModel=new n,this.getView().setModel(this.uModel,"uModel"),this.setUModel(),this.custId=t.getParameter("arguments").custId,this.loadCustData(t.getParameter("arguments").custId),this.oModel=new n,this.getView().setModel(this.oModel,"oModel"),this.cModel=new n,this.getView().setModel(this.cModel,"cModel"),this.getView().getModel("refreshModel").getData().r=!1},clickPhone:function(t){FabFinV3.URLHelper.triggerTel(t.getSource().getText())},clickEmail:function(t){FabFinV3.URLHelper.triggerEmail(t.getSource().getText(),"Info Request",!1,!1,!1,!0)},setUModel:function(){var t="A"===this.validateCookie("user").substr(0,1);this.uModel.setData({adm:t})},handleRefresh:function(){this.byId("idInstTab").addStyleClass("classColumnHide"),setTimeout(function(){this.byId("pullToRefresh").hide(),this.loadCustData(this.custId)}.bind(this),10)},highlightRow:function(){FabFinV3.currRow&&this.byId("idInstTab").getItems().forEach(function(e){if(e.removeStyleClass("classHighlightGreen"),e.removeStyleClass("classOpacity"),e.removeStyleClass("classHideRow"),FabFinV3.currRow==e.getId()){e.addStyleClass("classHighlightGreen");try{$("#"+e.getId()+"-sub").attr("style","background: rgb(171 226 171 / 40%)!important")}catch(t){}}0<FabFinV3.nxtRow.length&&FabFinV3.nxtRow.forEach(function(t){if(t==e.getId()){e.addStyleClass("classOpacity");try{$("#"+e.getId()+"-sub").css("opacity","0.3")}catch(t){}}}),0<FabFinV3.hideRow.length&&FabFinV3.hideRow.forEach(function(t){if(t==e.getId()){e.addStyleClass("classHideRow");try{$("#"+e.getId()+"-sub").css("display","none")}catch(t){}}})})},loadCustData:function(o){var t={};if(!this.uModel.getData().adm){if(!sap.ui.getCore().getModel("config"))return void this.onNavBack();t=sap.ui.getCore().getModel("config").getData()}this.getView().setModel(new n(t),"config");var s=this;sap.ui.core.BusyIndicator.show(0),$.ajax({type:"GET",headers:this.headers,url:this.custurl,cache:!1,success:function(t){if(window.custsha){if(window.custsha!=t.sha)return void(2<s.rCount?window.location.reload():(s.rCount++,$.sap.delayedCall(3e3,this,function(){s.loadCustData(o)})));s.rCount=0}else window.custsha=t.sha;var e=(e=atob(t.content)).trim()?JSON.parse(e):[];s.oModel.setData(e),s.oModel.refresh();var i,a;for(i in e)if(e[i].key===o){if(s.byId("idNotBtn").setVisible(!1),(e[i].lnCls||e[i].lnRen)&&(s.uModel.getData().adm||s.getView().getModel("config").getData().ls)&&s.calcSummary(e[i]),s.cModel.setData(e[i]),s.calPayData(),s.uModel.getData().adm||s.getView().getModel("config").getData().not){try{0<e[i].notDet.length&&(a=!0)}catch(t){}(a=a||s.formatter.setStatus_f(e[i],e[i].instDet).notVis)&&(e[i].notDet||(e[i].notDet=[]),s.byId("idNotBtn").setVisible(!0))}s.cModel.refresh();break}sap.ui.core.BusyIndicator.hide()},error:function(t){b.error(t.responseJSON.message),sap.ui.core.BusyIndicator.hide()}})},calcSummary:function(t){var e=0,i=0,a=t.defAmt;t.payDet.forEach(function(t){e+=Number(t.amt)});var o=Number(t.lnAmt);t.lnRen&&(o-=Number(t.trPra||t.lnAmt)),i=0<(i=e-Number(o))?i:0,this.byId("idTotPaid").setText("Total Amount Paid: "+e),this.byId("idIntEarn").setText("Profit: "+i),this.byId("idDefAmt").setText("Default Amount: "+a)},calPayData:function(){var t=this.cModel.getData();FabFinV3.currInst=0,FabFinV3.currRow="",FabFinV3.nxtRow=[],FabFinV3.hideRow=[];var e=this,i=this.formatter.generateLoanData(t,!0,this);t.instDet=i.arr;var a=i.currRoi,o=i.curDtObj;try{$.sap.delayedCall(100,this,function(){e.byId("idInstTab").rerender(),e.byId("idInstTab").removeStyleClass("classColumnHide")}),o.intTD=Math.round(o.prA*this.getNoOfDays(new Date(t.lnDt),new Date((new Date).toDateString()))*a/100*1/365),t.intTD=o}catch(t){}},onSelLC:function(t,e){for(var i,a=this.cModel.getData(),o=sap.ui.getCore().byId("idPayDate").getValue()||(new Date).toDateString(),s=a.instDet.length-1;0<=s;s--)if(a.instDet[s].payDate){i=a.instDet[s].payDate;break}if(i>new Date(o))return b.error("There is already a future date payment made on "+i+"."),void t.getSource().setSelected(!1);("R"===e?sap.ui.getCore().byId("idCB"):sap.ui.getCore().byId("idCBR")).setSelected(!1),sap.ui.getCore().byId("idGAHB").setVisible(sap.ui.getCore().byId("idCB").getSelected()),sap.ui.getCore().byId("idOthrAmtVB").setVisible(t.getSource().getSelected()),this.calAmtTD()},calAmtTD:function(t){"1"===t&&(sap.ui.getCore().byId("idOthrAmtVB").setVisible(!1),sap.ui.getCore().byId("idCB").setSelected(!1),sap.ui.getCore().byId("idCBR").setSelected(!1)),sap.ui.getCore().byId("idNtve").getSelected()&&(sap.ui.getCore().byId("idCB").setSelected(!1),sap.ui.getCore().byId("idCBR").setSelected(!1),sap.ui.getCore().byId("idOthrAmtVB").setVisible(!1));for(var e,i=this.cModel.getData(),t=sap.ui.getCore().byId("idOthrAmt").getValue(),a=sap.ui.getCore().byId("idPayDate").getValue()||(new Date).toDateString(),o=i.instDet.length-1;0<=o;o--)if(new Date(a)<=new Date(i.instDet[o].fnPayDt)&&new Date(a)>=new Date(i.instDet[o].instStDt)){e=i.instDet[o];break}if(sap.ui.getCore().byId("idCB").getSelected()){i.intTD=e;var s=0;15<Math.ceil(Math.abs(new Date(a)-e.intFrm)/864e5)+1?s=e.int:(s=Math.round(15*e.prA*e.roi/100*1/365),s+=e.cfInt),s=e.prA+Number(t)+s-e.amtPaid}else{if(!i.instDet[Number(i.lnDur)-1])return b.error("Loan renewal not possible"),sap.ui.getCore().byId("idCBR").setSelected(),void sap.ui.getCore().byId("idOthrAmtVB").setVisible(!1);s=(s=i.instDet[Number(i.lnDur)-1].int-i.instDet[Number(i.lnDur)-1].amtPaid)<0?0:s,s+=Number(t)}sap.ui.getCore().byId("idTot").setText(s),this.calcIntDet(e)},calcIntDet:function(t){var e,i,a;sap.ui.getCore().byId("idIntDetVB").setVisible(!1),sap.ui.getCore().byId("idRB").setSelectedIndex(0),sap.ui.getCore().byId("idCBR").getSelected()||sap.ui.getCore().byId("idCB").getSelected()||sap.ui.getCore().byId("idNtve").getSelected()||(e=sap.ui.getCore().byId("idPayAmt").getValue(),i=0,a=t.int<0?0:t.int,0<Number(e)&&0<(i=Number(t.amtPaid)>Number(a)?Number(e):Number(t.amtPaid)+Number(e)-Number(a))&&(sap.ui.getCore().byId("idIntDetVB").setVisible(!0),sap.ui.getCore().byId("idIntDetTxt").setText("Total interest to be collected for period from "+this.formatter.dateFormat(t.intFrm)+" to "+this.formatter.dateFormat(t.intTo)+" is "+a+".\n\nKindly choose from below option to handle the balance amount "+i+".")))},onAddInst:function(t){this._iDialog&&this._iDialog.destroy(),this._iDialog=sap.ui.xmlfragment("FabFinV3.f.AddInst",this),this.getView().addDependent(this._iDialog);var e=this.cModel.getData();this.formatter.setLnExpTxt(e.lnDt,e.lnDur,this)||sap.ui.getCore().byId("idLRVB").setVisible(!1),sap.ui.getCore().byId("idPayDate").setMinDate(new Date(e.lnDt)),sap.ui.getCore().byId("idPayDate").setMaxDate(new Date),this._iDialog.open()},onSubmit:function(t){var e=sap.ui.getCore().byId("idPayDate").getValue()||(new Date).toDateString(),i=sap.ui.getCore().byId("idPayAmt").getValue(),a=sap.ui.getCore().byId("idCB").getSelected(),o=sap.ui.getCore().byId("idCBR").getSelected(),s=Number(sap.ui.getCore().byId("idOthrAmt").getValue()),n=sap.ui.getCore().byId("idNtve").getSelected();if(Number(i)<0)b.error("Amount cannot be negative");else{i=n?-Number(i):i;var r=this.cModel.getData(),n=this.formatter.setLnExpTxt(r.lnDt,r.lnDur,this,e);if(n&&0<=n.indexOf("expired")&&!a&&!o)b.error("Loan duration expired. Kindly choose Loan closure or Loan renewal to proceed.");else if(!sap.ui.getCore().byId("idIntDetVB").getVisible()||sap.ui.getCore().byId("idAIP").getSelected()||sap.ui.getCore().byId("idPR").getSelected()){if(a||o){n=Number(sap.ui.getCore().byId("idTot").getText());if(100<Math.abs(n-Number(i)))return void b.error("Pending Amount to be collected is "+n);r.defAmt=0<n-Number(i)?n-Number(i):0,r.clsDt=Date.now().toString(),r.lnCls=a?"X":"",r.lnRen=o?"X":"",r.othrAmt=s,r.goldAuctn=sap.ui.getCore().byId("idGA").getSelected()?"X":"",r.notice=0,r.notDat="",s<0&&(r.defAmt+=-s)}for(var d,l,g=0;g<r.instDet.length;g++)if(new Date(e)<=new Date(r.instDet[g].fnPayDt)&&new Date(e)>=new Date(r.instDet[g].instStDt)){d=r.instDet[g],0;break}if(!a&&Number(i)<0&&-Number(i)>d.amtPaid)b.error("Reversal amount greater than paid amount "+r.instDet[g].amtPaid+".");else{if(sap.ui.getCore().byId("idIntDetVB").getVisible()&&sap.ui.getCore().byId("idAIP").getSelected()){for(var u=0,h=r.instDet.length-1;0<=h;h--)if(r.instDet[h].no==r.lnDur){u=r.instDet[h].int;break}if(Number(i)+d.amtPaid>u)return void b.error("You cannot pay amount more than "+u+" as interest payment.")}if(o&&(delete(l=$.extend(!0,{},r)).instDet,delete l.intTD,l.lnRen=l.clsDt="",r.renKey=l.crtDt=l.key=l.modDt=Date.now().toString(),l.preKey=r.key,l.payDet=[],l.roiDet=[l.roiDet[l.roiDet.length-1]],l.roiDet[0].month=1,l.roiDet[0].modDt=Date.now().toString(),l.lnDt=this.formatter.dateFormat(this.formatter.getLnEdDt(new Date(r.lnDt),Number(r.lnDur),0)),l.othrAmt=l.defAmt=0,l.lnAmt=r.trPra=r.instDet[r.instDet.length-1].prA,l.goldRt=l.lnAmt/Number(l.goldGms)),e&&i){r.payDet.push({payDate:e,amt:i,othrAmt:s,lnClsr:a?"X":"",lnRen:o?"X":"",crtDt:Date.now().toString(),xAmtOp:sap.ui.getCore().byId("idIntDetVB").getVisible()?sap.ui.getCore().byId("idAIP").getSelected()?"1":"2":""}),r.modDt=Date.now().toString(),delete r.instDet,delete r.intTD;var D,c=this.oModel.getData();for(D in c)if(c[D].key===r.key){c.splice(D,1,r);break}o&&c.push(l),this.updateFile(c),this.onCl()}}}else b.error("Kindly choose from above option to handle the balance amount.")}},onUpdateInt:function(){this._itDialog&&this._itDialog.destroy(),this._itDialog=sap.ui.xmlfragment("FabFinV3.f.intRate",this),this.getView().addDependent(this._itDialog),this._itDialog.setModel(new n($.extend(!0,[],this.cModel.getData().roiDet)),"iDialogModel"),this._itDialog.open()},onAddROI:function(){var t=Math.round(sap.ui.getCore().byId("idMnInp").getValue()),e=sap.ui.getCore().byId("idRoiInp").getValue();if(t&&e){for(var i=this._itDialog.getModel("iDialogModel").getData(),a={month:t,roi:e,modDt:Date.now().toString()},o=0;o<i.length;o++)if(i[o].month==t){i.splice(o,1,a);break}o==i.length&&i.push(a),i.sort((t,e)=>t.month-e.month),this._itDialog.getModel("iDialogModel").refresh()}},cUpdateInt:function(){var t=this.cModel.getData();t.roiDet=this._itDialog.getModel("iDialogModel").getData(),t.modDt=Date.now().toString(),delete t.instDet,delete t.intTD;var e,i=this.oModel.getData();for(e in i)if(i[e].key===t.key){i.splice(e,1,t);break}this.updateFile(i),this.onClose()},onDelIntMonth:function(t){this._itDialog.getModel("iDialogModel").getData().splice(t.getSource().getBindingContext("iDialogModel").getPath().split("/")[1],1),this._itDialog.getModel("iDialogModel").refresh()},onShowHistory:function(t){this._hDialog&&this._hDialog.destroy(),this._hDialog=sap.ui.xmlfragment("FabFinV3.f.payHistory",this),this.getView().addDependent(this._hDialog),this._hDialog.bindElement("cModel>"+t.getSource().getBindingContext("cModel").getPath()),this._hDialog.open()},onUpdateNot:function(t){this._nDialog&&this._nDialog.destroy(),this._nDialog=sap.ui.xmlfragment("FabFinV3.f.Notice",this),this.getView().addDependent(this._nDialog);var e,i,a=[],o=this.cModel.getData(),s=$.extend(!0,[],o.notDet);for(i in o.notice||sap.ui.getCore().byId("idRecalBtn").setVisible(!1),this.formatter.setStatus_f(o,o.instDet).notVis||sap.ui.getCore().byId("idsendNotBtn").setVisible(!1),sap.ui.getCore().byId("idsendNotBtn").getVisible()||sap.ui.getCore().byId("idRecalBtn").getVisible()||sap.ui.getCore().byId("idNotDate").setVisible(!1),s){switch(e={},s[i].no=s[i].recall?"X":s[i].no,String(s[i].no)){case"1":e.tit="1st Notice Sent",e.stat="Low",e.dat=s[i].date;break;case"2":e.tit="2nd Notice Sent",e.stat="Low",e.dat=s[i].date;break;case"3":e.tit="3rd Notice Sent",e.stat="Low",e.dat=s[i].date;break;case"X":e.tit="Recalled",e.stat="High",e.dat=s[i].date;break;default:e.tit=s[i].no+"th Notice Sent",e.stat="Low",e.dat=s[i].date}a.push(e)}this._nDialog.setModel(new n(a),"nDialogModel"),this._nDialog.open()},cUpdateNot:function(t){var e=sap.ui.getCore().byId("idNotDate").getValue()||(new Date).toDateString();if(e){var i=this.cModel.getData();i.notDet.push({no:i.notice?Number(i.notice)+1:1,date:e,recall:"R"==t?"X":"",modDt:Date.now().toString()}),i.notice=i.notice?Number(i.notice)+1:1,i.notDat=e,i.notice="R"==t?0:i.notice,i.notDat="R"==t?"":i.notDat,i.modDt=Date.now().toString(),delete i.instDet,delete i.intTD;var a,o=this.oModel.getData();for(a in o)if(o[a].key===i.key){o.splice(a,1,i);break}this.updateFile(o),this.onCl()}},onCl:function(){this._iDialog&&this._iDialog.destroy(),this._hDialog&&this._hDialog.destroy(),this._nDialog&&this._nDialog.destroy()},onClose:function(){this._itDialog&&this._itDialog.destroy(),this._oDialog&&this._oDialog.destroy()},getNoOfDays:function(t,e){return Math.ceil(Math.abs(e-t)/864e5)+1},getMonthRange:function(t){for(var e,i=(t=new Date("Dec 31,2023")).getDate(),a=t.getFullYear(),o=t.getMonth()+1,s=[],n=0;n<24;n++)a=(o%=12)?a:a+1,o!=(e={sDt:t,eDt:new Date(a,o,i)}).eDt.getMonth()&&(e.eDt=new Date(a,e.eDt.getMonth(),0)),t=e.eDt,e.eDt=new Date(e.eDt.getTime()-864e5),s.push(e),t=new Date(e.eDt.getTime()+864e5),o+=1;return s},onEditCust:function(){this._oDialog&&this._oDialog.destroy(),this._oDialog=sap.ui.xmlfragment("idcf","FabFinV3.f.AddCust",this),this.getView().addDependent(this._oDialog),this._oDialog.setModel(new n($.extend(!0,{},this.cModel.getData())),"oDialogModel"),sap.ui.getCore().byId("idcf--idLnDt").setMaxDate(new Date),sap.ui.getCore().byId("idcf--idAddBtn").setText("Update"),sap.ui.getCore().byId("idcf--idInstDet").setVisible(!1),sap.ui.getCore().byId("idcf--idelVB").setVisible(!0),this._oDialog.open()},onAddGoldItems:function(t){var e=this.formatter.fillGArr(),i=this._oDialog.getModel("oDialogModel").getData().gDet;try{for(var a in e)for(var o in i)if(e[a].name==i[o].name){e[a].value=i[o].value;break}}catch(t){}this._oDialog.getModel("oDialogModel").getData().gDet=e,this._gDialog&&this._gDialog.destroy(),this._gDialog=sap.ui.xmlfragment("FabFinV3.f.GoldDetail",this),this._oDialog.addDependent(this._gDialog),this._gDialog.openBy(t.getSource())},showGoldDetails:function(t){this._gDialog&&this._gDialog.destroy(),this._gDialog=sap.ui.xmlfragment("FabFinV3.f.GoldDetail",this);var e=$.extend(!0,{},this.cModel.getData());e.gDet.forEach(function(t){t.edit=!0}),this._gDialog.setModel(new n(e),"oDialogModel"),this._gDialog.openBy(t.getSource())},cAddCust:function(){var t=this._oDialog.getModel("oDialogModel").getData();if(!t.name.trim()||!t.id.trim()||!t.mob.trim()||Number(t.goldGms)<=0||Number(t.lnAmt)<=0)b.error("Please fill all the required fields");else{for(var e=t.gDet.length-1;0<=e;e--)0==Number(t.gDet[e].value)&&t.gDet.splice(e,1);var i=t;i.modDt=Date.now().toString(),delete i.instDet,delete i.intTD;var a,o=this.oModel.getData();for(a in o)if(o[a].key===i.key){o.splice(a,1,i);break}this.updateFile(o),this.onClose()}},calculateEMI:function(t){var e=this._oDialog.getModel("oDialogModel").getData();"G"===t?0<Number(e.goldRt)&&0<Number(e.goldGms)&&(e.lnAmt=Number(e.goldRt)*Number(e.goldGms)):"A"===t&&0<Number(e.lnAmt)&&0<Number(e.goldGms)&&(e.goldRt=Number(e.lnAmt)/Number(e.goldGms)),this._oDialog.getModel("oDialogModel").refresh()},onPressCustDel:function(){sap.m.MessageBox.confirm("Are you sure want to delete?",{actions:["Cancel","Confirm"],onClose:function(t){"Confirm"===t&&function(){var t,e=a.cModel.getData(),i=a.oModel.getData();for(t in i)if(i[t].key===e.key){i.splice(t,1);break}a.updateFile(i,1),a.onClose()}()}});var a=this},updateFile:function(t,e){var i=this.cModel.getData().key,a=this,o=JSON.stringify(t),t={message:"Updating file",content:btoa(o),sha:window.custsha},o=this.custurl;sap.ui.core.BusyIndicator.show(0),this.byId("idInstTab").addStyleClass("classColumnHide"),$.ajax({type:"PUT",url:o,headers:a.headers,data:JSON.stringify(t),dataType:"text",success:function(t){window.custsha=JSON.parse(t).content.sha,sap.ui.core.BusyIndicator.hide(),e?(s.show("Deleted Successfully."),a.onNavBack()):(a.loadCustData(i),b.success("Updated Successfully."))},error:function(t){sap.ui.core.BusyIndicator.hide(),b.error("Failed.")}})},onTestRun:function(t){window.testRun=!1,window.mainsha=null,window.custsha=null,this.onNavBack()},onNavBack:function(){this.getOwnerComponent().getRouter().navTo("home")},onNavLP:function(t){this.getOwnerComponent().getRouter().navTo("login")}})});
+sap.ui.define([
+	"FabFinV3/c/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"FabFinV3/u/formatter",
+	"sap/m/MessageBox",
+	"sap/m/MessageToast",
+	"sap/m/library"
+], function(BaseController, JSONModel, formatter, MessageBox, MessageToast, mobileLibrary) {
+	"use strict";
+	FabFinV3.URLHelper = mobileLibrary.URLHelper;
+	return BaseController.extend("FabFinV3.c.View2", {
+
+		formatter: formatter,
+
+		onInit: function() {
+
+			window.custsha;
+			this.rCount = 0;
+			this.getView().setModel(new JSONModel({}), "refreshModel")
+			this.getOwnerComponent().getRouter().getRoute("customer").attachPatternMatched(this._onObjectMatched, this);
+
+			this.byId("idInstTab").addEventDelegate({
+				onAfterRendering: function() {
+					this.highlightRow();
+				}
+			}, this);
+
+			//this.getMonthRange()
+		},
+		_onObjectMatched: function(evt) {
+
+			if (window.testRun) {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust.json";
+				this.byId("idStopTR").setVisible(true);
+			} else {
+				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json";
+				this.byId("idStopTR").setVisible(false);
+			}
+
+			this.byId("idInstTab").addStyleClass("classColumnHide");
+
+			if (!this.headers) {
+				var aKey = this.validateCookie("aKey");
+
+				if (!aKey) {
+					this.onNavLP();
+					return;
+				}
+				this.headers = {
+					"Authorization": 'Bearer ' + aKey,
+					"Accept": "application/vnd.github.v3+json",
+					"Content-Type": "application/json"
+				};
+			}
+
+			this.uModel = new JSONModel();
+			this.getView().setModel(this.uModel, "uModel");
+			this.setUModel();
+
+			this.custId = evt.getParameter("arguments").custId;
+			this.loadCustData(evt.getParameter("arguments").custId);
+			this.oModel = new JSONModel();
+			this.getView().setModel(this.oModel, "oModel");
+			this.cModel = new JSONModel();
+			this.getView().setModel(this.cModel, "cModel");
+			this.getView().getModel("refreshModel").getData().r = false;
+
+		},
+
+		clickPhone: function(oEvent) {
+			FabFinV3.URLHelper.triggerTel(oEvent.getSource().getText());
+		},
+
+		clickEmail: function(oEvent) {
+			FabFinV3.URLHelper.triggerEmail(oEvent.getSource().getText(), "Info Request", false, false, false, true);
+		},
+
+		setUModel: function() {
+			var adm = this.validateCookie("user").substr(0, 1) === "A" ? true : false;
+			this.uModel.setData({
+				"adm": adm
+			});
+		},
+
+		handleRefresh: function() {
+			this.byId("idInstTab").addStyleClass("classColumnHide");
+			setTimeout(function() {
+				this.byId("pullToRefresh").hide();
+				this.loadCustData(this.custId);
+			}.bind(this), 10);
+		},
+		highlightRow: function() {
+			if (FabFinV3.currRow) {
+
+				var items = this.byId("idInstTab").getItems();
+				items.forEach(function(e) {
+					e.removeStyleClass("classHighlightGreen");
+					e.removeStyleClass("classOpacity");
+					e.removeStyleClass("classHideRow");
+					if (FabFinV3.currRow == e.getId()) {
+						e.addStyleClass("classHighlightGreen");
+						try {
+							//	$("#" + e.getId() + "-sub").css("background", "#ebffeb");
+							$("#" + e.getId() + "-sub").attr('style', 'background: rgb(171 226 171 / 40%)!important');
+						} catch (err) {}
+					}
+
+					if (FabFinV3.nxtRow.length > 0) {
+						FabFinV3.nxtRow.forEach(function(el) {
+
+							if (el == e.getId()) {
+								e.addStyleClass("classOpacity");
+								try {
+									$("#" + e.getId() + "-sub").css("opacity", "0.3");
+								} catch (err) {}
+							}
+
+						});
+					}
+
+					if (FabFinV3.hideRow.length > 0) {
+						FabFinV3.hideRow.forEach(function(el) {
+
+							if (el == e.getId()) {
+								e.addStyleClass("classHideRow");
+								try {
+									$("#" + e.getId() + "-sub").css("display", "none");
+								} catch (err) {}
+							}
+
+						});
+					}
+
+				});
+
+			}
+		},
+		loadCustData: function(custId) {
+			var config = {};
+			if (!this.uModel.getData().adm) {
+				if (!sap.ui.getCore().getModel("config")) {
+					this.onNavBack();
+					return;
+				} else {
+					config = sap.ui.getCore().getModel("config").getData();
+				}
+			}
+
+			this.getView().setModel(new JSONModel(config), "config");
+			var rCount = 0;
+			var that = this;
+			sap.ui.core.BusyIndicator.show(0);
+			$.ajax({
+				type: 'GET',
+				headers: this.headers,
+				url: this.custurl,
+				cache: false,
+				success: function(odata) {
+					if (!window.custsha) {
+						window.custsha = odata.sha;
+					} else {
+						if (window.custsha != odata.sha) {
+
+							if (that.rCount > 2) {
+								window.location.reload();
+							} else {
+								that.rCount++;
+								$.sap.delayedCall(3000, this, function() {
+									that.loadCustData(custId);
+								});
+
+							}
+
+							return;
+						}
+
+						that.rCount = 0;
+					}
+
+					var data = atob(odata.content);
+					data = data.trim() ? JSON.parse(data) : [];
+
+					that.oModel.setData(data);
+					that.oModel.refresh();
+
+					var eflag = true,
+						lflag = true,
+						cfAmt,
+						AmtPaid;
+					for (var i in data) {
+						if (data[i].key === custId) {
+
+							that.byId("idNotBtn").setVisible(false);
+							if ((data[i].lnCls || data[i].lnRen) && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
+								that.calcSummary(data[i]);
+							}
+
+							that.cModel.setData(data[i]);
+							that.calPayData();
+							if ((that.uModel.getData().adm || that.getView().getModel("config").getData().not)) {
+								var visNotBtn;
+
+								try {
+									if (data[i].notDet.length > 0) {
+										visNotBtn = true;
+									}
+								} catch (err) {}
+
+								visNotBtn = !visNotBtn ? that.formatter.setStatus_f(data[i], data[i].instDet).notVis : visNotBtn;
+
+								if (visNotBtn) {
+									if (!data[i].notDet) {
+										data[i].notDet = [];
+									}
+									that.byId("idNotBtn").setVisible(true);
+								}
+
+							}
+
+							that.cModel.refresh();
+							break;
+						}
+					}
+					sap.ui.core.BusyIndicator.hide();
+				},
+				error: function(oError) {
+					MessageBox.error(oError.responseJSON.message);
+					sap.ui.core.BusyIndicator.hide();
+				}
+			});
+		},
+
+		calcSummary: function(data) {
+			var totAmt = 0,
+				intAmt = 0,
+				defAmt = data.defAmt;
+			data.payDet.forEach(function(e) {
+				totAmt += Number(e.amt);
+			});
+
+			var lnAmt = Number(data.lnAmt);
+
+			if (data.lnRen) {
+				lnAmt = lnAmt - Number(data.trPra || data.lnAmt);
+			}
+
+			intAmt = totAmt - Number(lnAmt);
+
+			intAmt = intAmt > 0 ? intAmt : 0;
+
+			this.byId("idTotPaid").setText("Total Amount Paid: " + totAmt);
+			this.byId("idIntEarn").setText("Profit: " + intAmt);
+			this.byId("idDefAmt").setText("Default Amount: " + defAmt);
+		},
+
+		calPayData: function() {
+
+			var cModel = this.cModel.getData();
+
+			/*	
+				var roiArr = cModel.roiDet;
+				var pwArr = cModel.pwDet;
+				var data = cModel.payDet;
+				data.sort((a, b) => {
+					return new Date(a.payDate) - new Date(b.payDate);
+				});
+
+				var currRoi = Number(cModel.roi);
+				var curDtObj = {};*/
+
+			FabFinV3.currInst = 0;
+			FabFinV3.currRow = "";
+			FabFinV3.nxtRow = [];
+			FabFinV3.hideRow = [];
+			var that = this;
+
+			var lnData = this.formatter.generateLoanData(cModel, true, this);
+
+			cModel.instDet = lnData.arr;
+			var currRoi = lnData.currRoi;
+			var curDtObj = lnData.curDtObj;
+
+			try {
+				$.sap.delayedCall(100, this, function() {
+					that.byId("idInstTab").rerender();
+					that.byId("idInstTab").removeStyleClass("classColumnHide");
+				});
+
+				curDtObj.intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(cModel.lnDt), new Date(new Date().toDateString())) *
+					currRoi / 100 * 1 / 365);
+
+				cModel.intTD = curDtObj;
+
+			} catch (err) {}
+
+		},
+
+		onSelLC: function(oEvent, act) {
+			var cData = this.cModel.getData();
+			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
+			var lstPayDate;
+			for (var i = cData.instDet.length - 1; i >= 0; i--) {
+				if (cData.instDet[i].payDate) {
+					lstPayDate = cData.instDet[i].payDate;
+					break;
+				}
+			}
+
+			if (lstPayDate > new Date(payDate)) {
+				MessageBox.error("There is already a future date payment made on " + lstPayDate + ".");
+				oEvent.getSource().setSelected(false);
+				return;
+			}
+
+			act === "R" ? sap.ui.getCore().byId("idCB").setSelected(false) : sap.ui.getCore().byId("idCBR").setSelected(false);
+
+			sap.ui.getCore().byId("idGAHB").setVisible(sap.ui.getCore().byId("idCB").getSelected());
+			sap.ui.getCore().byId("idOthrAmtVB").setVisible(oEvent.getSource().getSelected());
+			this.calAmtTD();
+
+		},
+
+		calAmtTD: function(flg) {
+			if (flg === '1') {
+				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
+				sap.ui.getCore().byId("idCB").setSelected(false);
+				sap.ui.getCore().byId("idCBR").setSelected(false);
+			}
+
+			if (sap.ui.getCore().byId("idNtve").getSelected()) {
+				sap.ui.getCore().byId("idCB").setSelected(false);
+				sap.ui.getCore().byId("idCBR").setSelected(false);
+				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
+			}
+
+			var cData = this.cModel.getData();
+			var othrAmt = sap.ui.getCore().byId("idOthrAmt").getValue();
+			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
+			var amtToPay;
+			var curDtObj;
+			for (var i = cData.instDet.length - 1; i >= 0; i--) {
+				if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
+					curDtObj = cData.instDet[i];
+					break;
+				}
+			}
+			if (sap.ui.getCore().byId("idCB").getSelected()) {
+
+				cData.intTD = curDtObj;
+				//	var intCurMnth = curDtObj.int - curDtObj.cfInt;
+
+				var curIntdays = Math.ceil(Math.abs(new Date(payDate) - curDtObj.intFrm) / (1000 * 60 * 60 * 24)) + 1;
+				var intTD = 0;
+				if (curIntdays > 15) {
+					intTD = curDtObj.int;
+				} else {
+					/*intTD = Math.round(curDtObj.prA * this.getNoOfDays(new Date(curDtObj.intFrm), new Date(payDate)) *
+						curDtObj.roi / 100 * 1 / 365);*/
+
+					intTD = Math.round(curDtObj.prA * 15 * curDtObj.roi / 100 * 1 / 365);
+
+					intTD = intTD + curDtObj.cfInt;
+				}
+
+				amtToPay = (curDtObj.prA + Number(othrAmt) + intTD - curDtObj.amtPaid);
+			} else {
+				//	var lnEndDate = this.formatter.getLnEdDt(new Date(cData.lnDt),Number(cData.lnDur));
+				if (!cData.instDet[Number(cData.lnDur) - 1]) {
+					MessageBox.error("Loan renewal not possible");
+					sap.ui.getCore().byId("idCBR").setSelected();
+					sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
+
+					return;
+				}
+
+				amtToPay = cData.instDet[Number(cData.lnDur) - 1].int - cData.instDet[Number(cData.lnDur) - 1].amtPaid;
+				amtToPay = amtToPay < 0 ? 0 : amtToPay;
+				amtToPay = amtToPay + Number(othrAmt);
+			}
+
+			sap.ui.getCore().byId("idTot").setText(amtToPay);
+
+			this.calcIntDet(curDtObj);
+
+		},
+
+		calcIntDet: function(obj) {
+			sap.ui.getCore().byId("idIntDetVB").setVisible(false);
+			sap.ui.getCore().byId("idRB").setSelectedIndex(0);
+			if (!sap.ui.getCore().byId("idCBR").getSelected() && !sap.ui.getCore().byId("idCB").getSelected() && !sap.ui.getCore().byId(
+					"idNtve").getSelected()) {
+				var pAmt = sap.ui.getCore().byId("idPayAmt").getValue();
+				//	var balAmt = (Number(obj.amtPaid) + Number(pAmt)) - Number(obj.int);
+				var balAmt = 0;
+				var int = obj.int < 0 ? 0 : obj.int;
+				if (Number(pAmt) > 0) {
+					if (Number(obj.amtPaid) > Number(int)) {
+						balAmt = Number(pAmt);
+					} else {
+						balAmt = (Number(obj.amtPaid) + Number(pAmt)) - Number(int);
+					}
+
+					if (balAmt > 0) {
+						sap.ui.getCore().byId("idIntDetVB").setVisible(true);
+						sap.ui.getCore().byId("idIntDetTxt").setText("Total interest to be collected for period from " + this.formatter.dateFormat(obj.intFrm) +
+							" to " + this.formatter.dateFormat(obj.intTo) + " is " + int +
+							".\n\nKindly choose from below option to handle the balance amount " + balAmt + ".");
+					}
+				}
+
+			}
+		},
+
+		onAddInst: function(oEvent) {
+			if (this._iDialog) {
+				this._iDialog.destroy();
+			}
+			this._iDialog = sap.ui.xmlfragment("FabFinV3.f.AddInst", this);
+			this.getView().addDependent(this._iDialog);
+
+			var cModel = this.cModel.getData();
+
+			var lnexp = this.formatter.setLnExpTxt(cModel.lnDt, cModel.lnDur, this);
+
+			if (!lnexp) {
+				sap.ui.getCore().byId("idLRVB").setVisible(false);
+			}
+
+			sap.ui.getCore().byId("idPayDate").setMinDate(new Date(cModel.lnDt));
+
+			sap.ui.getCore().byId("idPayDate").setMaxDate(new Date());
+
+			this._iDialog.open();
+		},
+
+		onSubmit: function(oEvent) {
+
+			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
+			var payAmt = sap.ui.getCore().byId("idPayAmt").getValue();
+			var lnClsr = sap.ui.getCore().byId("idCB").getSelected();
+			var lnRen = sap.ui.getCore().byId("idCBR").getSelected();
+			var othrAmt = Number(sap.ui.getCore().byId("idOthrAmt").getValue());
+
+			var isNeg = sap.ui.getCore().byId("idNtve").getSelected();
+
+			if (Number(payAmt) < 0) {
+				MessageBox.error("Amount cannot be negative");
+				return;
+			}
+
+			payAmt = isNeg ? -Number(payAmt) : payAmt;
+
+			var cData = this.cModel.getData();
+
+			var lnexp = this.formatter.setLnExpTxt(cData.lnDt, cData.lnDur, this, payDate);
+
+			if (lnexp && lnexp.indexOf("expired") >= 0) {
+				if (!lnClsr && !lnRen) {
+					MessageBox.error("Loan duration expired. Kindly choose Loan closure or Loan renewal to proceed.");
+					return;
+				}
+			}
+
+			if (sap.ui.getCore().byId("idIntDetVB").getVisible() && !sap.ui.getCore().byId("idAIP").getSelected() && !sap.ui.getCore().byId(
+					"idPR").getSelected()) {
+
+				MessageBox.error("Kindly choose from above option to handle the balance amount.");
+				return;
+			}
+
+			if (lnClsr || lnRen) {
+
+				var amtToPay = Number(sap.ui.getCore().byId("idTot").getText());
+
+				if (Math.abs(amtToPay - Number(payAmt)) > 100) {
+					MessageBox.error("Pending Amount to be collected is " + (amtToPay));
+					return;
+				}
+
+				cData.defAmt = (amtToPay - Number(payAmt)) > 0 ? (amtToPay - Number(payAmt)) : 0;
+				cData.clsDt = Date.now().toString();
+				cData.lnCls = lnClsr ? "X" : "";
+				cData.lnRen = lnRen ? "X" : "";
+				cData.othrAmt = othrAmt;
+				cData.goldAuctn = sap.ui.getCore().byId("idGA").getSelected() ? "X" : "";
+				cData.notice = 0;
+				cData.notDat = "";
+
+				if (othrAmt < 0) {
+					cData.defAmt += (-othrAmt);
+				}
+
+			}
+
+			var currInstObj, currInstCt;
+
+			for (var i = 0; i < cData.instDet.length; i++) {
+				if (new Date(payDate) <= new Date(cData.instDet[i].fnPayDt) && new Date(payDate) >= new Date(cData.instDet[i].instStDt)) {
+					currInstObj = cData.instDet[i];
+					currInstCt = i;
+					break;
+				}
+			}
+
+			if (!lnClsr) {
+
+				if (Number(payAmt) < 0) {
+					if ((-Number(payAmt)) > currInstObj.amtPaid) {
+						MessageBox.error("Reversal amount greater than paid amount " + cData.instDet[i].amtPaid + ".");
+						return;
+					}
+				}
+
+			}
+
+			if (sap.ui.getCore().byId("idIntDetVB").getVisible() && sap.ui.getCore().byId("idAIP").getSelected()) {
+
+				var fInstAmt = 0;
+
+				for (var k = cData.instDet.length - 1; k >= 0; k--) {
+					if (cData.instDet[k].no == cData.lnDur) {
+						fInstAmt = cData.instDet[k].int;
+						break;
+					}
+				}
+
+				if ((Number(payAmt) + currInstObj.amtPaid) > fInstAmt) {
+					MessageBox.error("You cannot pay amount more than " + fInstAmt + " as interest payment.");
+					return;
+				}
+
+			}
+
+			if (lnRen) {
+				var copyData = $.extend(true, {}, cData);
+				delete copyData.instDet;
+				delete copyData.intTD;
+
+				copyData.lnRen = copyData.clsDt = "";
+				cData.renKey = copyData.crtDt = copyData.key = copyData.modDt = Date.now().toString();
+				copyData.preKey = cData.key;
+				copyData.payDet = [];
+				copyData.roiDet = [copyData.roiDet[copyData.roiDet.length - 1]];
+				copyData.roiDet[0].month = 1;
+				copyData.roiDet[0].modDt = Date.now().toString();
+				copyData.lnDt = this.formatter.dateFormat(this.formatter.getLnEdDt(new Date(cData.lnDt), Number(cData.lnDur), 0));
+				copyData.othrAmt = copyData.defAmt = 0;
+				copyData.lnAmt = cData.trPra = cData.instDet[cData.instDet.length - 1].prA;
+				copyData.goldRt = copyData.lnAmt / Number(copyData.goldGms);
+
+			}
+
+			if (payDate && payAmt) {
+				cData.payDet.push({
+					payDate: payDate,
+					amt: payAmt,
+					othrAmt: othrAmt,
+					lnClsr: lnClsr ? "X" : "",
+					lnRen: lnRen ? "X" : "",
+					crtDt: Date.now().toString(),
+					xAmtOp: !sap.ui.getCore().byId("idIntDetVB").getVisible() ? "" : sap.ui.getCore().byId("idAIP").getSelected() ? "1" : "2"
+				});
+
+				cData.modDt = Date.now().toString();
+				delete cData.instDet;
+				delete cData.intTD
+				var oData = this.oModel.getData();
+
+				for (var j in oData) {
+					if (oData[j].key === cData.key) {
+						oData.splice(j, 1, cData);
+						break;
+					}
+				}
+
+				if (lnRen) {
+					oData.push(copyData);
+				}
+
+				this.updateFile(oData);
+				this.onCl();
+
+			}
+		},
+
+		onUpdateInt: function() {
+			if (this._itDialog) {
+				this._itDialog.destroy();
+			}
+			this._itDialog = sap.ui.xmlfragment("FabFinV3.f.intRate", this);
+			this.getView().addDependent(this._itDialog);
+			this._itDialog.setModel(new JSONModel($.extend(true, [], this.cModel.getData().roiDet)), "iDialogModel");
+			this._itDialog.open();
+		},
+
+		onAddROI: function() {
+			var month = Math.round(sap.ui.getCore().byId("idMnInp").getValue());
+			var roi = sap.ui.getCore().byId("idRoiInp").getValue();
+
+			if (month && roi) {
+				var model = this._itDialog.getModel("iDialogModel").getData();
+				var nwObj = {
+					month: month,
+					roi: roi,
+					modDt: Date.now().toString()
+				};
+				for (var i = 0; i < model.length; i++) {
+					if (model[i].month == month) {
+						model.splice(i, 1, nwObj);
+						break;
+					}
+				}
+				if (i == model.length) {
+					model.push(nwObj);
+				}
+
+				model.sort((a, b) => {
+					return a.month - b.month;
+				});
+
+				this._itDialog.getModel("iDialogModel").refresh();
+			}
+
+		},
+
+		cUpdateInt: function() {
+
+			var cData = this.cModel.getData();
+
+			cData.roiDet = this._itDialog.getModel("iDialogModel").getData();
+			cData.modDt = Date.now().toString();
+			delete cData.instDet;
+			delete cData.intTD
+			var oData = this.oModel.getData();
+
+			for (var j in oData) {
+				if (oData[j].key === cData.key) {
+					oData.splice(j, 1, cData);
+					break;
+				}
+			}
+
+			this.updateFile(oData);
+
+			this.onClose();
+
+		},
+
+		onDelIntMonth: function(oEvent) {
+
+			this._itDialog.getModel("iDialogModel").getData().splice(oEvent.getSource().getBindingContext("iDialogModel").getPath().split(
+					"/")[
+					1],
+				1);
+			this._itDialog.getModel("iDialogModel").refresh();
+		},
+
+		onShowHistory: function(oEvent) {
+
+			if (this._hDialog) {
+				this._hDialog.destroy();
+			}
+			this._hDialog = sap.ui.xmlfragment("FabFinV3.f.payHistory", this);
+			this.getView().addDependent(this._hDialog);
+			this._hDialog.bindElement("cModel>" + oEvent.getSource().getBindingContext("cModel").getPath());
+
+			this._hDialog.open();
+		},
+
+		onUpdateNot: function(oEvent) {
+
+			if (this._nDialog) {
+				this._nDialog.destroy();
+			}
+			this._nDialog = sap.ui.xmlfragment("FabFinV3.f.Notice", this);
+			this.getView().addDependent(this._nDialog);
+
+			var dat = [],
+				obj;
+
+			var cModel = this.cModel.getData();
+
+			var model = $.extend(true, [], cModel.notDet);
+
+			if (!cModel.notice) {
+				sap.ui.getCore().byId("idRecalBtn").setVisible(false);
+			}
+
+			if (!this.formatter.setStatus_f(cModel, cModel.instDet).notVis) {
+				sap.ui.getCore().byId("idsendNotBtn").setVisible(false);
+			}
+
+			if (!sap.ui.getCore().byId("idsendNotBtn").getVisible() && !sap.ui.getCore().byId("idRecalBtn").getVisible()) {
+				sap.ui.getCore().byId("idNotDate").setVisible(false);
+			}
+
+			for (var i in model) {
+				obj = {};
+				model[i].no = model[i].recall ? "X" : model[i].no;
+				switch (String(model[i].no)) {
+					case "1":
+						obj.tit = "1st Notice Sent";
+						obj.stat = "Low";
+						obj.dat = model[i].date;
+						break;
+					case "2":
+						obj.tit = "2nd Notice Sent";
+						obj.stat = "Low";
+						obj.dat = model[i].date;
+						break;
+					case "3":
+						obj.tit = "3rd Notice Sent";
+						obj.stat = "Low";
+						obj.dat = model[i].date;
+						break;
+					case "X":
+						obj.tit = "Recalled";
+						obj.stat = "High";
+						obj.dat = model[i].date;
+						break;
+					default:
+						obj.tit = model[i].no + "th Notice Sent";
+						obj.stat = "Low";
+						obj.dat = model[i].date;
+				}
+
+				dat.push(obj);
+			}
+
+			this._nDialog.setModel(new JSONModel(dat), "nDialogModel");
+
+			this._nDialog.open();
+		},
+		cUpdateNot: function(flag) {
+
+			var notDate = sap.ui.getCore().byId("idNotDate").getValue() || new Date().toDateString();
+
+			if (notDate) {
+				var cData = this.cModel.getData();
+
+				cData.notDet.push({
+					no: cData.notice ? Number(cData.notice) + 1 : 1,
+					date: notDate,
+					recall: flag == "R" ? "X" : "",
+					modDt: Date.now().toString()
+				});
+
+				cData.notice = cData.notice ? Number(cData.notice) + 1 : 1;
+				cData.notDat = notDate;
+				cData.notice = flag == "R" ? 0 : cData.notice;
+				cData.notDat = flag == "R" ? "" : cData.notDat;
+
+				cData.modDt = Date.now().toString();
+				delete cData.instDet;
+				delete cData.intTD
+				var oData = this.oModel.getData();
+
+				for (var j in oData) {
+					if (oData[j].key === cData.key) {
+						oData.splice(j, 1, cData);
+						break;
+					}
+				}
+
+				this.updateFile(oData);
+				this.onCl();
+
+			}
+		},
+
+		onCl: function() {
+			if (this._iDialog) {
+				this._iDialog.destroy();
+			}
+			if (this._hDialog) {
+				this._hDialog.destroy();
+			}
+			if (this._nDialog) {
+				this._nDialog.destroy();
+			}
+		},
+		onClose: function() {
+			if (this._itDialog) {
+				this._itDialog.destroy();
+			}
+			if (this._oDialog) {
+				this._oDialog.destroy();
+			}
+
+		},
+
+		getNoOfDays: function(sDate, eDate) {
+			return Math.ceil(Math.abs(eDate - sDate) / (1000 * 60 * 60 * 24)) + 1;
+		},
+
+		getMonthRange: function(date) {
+			date = new Date("Dec 31,2023");
+			var day = date.getDate();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			//	var nxtMonth = month+1;
+			var obj, arr = [];
+			for (var i = 0; i < 24; i++) {
+				month = month % 12;
+				year = !(month) ? year + 1 : year;
+				obj = {
+					sDt: date,
+					eDt: new Date(year, month, day)
+				};
+
+				if (month != obj.eDt.getMonth()) {
+					obj.eDt = new Date(year, obj.eDt.getMonth(), 0);
+				}
+				date = obj.eDt;
+				obj.eDt = new Date(obj.eDt.getTime() - (1 * 24 * 60 * 60 * 1000));
+
+				arr.push(obj);
+
+				date = new Date(obj.eDt.getTime() + (1 * 24 * 60 * 60 * 1000));
+				month += 1;
+
+			}
+			return arr;
+		},
+
+		onEditCust: function() {
+			if (this._oDialog) {
+				this._oDialog.destroy();
+			}
+			this._oDialog = sap.ui.xmlfragment("idcf", "FabFinV3.f.AddCust", this);
+			this.getView().addDependent(this._oDialog);
+			this._oDialog.setModel(new JSONModel($.extend(true, {}, this.cModel.getData())), "oDialogModel");
+			sap.ui.getCore().byId("idcf--idLnDt").setMaxDate(new Date());
+			sap.ui.getCore().byId("idcf--idAddBtn").setText("Update");
+			sap.ui.getCore().byId("idcf--idInstDet").setVisible(false);
+			sap.ui.getCore().byId("idcf--idelVB").setVisible(true);
+
+			this._oDialog.open();
+		},
+
+		onAddGoldItems: function(oEvent) {
+
+			var gArr = this.formatter.fillGArr();
+			var cArr = this._oDialog.getModel("oDialogModel").getData().gDet;
+			try {
+
+				for (var i in gArr) {
+					for (var j in cArr) {
+						if (gArr[i].name == cArr[j].name) {
+							gArr[i].value = cArr[j].value;
+							break;
+						}
+					}
+				}
+
+			} catch (err) {}
+
+			this._oDialog.getModel("oDialogModel").getData().gDet = gArr;
+
+			if (this._gDialog) {
+				this._gDialog.destroy();
+			}
+			this._gDialog = sap.ui.xmlfragment("FabFinV3.f.GoldDetail", this);
+			this._oDialog.addDependent(this._gDialog);
+			this._gDialog.openBy(oEvent.getSource());
+		},
+
+		showGoldDetails: function(oEvent) {
+			if (this._gDialog) {
+				this._gDialog.destroy();
+			}
+			this._gDialog = sap.ui.xmlfragment("FabFinV3.f.GoldDetail", this);
+
+			var data = $.extend(true, {}, this.cModel.getData());
+			data.gDet.forEach(function(e) {
+				e.edit = true;
+			});
+
+			this._gDialog.setModel(new JSONModel(data), "oDialogModel");
+			this._gDialog.openBy(oEvent.getSource());
+		},
+
+		cAddCust: function() {
+
+			var nwData = this._oDialog.getModel("oDialogModel").getData();
+
+			if (!nwData.name.trim() || !nwData.id.trim() || !nwData.mob.trim() || Number(nwData.goldGms) <= 0 || Number(nwData.lnAmt) <= 0) {
+				MessageBox.error("Please fill all the required fields");
+				return;
+			}
+
+			for (var i = nwData.gDet.length - 1; i >= 0; i--) {
+				if (Number(nwData.gDet[i].value) == 0) {
+					nwData.gDet.splice(i, 1);
+				}
+			}
+			
+			nwData.goldRt = Number(nwData.goldRt).toFixed(3);
+
+			var cData = nwData;
+
+			cData.modDt = Date.now().toString();
+
+			delete cData.instDet;
+			delete cData.intTD;
+
+			var oData = this.oModel.getData();
+
+			for (var j in oData) {
+				if (oData[j].key === cData.key) {
+					oData.splice(j, 1, cData);
+					break;
+				}
+			}
+
+			this.updateFile(oData);
+
+			this.onClose();
+
+		},
+
+		calculateEMI: function(e) {
+			var data = this._oDialog.getModel("oDialogModel").getData();
+			if (e === "G") {
+				if (Number(data.goldRt) > 0 && Number(data.goldGms) > 0) {
+					data.lnAmt = Number(data.goldRt) * Number(data.goldGms);
+				}
+			} else if (e === "A") {
+				if (Number(data.lnAmt) > 0 && Number(data.goldGms) > 0) {
+					data.goldRt = Number(data.lnAmt) / Number(data.goldGms);
+				}
+			}
+
+			this._oDialog.getModel("oDialogModel").refresh();
+
+		},
+
+		onPressCustDel: function() {
+			sap.m.MessageBox.confirm(
+				"Are you sure want to delete?", {
+					actions: ["Cancel", "Confirm"],
+					onClose: function(sAction) {
+						if (sAction === "Confirm") {
+							delCust();
+						}
+					}
+				}
+			);
+			var that = this;
+
+			function delCust() {
+
+				var cData = that.cModel.getData();
+
+				var oData = that.oModel.getData();
+
+				for (var j in oData) {
+					if (oData[j].key === cData.key) {
+						oData.splice(j, 1);
+						break;
+					}
+				}
+
+				that.updateFile(oData, 1);
+				that.onClose();
+
+			}
+		},
+
+		updateFile: function(oData, del) {
+			var key = this.cModel.getData().key;
+			var that = this;
+			var data = JSON.stringify(oData);
+
+			var body = {
+				message: "Updating file",
+				content: btoa(data),
+				sha: window.custsha
+			};
+			var url = this.custurl;
+			sap.ui.core.BusyIndicator.show(0);
+			this.byId("idInstTab").addStyleClass("classColumnHide");
+			$.ajax({
+				type: 'PUT',
+				url: url,
+				headers: that.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
+				success: function(odata) {
+					window.custsha = JSON.parse(odata).content.sha;
+					sap.ui.core.BusyIndicator.hide();
+					if (del) {
+						MessageToast.show("Deleted Successfully.")
+						that.onNavBack();
+					} else {
+
+						that.loadCustData(key);
+						MessageBox.success("Updated Successfully.")
+					}
+
+				},
+				error: function(odata) {
+					sap.ui.core.BusyIndicator.hide();
+					MessageBox.error("Failed.")
+				}
+			});
+		},
+
+		onTestRun: function(evt) {
+			window.testRun = false;
+			window.mainsha = null;
+			window.custsha = null;
+			this.onNavBack();
+		},
+
+		onNavBack: function() {
+			this.getOwnerComponent().getRouter().navTo("home");
+		},
+		onNavLP: function(obj) {
+			this.getOwnerComponent().getRouter().navTo("login");
+		}
+
+	});
+});
