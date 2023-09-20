@@ -45,6 +45,14 @@
 							<CheckBox selected="{ucDialogModel>/bkp}"/>
 						</HBox>
 						<HBox justifyContent="SpaceBetween">
+							<Text text="SMS"/>
+							<CheckBox selected="{ucDialogModel>/sms}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
+							<Text text="SMS (include Amount)"/>
+							<CheckBox selected="{ucDialogModel>/iaSMS}"/>
+						</HBox>
+						<HBox justifyContent="SpaceBetween">
 							<Text text="Session"/>
 						</HBox>
 						<HBox justifyContent="SpaceBetween">
