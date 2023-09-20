@@ -39,7 +39,7 @@
 
 	"sap.ui5": {
 	 "rootView": {
-            "viewName": "FabFinV3.v.App",
+            "viewName": "FabFinV3.view.App",
             "type": "XML",
             "async": true
         },
@@ -52,7 +52,8 @@
 				"sap.ushell": {},
 				"sap.collaboration": {},
 				"sap.ui.comp": {},
-				"sap.uxap": {}
+				"sap.uxap": {},
+				"sap.ui.table":{}
 			}
 		},
 		"contentDensities": {
@@ -71,7 +72,7 @@
             "config": {
                 "routerClass": "sap.m.routing.Router",
                 "viewType": "XML",
-                "viewPath": "FabFinV3.v",
+                "viewPath": "FabFinV3.view",
                 "controlId": "app",
                 "controlAggregation": "pages",
                 "bypassed": {
