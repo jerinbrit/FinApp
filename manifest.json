@@ -125,9 +125,7 @@
         },
 		"resources": {
 			
-			"css": [{
-				"uri": "cs/style.css"
-			}, {
+			"css": [ {
 				"uri": "cs/cropper.min.css"
 			}],
 			"js": [{
