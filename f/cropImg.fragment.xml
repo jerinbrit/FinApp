@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml">
+	<Dialog showHeader="false" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done" afterOpen="afCrpImg">
+		<content>
+			<html:img id="imageToCrop" alt="Loading..."></html:img>
+		</content>
+		<buttons>
+			<Button type="Ghost" text="Close" press="onCloseIC" class="sapUiTinyMarginEnd"/>
+			<Button type="Emphasized" text="Read" press="onReadTxt" class="sapUiTinyMarginEnd"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
