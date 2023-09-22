@@ -8,7 +8,8 @@ sap.ui.define([
 	return UIComponent.extend("FabFinV3.Component", {
 
 		metadata: {
-			manifest: "json"
+			manifest: "json",
+			"includes": ["cs/style.css"]
 		},
 
 		/**
