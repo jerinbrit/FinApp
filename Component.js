@@ -8,8 +8,7 @@ sap.ui.define([
 	return UIComponent.extend("FabFinV3.Component", {
 
 		metadata: {
-			manifest: "json",
-			"includes": ["cs/style.css"]
+			manifest: "json"
 		},
 
 		/**
@@ -18,6 +17,7 @@ sap.ui.define([
 		 * @override
 		 */
 		init: function() {
+				jQuery.sap.includeStyleSheet("cs/style.css");
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
