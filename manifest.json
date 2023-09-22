@@ -125,14 +125,6 @@
         },
 		"resources": {
 			
-			"css": [ {
-				"uri": "cs/cropper.min.css"
-			}],
-			"js": [{
-				"uri": "l/cropper.min.js"
-			}, {
-				"uri": "l/tesseract.min.js"
-			}]
 		
 		}
 	}
