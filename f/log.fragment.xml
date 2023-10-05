@@ -1,0 +1,31 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" >
+	<Dialog class="sapUiSizeCompact" contentWidth="100%" initialFocus="done">
+		<customHeader>
+			<Bar>
+			
+				<contentMiddle>
+					<DatePicker id="idLogDt" class= "classDt"  width="10rem" change="fetchLogData"/>
+				</contentMiddle>
+			</Bar>
+		</customHeader>
+		<content>
+			<VBox class="sapUiTinyMargin">
+			<List  items="{log>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
+							<ObjectListItem title="{log>name}" type="Active" press=".onNav(${log>})" number="{log>lnAmt}" numberUnit="INR">
+								<firstStatus>
+									<ObjectStatus text="{log>rem}"  state="Success"/>
+								</firstStatus>
+								<ObjectAttribute text="Ref No.: {log>refNo}"/>
+								<ObjectAttribute text="Loan Date: {log>lnDt}"/>
+								
+							</ObjectListItem>
+						</List>
+			</VBox>
+		</content>
+		<buttons>
+			<Button type="Ghost" text="Close" press="onClose" class="sapUiTinyMarginEnd"/>
+		</buttons>
+		<beginButton></beginButton>
+		<endButton></endButton>
+	</Dialog>
+</core:FragmentDefinition>
