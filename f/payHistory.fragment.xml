@@ -3,30 +3,35 @@
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="1">
 				<l:content>
-					
-					<Text text="Installment Date" class="sapUiSmallMarginTop bold" />
+					<Text text="Installment Date" class="sapUiSmallMarginTop bold"/>
 					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
 						<Text text="{path: 'cModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
-					
 					</HBox>
-					<Text text="Interest Period" class="sapUiSmallMarginTop bold" />
+					<Text text="Interest Period" class="sapUiSmallMarginTop bold"/>
 					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
 						<Text text="{path: 'cModel>intFrm', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 						<Text text="-" class="sapUiSmallMarginBeginEnd"/>
 						<Text text="{path: 'cModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 					</HBox>
-					
-						<Text text="Balance Principal" class="sapUiSmallMarginTop bold" />
+					<!--	<VBox>
+					<Text text="Balance Principal" class="sapUiSmallMarginTop bold" />
 					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
 						<Text text="{cModel>bPrA}"/>
 					
 					</HBox>
-					
+					</VBox>-->
+					<VBox visible="{=${cModel>apAmt}>0 ? true : false}">
+						<Text text="Advance Payment" class="sapUiSmallMarginTop bold"/>
+						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
+							<Text text="{cModel>apAmt}"/>
+						</HBox>
+					</VBox>
 					<Toolbar height="2rem" class="sapUiTinyMarginTop">
 						<Text text="Payment History" class="bold"/>
 					</Toolbar>
 					<t:Table rows="{cModel>hist/}" enableColumnReordering="false" visibleRowCount="5" selectionMode="None" showNoData="true"
-						enableCellFilter="true" class="sapUiSmallMarginBottom">
+						enableCellFilter="true" class="sapUiSmallMarginBottom"
+						rowActionCount="{ parts: [{ path: 'uModel>/adm' }, { path: 'config>/reversal' }], formatter: '.formatter.visReverse' }">
 						<t:columns>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
 								<Text text="Payment Date" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
@@ -34,19 +39,25 @@
 									<Text text="{cModel>payDate}"/>
 								</t:template>
 							</t:Column>
-							<!--	<t:Column sortProperty="UOM" filterProperty="UOM" hAlign="Start" resizable="false">
-								<Text text="EMI" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
-								<t:template>
-									<Text text="{oDialogModel>emi}"/>
-								</t:template>
-							</t:Column>-->
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
 								<Text text="Amount Paid" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
-									<Text text="{cModel>amt}"/>
+									<HBox >
+										<Text text="{=Number(${cModel>amt})+Number(${cModel>apAmt}||0)}"/>
+										<core:Icon src="sap-icon://information" press=".showAPInfo($event,'Advance Payment: Rs.'+${cModel>apAmt})" class="sapUiMediumMarginBegin"
+											visible="{=Number(${cModel>apAmt})>0 ? true : false}"/>
+										<core:Icon src="sap-icon://information" press=".showAPInfo($event,'Balance reduced from Advance Amount: Rs.'+ (-${cModel>apAmt}))"
+											class="sapUiMediumMarginBegin" visible="{ parts: [{ path: 'cModel>amt' }, { path: 'cModel>apAmt' }], formatter: '.formatter.visBR' }"/>
+									</HBox>
 								</t:template>
 							</t:Column>
 						</t:columns>
+						<t:rowActionTemplate >
+							<t:RowAction>
+								<t:RowActionItem icon="sap-icon://undo" press=".onRevPay(${cModel>crtDt})"
+									visible="{ parts: [{ path: 'cModel>amt' }, { path: 'cModel>apAmt' },{ path: 'cModel>rflg' }], formatter: '.formatter.enableReverse' }"/>
+							</t:RowAction>
+						</t:rowActionTemplate>
 					</t:Table>
 				</l:content>
 			</l:Grid>
