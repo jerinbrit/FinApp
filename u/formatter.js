@@ -13,7 +13,9 @@ sap.ui.define([], function() {
 		},
 
 		fillGArr: function() {
-			var arr = ["Anklet", "Bangle", "Bracelet", "Chain", "Ear Ring", "Necklace", "Ring", "Other"];
+			var arr = ["Anklet", "Anklet (916)", "Bangle", "Bangle (916)", "Bracelet", "Bracelet (916)", "Chain", "Chain (916)", "Ear Ring",
+				"Ear Ring (916)", "Necklace", "Necklace (916)", "Ring", "Ring (916)", "Other", "Other (916)"
+			];
 			var rArr = [];
 			arr.forEach(function(e) {
 				rArr.push({
@@ -37,7 +39,7 @@ sap.ui.define([], function() {
 				instDet = ctrl.generateLoanData(instDet, false, this).arr;
 				var obj = ctrl.setStatus_f(lnCls, instDet);
 				this.getParent().getSecondStatus().setState(obj.status);
-				this.getParent().getAttributes()[1].setText(obj.instDateText);
+				this.getParent().getAttributes()[2].setText(obj.instDateText);
 
 				return obj.statusText;
 
@@ -604,13 +606,12 @@ sap.ui.define([], function() {
 			return retObj;
 
 		},
-		
-		visReverse:function(adm,rev){
+
+		visReverse: function(adm, rev) {
 			var cData = this.cModel.getData();
-			if((adm || rev) && !cData.lnCls && !cData.lnRen)
-				{
-					return 1;
-				}
+			if ((adm || rev) && !cData.lnCls && !cData.lnRen) {
+				return 1;
+			}
 			return 0;
 		},
 
@@ -633,15 +634,13 @@ sap.ui.define([], function() {
 			return false;
 
 		},
-		
-		visBR:function(amt, apamt)
-			{
-				if((Number(amt) + Number(apamt))==0 && Number(apamt)<0)
-					{
-						return true;
-					}
-				return false;
-			},
+
+		visBR: function(amt, apamt) {
+			if ((Number(amt) + Number(apamt)) == 0 && Number(apamt) < 0) {
+				return true;
+			}
+			return false;
+		},
 
 		setLnExpTxt: function(lnDt, lnDur, flg, payDate) {
 
