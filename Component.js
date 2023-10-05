@@ -11,19 +11,33 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		/**
-		 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
-		 * @public
-		 * @override
-		 */
 		init: function() {
-				
-			// call the base component's init function
-			UIComponent.prototype.init.apply(this, arguments);
 
+			UIComponent.prototype.init.apply(this, arguments);
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
-				this.getRouter().initialize();
+			this.getRouter().initialize();
+			FabFinV3.fy = 0;
+			FabFinV3.ExpType = [{
+				key: "",
+				text: "--Select--"
+			}, {
+				key: "1",
+				text: "Infrastructure"
+			}, {
+				key: "2",
+				text: "Hardware"
+			}, {
+				key: "3",
+				text: "Internet"
+			}, {
+				key: "4",
+				text: "Travel"
+			}, {
+				key: "5",
+				text: "Salary"
+			}]
+
 		}
 	});
 });
