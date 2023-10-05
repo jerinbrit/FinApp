@@ -1,0 +1,73 @@
+<mvc:View controllerName="FabFinV3.c.Exp" displayBlock="true" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+	<App>
+		<pages>
+			<Page title="Expense" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
+				<customHeader>
+					<Bar>
+						<contentLeft>
+							<VBox>
+								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiSmallMarginBegin"/>
+							</VBox>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press="onTestRun" visible="false" class="sapUiMediumMarginBegin"/>
+						</contentLeft>
+						<contentMiddle>
+							<Title text="Expense" titleStyle="H4"/>
+						</contentMiddle>
+					</Bar>
+				</customHeader>
+				<content>
+					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
+						<VBox>
+							<Label text="Exp. Type:"/>
+							<Select id="idExpTyp" items="{etModel>/}" width="100%">
+								<core:Item key="{etModel>key}" text="{etModel>text}"/>
+							</Select>
+							<layoutData>
+								<l:GridData span="L3 M4 S6"/>
+							</layoutData>
+						</VBox>
+						<VBox>
+							<Label text="Description:"/>
+							<Input id="idExpDesc" width="100%"/>
+							<layoutData>
+								<l:GridData span="L3 M4 S6"/>
+							</layoutData>
+						</VBox>
+						<VBox>
+							<Label text="Date:"/>
+							<DatePicker id="idExpDate" width="100%" class="classDt" valueFormat="MMM dd,yyyy"/>
+							<layoutData>
+								<l:GridData span="L3 M4 S6"/>
+							</layoutData>
+						</VBox>
+						<VBox>
+							<Label text="Amount:"/>
+							<Input id="idExpAmt" width="100%" typr="Number"/>
+							<layoutData>
+								<l:GridData span="L3 M4 S6"/>
+							</layoutData>
+						</VBox>
+						<Toolbar class="sapUiSmallMarginTop">
+							<Label text="Total Expense:" class="bold"/>
+							<Text id="idTotTxt" class="bold"/>
+							<ToolbarSpacer/>
+							<Button type="Accept" text="Add" icon="sap-icon://create-form" press="onAddExp"/>
+						</Toolbar>
+						<List id="idList" items="{eModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
+							<ObjectListItem title="{eModel>desc}" number="{eModel>amt}" numberUnit="INR">
+								<firstStatus>
+									<ObjectStatus text="{path:'eModel>typ',formatter:'.getTypDesc'}"/>
+								</firstStatus>
+								<secondStatus>
+									<ObjectStatus icon="sap-icon://delete" active="true" press="onDelExp"/>
+								</secondStatus>
+								<ObjectAttribute text="Date: {eModel>dat}"/>
+							</ObjectListItem>
+						</List>
+					</l:Grid>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
