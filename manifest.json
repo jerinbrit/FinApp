@@ -53,7 +53,9 @@
 				"sap.collaboration": {},
 				"sap.ui.comp": {},
 				"sap.uxap": {},
-				"sap.ui.table": {}
+				"sap.ui.table": {},
+				"sap.viz.ui5":{},
+				"sap.suite":{}
 			}
 		},
 		"contentDensities": {
@@ -142,11 +144,7 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "cs/cropper.min.css"
-			}, {
-				"uri": "cs/style.css"
-			}],
+			"css": [],
 			"js": [{
 				"uri": "l/cropper.min.js"
 			}, {
