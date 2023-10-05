@@ -9,7 +9,7 @@
 						<Title text="User ID" titleStyle="H4"/>
 						<Input id="idInpUsr"/>
 						<Title text="Password" titleStyle="H4"/>
-						<Input id="idInpPswd" type="Password"/>
+						<Input id="idInpPswd" type="Password" change="onLogin"/>
 						<Button icon="sap-icon://visits" type="Accept" text="Login" press="onLogin" class="sapUiTinyMarginTop" />
 					</VBox>
 				
