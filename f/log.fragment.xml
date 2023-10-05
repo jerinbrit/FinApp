@@ -4,7 +4,7 @@
 			<Bar>
 			
 				<contentMiddle>
-					<DatePicker id="idLogDt" class= "classDt"  width="10rem" change="fetchLogData"/>
+					<DatePicker id="idLogDt" class= "classDt"  width="10rem" change="fetchLogData" valueFormat="MMM dd,yyyy"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>
