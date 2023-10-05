@@ -1,0 +1,161 @@
+<mvc:View controllerName="FabFinV3.c.DB" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:mc="sap.suite.ui.microchart" xmlns:viz="sap.viz.ui5.controls"
+	xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds" xmlns:viz.data="sap.viz.ui5.data">
+	<App>
+		<pages>
+			<Page title="DB" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
+				<customHeader>
+					<Bar>
+						<contentLeft>
+							<VBox>
+								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiSmallMarginBegin"/>
+							</VBox>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press="onTestRun" visible="false" class="sapUiMediumMarginBegin"/>
+						</contentLeft>
+						<contentMiddle>
+							<Select id="idSelDB" items="{lModel>/}" selectedKey="ytd" change="onChangeDB">
+								<core:Item key="{lModel>key}" text="{lModel>text}"/>
+							</Select>
+						</contentMiddle>
+					</Bar>
+				</customHeader>
+				<content>
+					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5" height="100%">
+						<VBox height="10rem" alignItems="Center">
+							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
+								<Title text="Revenue" class="bold"/>
+								<Text text="Rs. {path: 'dModel>/rev', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="green"/>
+							</VBox>
+							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
+								<Title text="Expense" class="bold"/>
+								<Text text="Rs. {path: 'dModel>/exp', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="blue"/>
+							</VBox>
+							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
+								<Title text="Waived off" class="bold"/>
+								<Text text="Rs. {path: 'dModel>/def', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="red"/>
+							</VBox>
+							<layoutData>
+								<l:GridData span="L6 M6 S6"/>
+							</layoutData>
+						</VBox>
+						<VBox height="10rem" alignItems="Center" justifyContent="Center" class="classVZVB">
+							<Title text="Margin" class="bold"/>
+							<mc:HarveyBallMicroChart size="M" total="100" showTotal="false" class="sapUiSmallMargin sapUiLargeMarginBegin">
+								<mc:items>
+									<mc:HarveyBallMicroChartItem fraction="{dModel>/mgnVal}" fractionLabel="{dModel>/mgn}" color="{dModel>/color}" fractionScale="%"/>
+								</mc:items>
+							</mc:HarveyBallMicroChart>
+							<layoutData>
+								<l:GridData span="L6 M6 S6"/>
+							</layoutData>
+						</VBox>
+						<viz:Popover id="idPopOver"></viz:Popover>
+						<VBox visible="{=${dModel>/lnAmtDB}.length>0 ? true : false}" class="classVZVB">
+							<FlexBox justifyContent="Center">
+								<Title text="Amount Disbursed:" class="bold classVZTit"/>
+								<Title text="Rs. {path: 'dModel>/lamtTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+									class="classVZTit sapUiTinyMarginBegin"/>
+							</FlexBox>
+							<viz:VizFrame id="idAmtVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut' selectData=".onSelectVF($event,'idAmtVF')">
+								<viz:dataset>
+									<viz.data:FlattenedDataset data="{dModel>/lnAmtDB}">
+										<viz.data:dimensions>
+											<viz.data:DimensionDefinition name="Status" value="{dModel>dim}"/>
+										</viz.data:dimensions>
+										<viz.data:measures>
+											<viz.data:MeasureDefinition name="Total" value="{dModel>mes}"/>
+										</viz.data:measures>
+									</viz.data:FlattenedDataset>
+								</viz:dataset>
+								<viz:feeds>
+									<viz.feeds:FeedItem uid="size" type="Measure" values="Total"/>
+									<viz.feeds:FeedItem uid="color" type="Dimension" values="Status"/>
+								</viz:feeds>
+							</viz:VizFrame>
+							<layoutData>
+								<l:GridData span="L4 M6 S12"/>
+							</layoutData>
+						</VBox>
+						<VBox visible="{=${dModel>/accDB}.length>0 ? true : false}" class="classVZVB">
+							<FlexBox justifyContent="Center">
+								<Title text="Total Accounts:" class="bold classVZTit"/>
+								<Title text="{path: 'dModel>/accTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+									class="classVZTit sapUiTinyMarginBegin"/>
+							</FlexBox>
+							<viz:VizFrame id="idAccVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut'>
+								<viz:dataset>
+									<viz.data:FlattenedDataset data="{dModel>/accDB}">
+										<viz.data:dimensions>
+											<viz.data:DimensionDefinition name="Status" value="{dModel>dim}"/>
+										</viz.data:dimensions>
+										<viz.data:measures>
+											<viz.data:MeasureDefinition name="Total" value="{dModel>mes}"/>
+										</viz.data:measures>
+									</viz.data:FlattenedDataset>
+								</viz:dataset>
+								<viz:feeds>
+									<viz.feeds:FeedItem uid="size" type="Measure" values="Total"/>
+									<viz.feeds:FeedItem uid="color" type="Dimension" values="Status"/>
+								</viz:feeds>
+							</viz:VizFrame>
+							<layoutData>
+								<l:GridData span="L4 M6 S12"/>
+							</layoutData>
+						</VBox>
+						<VBox visible="{=${dModel>/expDB}.length>0 ? true : false}" class="classVZVB">
+							<FlexBox justifyContent="Center">
+								<Title text="Total Expense:" class="bold classVZTit"/>
+								<Title text="Rs. {path: 'dModel>/expTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+									class="classVZTit sapUiTinyMarginBegin"/>
+							</FlexBox>
+							<viz:VizFrame id="idExpVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut'>
+								<viz:dataset>
+									<viz.data:FlattenedDataset data="{dModel>/expDB}">
+										<viz.data:dimensions>
+											<viz.data:DimensionDefinition name="Status" value="{dModel>dim}"/>
+										</viz.data:dimensions>
+										<viz.data:measures>
+											<viz.data:MeasureDefinition name="Total" value="{dModel>mes}"/>
+										</viz.data:measures>
+									</viz.data:FlattenedDataset>
+								</viz:dataset>
+								<viz:feeds>
+									<viz.feeds:FeedItem uid="size" type="Measure" values="Total"/>
+									<viz.feeds:FeedItem uid="color" type="Dimension" values="Status"/>
+								</viz:feeds>
+							</viz:VizFrame>
+							<layoutData>
+								<l:GridData span="L4 M6 S12"/>
+							</layoutData>
+						</VBox>
+						<VBox visible="{=${dModel>/sumDB}.length>0 ? true : false}" class="classVZVB">
+							<FlexBox justifyContent="Center">
+								<Title text="Summary" class="bold classVZTit"/>
+							</FlexBox>
+							<viz:VizFrame id="idSumVF" uiConfig="{applicationSet:'fiori'}" height='90rem' width="100%" vizType='dual_horizontal_combination'>
+								<viz:dataset>
+									<viz.data:FlattenedDataset data="{dModel>/sumDB}">
+										<viz.data:dimensions>
+											<viz.data:DimensionDefinition name="Month" value="{dModel>dim}"/>
+										</viz.data:dimensions>
+										<viz.data:measures>
+											<viz.data:MeasureDefinition name="Revenue" value="{dModel>rev}"/>
+											<viz.data:MeasureDefinition name="Expense" value="{dModel>exp}"/>
+											<viz.data:MeasureDefinition name="Margin" value="{dModel>mgn}"/>
+										</viz.data:measures>
+									</viz.data:FlattenedDataset>
+								</viz:dataset>
+								<viz:feeds>
+									<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Revenue,Expense"/>
+									<!--	<viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Expense"/>-->
+									<viz.feeds:FeedItem uid="valueAxis2" type="Measure" values="Margin"/>
+									<viz.feeds:FeedItem id="feedCategoryAxis" uid="categoryAxis" type="Dimension" values="Month"/>
+								</viz:feeds>
+							</viz:VizFrame>
+						</VBox>
+					</l:Grid>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
