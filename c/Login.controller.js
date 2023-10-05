@@ -26,51 +26,16 @@ sap.ui.define([
 				aflg = userid.substr(0, 1).charCodeAt() === Number(atob("NjU=")) ? true : false;
 			} catch (err) {}
 			var pswd = this.byId("idInpPswd").getValue().trim();
-			var ekey = "";
-			var dk = {
-				0: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 6) : String.fromCharCode(e.charCodeAt() + 16)
-				},
-				1: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 22) : String.fromCharCode(e.charCodeAt() + 37)
-				},
-				2: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() - 20) : String.fromCharCode(e.charCodeAt() + 16)
-				},
-				3: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 41) : String.fromCharCode(e.charCodeAt() + 32)
-				},
-				4: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 10) : String.fromCharCode(e.charCodeAt() + 1)
-				},
-				5: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() - 5) : String.fromCharCode(e.charCodeAt() - 40)
-				},
-				6: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 8) : String.fromCharCode(e.charCodeAt() - 18)
-				},
-				7: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() - 32) : String.fromCharCode(e.charCodeAt() - 22)
-				},
-				8: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 45) : String.fromCharCode(e.charCodeAt() - 17)
-				},
-				9: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 17) : String.fromCharCode(e.charCodeAt() + 5)
-				},
-				10: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() - 31) : String.fromCharCode(e.charCodeAt() + 29)
-				},
-				11: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() - 6) : String.fromCharCode(e.charCodeAt() + 68)
-				},
-				12: (e) => {
-					ekey += aflg ? String.fromCharCode(e.charCodeAt() + 26) : String.fromCharCode(e.charCodeAt() + 2)
-				}
-			};
+			var ekey = "",
+				kArr = [
+					[6, 22, -20, 41, 10, -5, 8, -32, 45, 17, -31, -6, 26],
+					[16, 37, 16, 32, 1, -40, -18, -22, -17, 5, 29, 68, 2]
+				];
+
 			(userid + pswd).split("").forEach(function(e, key) {
 				try {
-					dk[key](e);
+					ekey += aflg ? String.fromCharCode(e.charCodeAt() + kArr[0][key]) : String.fromCharCode(e.charCodeAt() + kArr[1][key])
+
 				} catch (err) {}
 
 			});
@@ -133,13 +98,13 @@ sap.ui.define([
 
 					MessageToast.show("Logged in Successfully.");
 					that.setCookie(user, key);
-					if(window.mainsha){
-						window.mainsha="";
+					if (window.mainsha) {
+						window.mainsha = "";
 					}
-					if(window.custsha){
-						window.custsha="";
+					if (window.custsha) {
+						window.custsha = "";
 					}
-					
+
 					that.onNav();
 				},
 				error: function(oError) {
