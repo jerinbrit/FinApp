@@ -38,11 +38,11 @@
 	},
 
 	"sap.ui5": {
-	 "rootView": {
-            "viewName": "FabFinV3.v.App",
-            "type": "XML",
-            "async": true
-        },
+		"rootView": {
+			"viewName": "FabFinV3.v.App",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"minUI5Version": "1.42.0",
 			"libs": {
@@ -53,8 +53,7 @@
 				"sap.collaboration": {},
 				"sap.ui.comp": {},
 				"sap.uxap": {},
-				"sap.ui.table":{},
-				"sap.ui.unified":{}
+				"sap.ui.table": {}
 			}
 		},
 		"contentDensities": {
@@ -69,67 +68,90 @@
 				}
 			}
 		},
-        "routing": {
-            "config": {
-                "routerClass": "sap.m.routing.Router",
-                "viewType": "XML",
-                "viewPath": "FabFinV3.v",
-                "controlId": "app",
-                "controlAggregation": "pages",
-                "bypassed": {
-                    "target": [
-                        "notFound"
-                    ]
-                },
-                "async": true
-            },
-            "routes": [{
-                    "pattern": "",
-                    "name": "login",
-                    "target": [
-                        "login"
-                    ]
-                },
-                {
-                    "pattern": "home",
-                    "name": "home",
-                    "target": [
-                        "home"
-                    ]
-                },
-                {
-                    "pattern": "cust/{custId}",
-                    "name": "customer",
-                    "target": [
-                        "customer"
-                    ]
-                }
-            ],
-            "targets": {
-            	"login": {
-                    "viewName": "Login",
-                    "viewId": "login",
-                    "viewLevel": 1
-                },
-                "home": {
-                    "viewName": "View1",
-                    "viewId": "home",
-                    "viewLevel": 2
-                },
-                "customer": {
-                    "viewName": "View2",
-                    "viewId": "cust",
-                    "viewLevel": 3
-                }
-            }
-        },
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "FabFinV3.v",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": [
+						"notFound"
+					]
+				},
+				"async": true
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "login",
+				"target": [
+					"login"
+				]
+			}, {
+				"pattern": "home",
+				"name": "home",
+				"target": [
+					"home"
+				]
+			}, {
+				"pattern": "cust/{custId}",
+				"name": "customer",
+				"target": [
+					"customer"
+				]
+			}, {
+				"pattern": "db",
+				"name": "db",
+				"target": [
+					"db"
+				]
+			},{
+				"pattern": "exp",
+				"name": "exp",
+				"target": [
+					"exp"
+				]
+			}],
+			"targets": {
+				"login": {
+					"viewName": "Login",
+					"viewId": "login",
+					"viewLevel": 1
+				},
+				"home": {
+					"viewName": "View1",
+					"viewId": "home",
+					"viewLevel": 2
+				},
+				"customer": {
+					"viewName": "View2",
+					"viewId": "cust",
+					"viewLevel": 3
+				},
+				"db": {
+					"viewName": "DB",
+					"viewId": "db",
+					"viewLevel": 3
+				},
+				"exp": {
+					"viewName": "Exp",
+					"viewId": "exp",
+					"viewLevel": 3
+				}
+			}
+		},
 		"resources": {
-				"js": [{
+			"css": [{
+				"uri": "cs/cropper.min.css"
+			}, {
+				"uri": "cs/style.css"
+			}],
+			"js": [{
 				"uri": "l/cropper.min.js"
 			}, {
 				"uri": "l/tesseract.min.js"
 			}]
-		
 		}
 	}
 }
