@@ -1,13 +1,21 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
 	<Popover placement="Bottom" showHeader="false">
-		<VBox justifyContent="Center" alignItems="Center" height="5rem">
+		<FlexBox justifyContent="Center" alignItems="Center">
 			<Text id="idUserLogged" class="sapUiTinyMarginTop"/>
-			<FlexBox jsutifyContent="Center" class="sapUiTinyMarginTop sapUiTinyMarginBeginEnd">
-				<Button type="Ghost" icon="sap-icon://key-user-settings" press="onUserConfig" visible="{uModel>/adm}" class="sapUiSmallMarginEnd"/>
-				<Button type="Ghost" icon="sap-icon://save" press="onBkpFile" visible="{=${uModel>/adm} || ${config>/bkp}}" class="sapUiSmallMarginEnd"/>
-				<Button type="Ghost" icon="sap-icon://play" press="onTestRun" visible="{=${uModel>/adm}}" class="sapUiSmallMarginEnd"/>
-				<Button type="Ghost" icon="sap-icon://log" text="" press="onLogOut"/>
-			</FlexBox>
+		</FlexBox>
+		<VBox justifyContent="Start" alignItems="Start" >
+			
+			<VBox jsutifyContent="Start" class="sapUiTinyMarginTop sapUiTinyMarginBeginEnd" visible="{uModel>/adm}">
+					<Button type="Ghost" width="10rem" icon="sap-icon://play" text="Test Mode" press="onTestRun" class="sapUiTinyMargin"/>
+					<Button type="Ghost" width="10rem" icon="sap-icon://expense-report" text="Expense" class="sapUiTinyMargin" press=".onNavTo('exp')"/>
+					<Button type="Ghost" width="10rem" icon="sap-icon://business-objects-experience" text="Dashboard" press=".onNavTo('db')"  class="sapUiTinyMargin"/>
+			</VBox>
+			<VBox jsutifyContent="Start" class=" sapUiTinyMarginBeginEnd">
+				<Button type="Ghost" width="10rem" icon="sap-icon://key-user-settings" press="onUserConfig" text="User Config" visible="{uModel>/adm}" class="sapUiTinyMargin"/>
+				<Button type="Ghost" width="10rem" icon="sap-icon://save" press="onBkpFile" text="Backup" visible="{=${uModel>/adm} || ${config>/bkp}}" class="sapUiTinyMargin"/>
+			<Button type="Ghost" width="10rem" icon="sap-icon://customer-history" press="onShowLog" text="Log" visible="{=${uModel>/adm} }" class="sapUiTinyMargin"/>
+				<Button type="Ghost" width="10rem" icon="sap-icon://log" press="onLogOut" text="Log out" class="sapUiTinyMargin"/>
+			</VBox>
 		</VBox>
 	</Popover>
 </core:FragmentDefinition>
