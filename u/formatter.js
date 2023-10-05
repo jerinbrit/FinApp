@@ -18,7 +18,8 @@ sap.ui.define([], function() {
 			arr.forEach(function(e) {
 				rArr.push({
 					name: e,
-					value: ""
+					value: "",
+					flg: false
 				});
 			});
 
@@ -450,6 +451,7 @@ sap.ui.define([], function() {
 					lPay: 0,
 					payDate: "",
 					amtPaid: 0,
+					apAmt: 0,
 					hist: [],
 					roi: tRoi
 				};
@@ -492,6 +494,7 @@ sap.ui.define([], function() {
 
 					if (new Date(data[j].payDate) <= new Date(pObj.fnPayDt) && new Date(data[j].payDate) >= new Date(pObj.instStDt)) {
 						pObj.amtPaid += Number(data[j].amt);
+						pObj.apAmt += Number(data[j].apAmt);
 						pObj.payDate = Number(data[j].amt) > 0 ? data[j].payDate : pObj.payDate;
 						pObj.hist.push(data[j]);
 						isLnClsd = (data[j].lnClsr || data[j].lnRen) ? true : false;
@@ -601,6 +604,44 @@ sap.ui.define([], function() {
 			return retObj;
 
 		},
+		
+		visReverse:function(adm,rev){
+			var cData = this.cModel.getData();
+			if((adm || rev) && !cData.lnCls && !cData.lnRen)
+				{
+					return 1;
+				}
+			return 0;
+		},
+
+		enableReverse: function(amt, apamt, rflg) {
+			var pDat = this.cModel.getData().payDet;
+			var pfa = false;
+			for (var i in pDat) {
+				if ((Number(pDat[i].amt) > 0 && Number(pDat[i].apAmt) < 0) && !pDat[i].rflg) {
+					pfa = true;
+				}
+			}
+			if (pfa) {
+				if (apamt > 0) {
+					return false;
+				}
+			}
+			if (!rflg && amt > 0) {
+				return true;
+			}
+			return false;
+
+		},
+		
+		visBR:function(amt, apamt)
+			{
+				if((Number(amt) + Number(apamt))==0 && Number(apamt)<0)
+					{
+						return true;
+					}
+				return false;
+			},
 
 		setLnExpTxt: function(lnDt, lnDur, flg, payDate) {
 
@@ -685,9 +726,9 @@ sap.ui.define([], function() {
 		},
 
 		readText: function(url, key) {
-				sap.ui.core.BusyIndicator.show(0);
+			sap.ui.core.BusyIndicator.show(0);
 			sap.ui.getCore().byId(key).setValue();
-		
+
 			(async() => {
 				try {
 					var worker = await Tesseract.createWorker({
@@ -706,7 +747,7 @@ sap.ui.define([], function() {
 						}
 					} = await worker.recognize(url);
 					sap.ui.getCore().byId(key).setValue(text);
-						sap.ui.core.BusyIndicator.hide();
+					sap.ui.core.BusyIndicator.hide();
 					await worker.terminate();
 				} catch (err) {
 					sap.ui.core.BusyIndicator.hide();
