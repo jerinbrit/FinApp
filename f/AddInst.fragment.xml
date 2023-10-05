@@ -3,6 +3,13 @@
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="1">
 				<l:content>
+					<VBox id="idAPamtHB" visible="false">
+						<HBox >
+							<Text text="Previous Advance Payment: Rs." class="bold"/>
+							<Text id="idAPamt" class="sapUiTinyMarginBegin bold"/>
+						</HBox>
+						<CheckBox id="idPFA" select="selPFA" text="Pay Interest from Advance"/>
+					</VBox>
 					<VBox>
 						<Text text="Payment Date:"/>
 						<DatePicker id="idPayDate" class="classDt" valueFormat="MMM dd,yyyy" change=".calAmtTD('1')"/>
@@ -13,13 +20,17 @@
 					<VBox>
 						<Text text="Amount Paid:"/>
 						<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
-						<HBox justifyContent="End">
+						<HBox justifyContent="End" visible="false">
 							<CheckBox id="idNtve" text="Reversal" visible="{=${uModel>/adm} || ${config>/reversal}}" select="calAmtTD"/>
 						</HBox>
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</VBox>
+				</l:content>
+			</l:Grid>
+			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="1" id="idLGrid">
+				<l:content>
 					<VBox visible="false">
 						<VBox id="idIntDetVB" visible="false">
 							<Text id="idIntDetTxt"/>
@@ -43,6 +54,16 @@
 						<VBox visible="{=${uModel>/adm} || ${config>/lr}}">
 							<Text text="Loan Renewal:" class="bold"/>
 							<CheckBox id="idCBR" select=".onSelLC($event,'R')"/>
+						</VBox>
+						<layoutData>
+							<l:GridData span="L4 M6 S6"/>
+						</layoutData>
+					</VBox>
+					<VBox id="idAPVB">
+						<VBox >
+							<Text text="Advance Payment:" class="bold"/>
+							<CheckBox id="idCBAP" select="onSelAP"/>
+							<Text id="idAPTxt"/>
 						</VBox>
 						<layoutData>
 							<l:GridData span="L4 M6 S6"/>
