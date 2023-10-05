@@ -4,18 +4,18 @@
 			<List items="{oDialogModel>/gDet/}" class="" width="100%" backgroundDesign="Transparent">
 				<CustomListItem>
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
-						<Label text="{oDialogModel>name}" class="sapUiTinyMarginTop">
+						<Label text="{oDialogModel>name}" class="sapUiTinyMarginTop" width="6rem">
 							<layoutData>
-								<l:GridData span="L5 M5 S5"/>
+								<l:GridData span="L6 M6 S6"/>
 							</layoutData>
 						</Label>
 						<Input value="{oDialogModel>value}" width="3rem" type="Number" class="sapUiSmallMarginEnd"
 							editable="{=${oDialogModel>edit} ? false : true }">
 							<layoutData>
-								<l:GridData span="L3 M3 S3"/>
+								<l:GridData span="L6 M6 S6"/>
 							</layoutData>
 						</Input>
-						<CheckBox text="916" selected="{oDialogModel>flg}" editable="{=${oDialogModel>edit} ? false : true }">
+						<CheckBox text="916" selected="{oDialogModel>flg}" editable="{=${oDialogModel>edit} ? false : true }" visible="false">
 							<layoutData>
 								<l:GridData span="L4 M4 S4"/>
 							</layoutData>
