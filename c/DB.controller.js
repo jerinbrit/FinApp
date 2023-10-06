@@ -196,9 +196,9 @@ sap.ui.define([
 			obj.expTit = key.exp;
 
 			this.dModel.setData(obj);
-			this.setVizProp(this.byId("idAccVF"), "Total Accounts: " + key.acc, true);
-			this.setVizProp(this.byId("idAmtVF"), "Disbursed Amount: " + key.lamt);
-			this.setVizProp(this.byId("idExpVF"), "Total Expense: " + key.exp);
+			this.setVizProp(this.byId("idAccVF"), ["#6bbd6b","#e36968","#ffa556","#629fcb"], true);
+			this.setVizProp(this.byId("idAmtVF"), ["#00a64c","#d4c44e"]);
+			this.setVizProp(this.byId("idExpVF"), ["#95dd91","#ba90dc","#ffc186","#ddd990","#d95e01","#6bbd6b","#e36968","#ffa556","#629fcb","#b8a1e7"]);
 			this.setSumVizProp(this.byId("idSumVF"), "Summary");
 
 			function fil(arr, d, m) {
@@ -219,14 +219,14 @@ sap.ui.define([
 						visible: true,
 						formatString: formatPattern.SHORTFLOAT_MFD2,
 						renderer: function(val) {
-							val.text = val['info'].key === "Margin" ? val.text + "%" : "Rs. " + val.text;
+							val.text = val['info'].key === "Margin" ? val.text + "%" : "Rs." + val.text;
 						}
 					},
 					dataShape: {
 						primaryAxis: ["bar", "bar", "line"]
 					},
 					drawingEffect: "glossy",
-					primaryValuesColorPalette: ["#66cdaa", "#ff7f50"],
+					primaryValuesColorPalette: ["#008f91", "#e57872"],
 					secondaryValuesColorPalette: ["#1e90ff"]
 				},
 				title: {
@@ -275,7 +275,7 @@ sap.ui.define([
             oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
 		},
 
-		setVizProp: function(vf, tit, nf) {
+		setVizProp: function(vf, clr, nf) {
 			Format.numericFormatter(ChartFormatter.getInstance());
 			var formatPattern = ChartFormatter.DefaultPattern;
 			vf.setVizProperties({
@@ -289,10 +289,9 @@ sap.ui.define([
 						}
 					},
 					drawingEffect: "glossy",
-					colorPalette: ["#3cb371", "#ff7f50", "#ffd700", "#4d92d7", "#9370db"]
+					colorPalette: clr
 				},
 				title: {
-					text: tit,
 					visible: false
 				},
 				valueAxis: {
