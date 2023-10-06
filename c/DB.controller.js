@@ -142,10 +142,9 @@ sap.ui.define([
 
 		},
 		
-		onChangeDB:function(oEvent){/*
+		onChangeDB:function(oEvent){
 			this.setdbModel(oEvent.getSource().getSelectedKey());
-			var dbd = this.dbd[this.byId("idSelDB").getSelectedKey()];
-		*/},
+		},
 
 		setdbModel: function(key) {
 			key = this.dbd[key];
