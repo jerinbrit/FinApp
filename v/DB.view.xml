@@ -23,15 +23,15 @@
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5" height="100%">
 						<VBox height="10rem" alignItems="Center">
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
-								<Title text="Revenue" class="bold"/>
+								<Title text="Revenue" class=""/>
 								<Text text="Rs. {path: 'dModel>/rev', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="green"/>
 							</VBox>
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
-								<Title text="Expense" class="bold"/>
+								<Title text="Expense" class=""/>
 								<Text text="Rs. {path: 'dModel>/exp', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="blue"/>
 							</VBox>
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
-								<Title text="Waived off" class="bold"/>
+								<Title text="Waived off" class=""/>
 								<Text text="Rs. {path: 'dModel>/def', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="red"/>
 							</VBox>
 							<layoutData>
@@ -39,7 +39,7 @@
 							</layoutData>
 						</VBox>
 						<VBox height="10rem" alignItems="Center" justifyContent="Center" class="classVZVB">
-							<Title text="Margin" class="bold"/>
+							<Title text="Margin" class=""/>
 							<mc:HarveyBallMicroChart size="M" total="100" showTotal="false" class="sapUiSmallMargin sapUiLargeMarginBegin">
 								<mc:items>
 									<mc:HarveyBallMicroChartItem fraction="{dModel>/mgnVal}" fractionLabel="{dModel>/mgn}" color="{dModel>/color}" fractionScale="%"/>
