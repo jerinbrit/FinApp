@@ -13,7 +13,7 @@
 			<VBox jsutifyContent="Start" class=" sapUiTinyMarginBeginEnd">
 				<Button type="Ghost" width="10rem" icon="sap-icon://key-user-settings" press="onUserConfig" text="User Config" visible="{uModel>/adm}" class="sapUiTinyMargin"/>
 				<Button type="Ghost" width="10rem" icon="sap-icon://save" press="onBkpFile" text="Backup" visible="{=${uModel>/adm} || ${config>/bkp}}" class="sapUiTinyMargin"/>
-			<Button type="Ghost" width="10rem" icon="sap-icon://customer-history" press="onShowLog" text="Log" visible="{=${uModel>/adm} }" class="sapUiTinyMargin"/>
+			<Button type="Ghost" width="10rem" icon="sap-icon://customer-history" press="onShowLog" text="Activity" visible="{=${uModel>/adm} }" class="sapUiTinyMargin"/>
 				<Button type="Ghost" width="10rem" icon="sap-icon://log" press="onLogOut" text="Log out" class="sapUiTinyMargin"/>
 			</VBox>
 		</VBox>
