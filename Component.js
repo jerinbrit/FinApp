@@ -36,7 +36,13 @@ sap.ui.define([
 			}, {
 				key: "5",
 				text: "Salary"
-			}]
+			},{
+				key: "6",
+				text: "Utilities"
+			},{
+				key: "7",
+				text: "Miscellaneous"
+			}];
 
 		}
 	});
