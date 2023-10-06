@@ -17,7 +17,7 @@ sap.ui.define([
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 			this.getRouter().initialize();
-			FabFinV3.fy = 0;
+			FabFinV3.fy = 3;
 			FabFinV3.ExpType = [{
 				key: "",
 				text: "--Select--"
