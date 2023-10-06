@@ -284,7 +284,7 @@ sap.ui.define([
 						visible: true,
 						formatString: formatPattern.SHORTFLOAT_MFD2,
 						renderer: function(val) {
-							val.text = nf ? val.text : "Rs. " + val.text;
+							val.text = nf ? val.text : "Rs." + val.text;
 						}
 					},
 					drawingEffect: "glossy",
