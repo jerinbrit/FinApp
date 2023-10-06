@@ -178,7 +178,7 @@ sap.ui.define([
 					}
 				}
 			});
-			key.m.reverse().forEach(function(e) {
+			key.m.forEach(function(e) {
 				tObj = {};
 				tObj.dim = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "MMM yyyy"
@@ -414,11 +414,11 @@ sap.ui.define([
 							while (ytd[ky].length < 12 && oy[Object.keys(oy)[Object.keys(oy).indexOf(String(io)) - 1]]) {
 								ytd[ky].push(oy[Object.keys(oy)[Object.keys(oy).indexOf(String(io)) - 1]][ky][z]), z--;
 							}
-							ytd[ky].reverse();
 						} catch (err) {}
 					}
 
 				});
+				oy[io]["m"].reverse();
 
 				Object.keys(lac).forEach(function(e) {
 					oy[io]["acc"]++, oy[io]["lamt"] += lac[e];
