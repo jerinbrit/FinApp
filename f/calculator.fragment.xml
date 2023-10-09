@@ -1,0 +1,38 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog title="Interest Calculator" class="sapUiSizeCompact" initialFocus="done">
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<FlexBox alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Principal:"></Label>
+					<Input type="Number" id="idInpP" width="8rem" class="sapUiTinyMarginBegin" change="calIntVal"/>
+				</FlexBox>
+				<FlexBox alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Interest Rate:"></Label>
+					<Input type="Number" id="idInpI" width="8rem" class="sapUiTinyMarginBegin" change="calIntVal"/>
+				</FlexBox>
+				<FlexBox alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Term:"></Label>
+				</FlexBox>
+				<FlexBox alignItems="Center" justifyContent="SpaceBetween">
+					<Select id="idNtyp" change="onChangeTm" width="8rem">
+						<core:Item key="1" text="Years"/>
+						<core:Item key="2" text="Months"/>
+						<core:Item key="3" text="Days"/>
+					</Select>
+					<Input type="Number" id="idInpN" width="8rem" class="sapUiTinyMarginBegin" showValueHelp="false" valueHelpRequest="onValHelp" change="calIntVal"/>
+				</FlexBox>
+				<FlexBox alignItems="End" justifyContent="End" class="sapUiSmallMarginTop">
+					<Button text="Calculate" press="calIntVal"/>
+				</FlexBox>
+				<FlexBox alignItems="Center" justifyContent="Center" class="sapUiSmallMarginTop">
+					<Label id="idIntVal" text="" class="bold green"></Label>
+				</FlexBox>
+			</VBox>
+		</content>
+		<buttons>
+			<Button type="Ghost" text="Close" press="onClCalc" class="sapUiTinyMarginEnd"/>
+		</buttons>
+		<beginButton></beginButton>
+		<endButton></endButton>
+	</Dialog>
+</core:FragmentDefinition>
