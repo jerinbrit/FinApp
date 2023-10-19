@@ -628,7 +628,7 @@ sap.ui.define([], function() {
 					return false;
 				}
 			}
-			if (!rflg && amt > 0) {
+			if (!rflg && (amt > 0 || apamt>0)) {
 				return true;
 			}
 			return false;
