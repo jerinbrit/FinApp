@@ -133,7 +133,7 @@ sap.ui.define([], function() {
 
 					var pendPyObj = ciObj,
 						pendPayDate;
-					if (currDate >= ciObj.instDt) {
+					if (currDate > ciObj.instDt) {
 
 						var pi = dc - ci;
 
