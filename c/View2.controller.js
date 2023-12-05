@@ -350,6 +350,8 @@ sap.ui.define([
 			data.payDet.forEach(function(e) {
 				totAmt += Number(e.amt);
 			});
+			
+			totAmt+=Number(data.advAmt||0);
 
 			var lnAmt = Number(data.lnAmt);
 
@@ -535,7 +537,7 @@ sap.ui.define([
 				}
 
 				amtToPay = ((curDtObj.prA - Number(sap.ui.getCore().byId("idAPamt").getText())) + Number(othrAmt) + intTD - curDtObj.amtPaid);
-			} else if (sap.ui.getCore().byId("idCBR").getSelected()){
+			} else if (sap.ui.getCore().byId("idCBR").getSelected()) {
 				//	var lnEndDate = this.formatter.getLnEdDt(new Date(cData.lnDt),Number(cData.lnDur));
 				if (!cData.instDet[Number(cData.lnDur) - 1] || Number(sap.ui.getCore().byId("idAPamt").getText()) > 0) {
 					MessageBox.error("Loan renewal not possible");
@@ -676,6 +678,10 @@ sap.ui.define([
 
 				if (othrAmt < 0) {
 					cData.defAmt += (-othrAmt);
+				}
+
+				if (Number(sap.ui.getCore().byId("idAPamt").getText()) > 0) {
+					cData.advAmt = Number(sap.ui.getCore().byId("idAPamt").getText());
 				}
 
 			}
