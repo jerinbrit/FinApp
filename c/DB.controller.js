@@ -141,15 +141,15 @@ sap.ui.define([
 			});
 
 		},
-		
-		onChangeDB:function(oEvent){
+
+		onChangeDB: function(oEvent) {
 			this.setdbModel(oEvent.getSource().getSelectedKey());
 		},
 
 		setdbModel: function(key) {
 			key = this.dbd[key];
 			var obj = {};
-			obj.rev = (key.amtp - key.clam);
+			obj.rev = ((key.amtp + key.adAmtf) - key.clam);
 			obj.exp = key.exp;
 			obj.mgn = obj.rev ? ((obj.rev - obj.exp) / obj.rev) * 100 : 0;
 			obj.def = key.amtd
@@ -162,9 +162,16 @@ sap.ui.define([
 			key.ga ? fil(obj.accDB, "Auctioned", (key.ga)) : null;
 			key.ren ? fil(obj.accDB, "Renewed", (key.ren)) : null;
 
-			fil(obj.lnAmtDB, "Pending", (key.lamt - key.clam - key.ram));
-			fil(obj.lnAmtDB, "Repayment", (key.clam));
+			//	fil(obj.lnAmtDB, "Pending", (key.lamt - key.clam - key.ram));
+			//	fil(obj.lnAmtDB, "Repayment", (key.clam));
 			//	(key.amtp - key.clam) > 0 ? fil(obj.lnAmtDB, "Interest", (key.amtp - key.clam)) : null;
+
+			//new 
+
+			fil(obj.lnAmtDB, "Pending", (key.lamt - key.clam - key.ram - key.adAmt));
+			fil(obj.lnAmtDB, "Repayment", (key.clam + key.adAmt));
+
+			//new
 
 			var tObj = {};
 			(key.expa || []).forEach(function(e) {
@@ -183,7 +190,7 @@ sap.ui.define([
 				tObj.dim = sap.ui.core.format.DateFormat.getDateInstance({
 					pattern: "MMM yyyy"
 				}).format(e.id);
-				tObj.rev = (e.amtp - e.clam);
+				tObj.rev = ((e.amtp + e.adAmtf) - e.clam);
 				tObj.exp = e.exp;
 				tObj.mgn = tObj.rev ? ((tObj.rev - tObj.exp) / tObj.rev) * 100 : 0;
 				tObj.mgn = Math.round(tObj.mgn > 100 ? 100 : tObj.mgn < -100 ? -100 : tObj.mgn);
@@ -195,9 +202,11 @@ sap.ui.define([
 			obj.expTit = key.exp;
 
 			this.dModel.setData(obj);
-			this.setVizProp(this.byId("idAccVF"), ["#6bbd6b","#e36968","#ffa556","#629fcb"], true);
-			this.setVizProp(this.byId("idAmtVF"), ["#00a64c","#d4c44e"]);
-			this.setVizProp(this.byId("idExpVF"), ["#95dd91","#ba90dc","#ffc186","#ddd990","#d95e01","#6bbd6b","#e36968","#ffa556","#629fcb","#b8a1e7"]);
+			this.setVizProp(this.byId("idAccVF"), ["#6bbd6b", "#e36968", "#ffa556", "#629fcb"], true);
+			this.setVizProp(this.byId("idAmtVF"), ["#00a64c", "#d4c44e"]);
+			this.setVizProp(this.byId("idExpVF"), ["#95dd91", "#ba90dc", "#ffc186", "#ddd990", "#d95e01", "#6bbd6b", "#e36968", "#ffa556",
+				"#629fcb", "#b8a1e7"
+			]);
 			this.setSumVizProp(this.byId("idSumVF"), "Summary");
 
 			function fil(arr, d, m) {
@@ -268,10 +277,10 @@ sap.ui.define([
 					}
 				}
 			});
-			
+
 			var oPopOver = this.getView().byId("idPopOver");
-            oPopOver.connect(vf.getVizUid());
-            oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
+			oPopOver.connect(vf.getVizUid());
+			oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
 		},
 
 		setVizProp: function(vf, clr, nf) {
@@ -284,7 +293,7 @@ sap.ui.define([
 						visible: true,
 						formatString: formatPattern.SHORTFLOAT_MFD2,
 						renderer: function(val) {
-							val.text = nf ? val.text : "Rs." + val.text;
+							val.text = nf ? val.text : "Rs. " + val.text;
 						}
 					},
 					drawingEffect: "glossy",
@@ -320,8 +329,8 @@ sap.ui.define([
 			});
 
 			var oPopOver = this.getView().byId("idPopOver");
-            oPopOver.connect(vf.getVizUid());
-            oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
+			oPopOver.connect(vf.getVizUid());
+			oPopOver.setFormatString(ChartFormatter.DefaultPattern.STANDARDFLOAT);
 
 		},
 
@@ -397,10 +406,18 @@ sap.ui.define([
 								null;
 							ky = "amtd", Number(el.defAmt) > 0 ? [ytd[ky], oy[io][ky], e[ky]] = fv([ytd[ky], oy[io][ky], e[ky]], el.defAmt, el, e, oy[
 								io], null, ky) : null;
+							ky = "adAmtf", Number(el.advAmt) > 0 ? [ytd[ky], oy[io][ky], e[ky]] = fv([ytd[ky], oy[io][ky], e[ky]], (el.advAmt || 0), el,
+								e, oy[
+									io], null, ky) : null;
 						}
 						el.payDet.forEach(function(ele) {
 							if (new Date(ele.payDate) >= e.id && new Date(ele.payDate) <= e.ed) {
 								ky = "amtp", [ytd[ky], oy[io][ky], e[ky]] = fv([ytd[ky], oy[io][ky], e[ky]], ele.amt);
+								//new
+								if (Number(ele.apAmt || 0) > 0 && !ele.rflg && !el.lnCls) {
+									ky = "adAmt", [ytd[ky], oy[io][ky], e[ky]] = fv([ytd[ky], oy[io][ky], e[ky]], (ele.apAmt || 0));
+								}
+								//new
 							}
 						});
 					});
@@ -446,7 +463,7 @@ sap.ui.define([
 			}
 
 			function af(x) {
-				return [x.exp, x.acc, x.lamt, x.amtp, x.nwa, x.ga, x.cls, x.ren, x.clam, x.ram, x.amtd] = Array(15).fill(0);
+				return [x.exp, x.acc, x.lamt, x.amtp, x.nwa, x.ga, x.cls, x.ren, x.clam, x.ram, x.amtd, x.adAmt, x.adAmtf] = Array(15).fill(0);
 			}
 
 			function fv(a, m, so, mo, yo, ytd, k) {
@@ -461,11 +478,11 @@ sap.ui.define([
 			}
 
 		},
-		
-		onSelectVF:function(oEvent){
+
+		onSelectVF: function(oEvent) {
 			var status = oEvent.getParameter('data')[0].data.Status;
 		},
-		
+
 		onNavLP: function(obj) {
 			this.getOwnerComponent().getRouter().navTo("login");
 		},
