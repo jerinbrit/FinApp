@@ -1,4 +1,4 @@
-sap.ui.define([ //test
+sap.ui.define([ //test1
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History"
 ], function(Controller, History) { 
