@@ -1,7 +1,7 @@
-sap.ui.define([
+sap.ui.define([ //test
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History"
-], function(Controller, History) {
+], function(Controller, History) { 
 	"use strict";
 
 	return Controller.extend("FabFinV3.c.BaseController", {
