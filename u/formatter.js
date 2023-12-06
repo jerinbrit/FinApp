@@ -491,12 +491,23 @@ sap.ui.define([], function() {
 				var prAmt = 0,
 					aiAmt = 0,
 					intExc = false,
-					balPdAmt = 0;
+					balPdAmt = 0,
+					apArr = [];
 				for (var j in data) {
 
 					if (new Date(data[j].payDate) <= new Date(pObj.fnPayDt) && new Date(data[j].payDate) >= new Date(pObj.instStDt)) {
 						pObj.amtPaid += Number(data[j].amt);
-						pObj.apAmt += Number(data[j].apAmt);
+						pObj.apAmt += Number(data[j].apAmt || 0);
+
+						//new
+						if (Number(data[j].apAmt || 0) > 0 && !data[j].rflg && data[j].brFlg) {
+							apArr.push({
+								amt: Number(data[j].apAmt || 0),
+								dt: data[j].payDate
+							});
+						}
+						//new
+
 						pObj.payDate = Number(data[j].amt) > 0 ? data[j].payDate : pObj.payDate;
 						pObj.hist.push(data[j]);
 						isLnClsd = (data[j].lnClsr || data[j].lnRen) ? true : false;
@@ -532,7 +543,49 @@ sap.ui.define([], function() {
 				/*	if (pObj.amtPaid > pObj.int) {
 						bPrA -= (pObj.amtPaid - pObj.int);
 					}*/
+
 				bPrA -= prAmt;
+				pObj.bPrA = bPrA;
+
+				//new
+
+				if (apArr.length > 0) {
+					var apObj = {
+						0: {
+							adAmt: 0
+						},
+						1: {
+							adAmt: 0
+						},
+						int: 0
+					};
+					apArr.forEach(function(x) {
+						apObj.nd = Math.ceil(Math.abs(new Date(x.dt) - new Date(pObj.intFrm)) / (1000 * 60 * 60 * 24)) + 1;
+						if (apObj.nd > 15) {
+							apObj[1].adAmt += x.amt;
+							//	apObj.int = pObj.int;
+						} else {
+							apObj[0].adAmt += x.amt;
+							//	apObj.int = ((pObj.int - pObj.cfInt) / 2) + pObj.cfInt;
+						}
+					});
+
+					if (apObj[0].adAmt > 0) {
+						apObj.int += ((pObj.int - pObj.cfInt) / 2);
+						apObj.int += (((Number(pObj.prA) - apObj[0].adAmt) * roi)) / 2;
+					} else {
+						apObj.int += (pObj.int - pObj.cfInt);
+					}
+
+					apObj.int += pObj.cfInt;
+					apObj.int = Math.round(apObj.int);
+					bPrA -= apObj[0].adAmt + apObj[1].adAmt;
+
+					pObj.int = apObj.int;
+					pObj.bPrA = bPrA;
+				}
+
+				//new
 
 				cfInt = 0;
 				if (pObj.amtPaid < pObj.int) {
@@ -544,8 +597,6 @@ sap.ui.define([], function() {
 				if (pObj.int < 0) {
 					cfInt += pObj.int;
 				}
-
-				pObj.bPrA = bPrA;
 
 				//	tmpDate = new Date(new Date(pObj.intTo).getTime() + (1 * 24 * 60 * 60 * 1000)).toDateString();
 
@@ -559,7 +610,6 @@ sap.ui.define([], function() {
 					}
 
 					//	that.byId("idAmtDue").setText ("Total Amount Due: "+pObj.int);
-
 				}
 
 				pObj.intFrm = new Date(pObj.intFrm);
@@ -628,9 +678,10 @@ sap.ui.define([], function() {
 					return false;
 				}
 			}
-			if (!rflg && (amt > 0 || apamt>0)) {
+			if (!rflg && (amt > 0 || apamt > 0)) {
 				return true;
 			}
+
 			return false;
 
 		},
