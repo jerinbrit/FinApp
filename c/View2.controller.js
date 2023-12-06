@@ -350,8 +350,8 @@ sap.ui.define([
 			data.payDet.forEach(function(e) {
 				totAmt += Number(e.amt);
 			});
-			
-			totAmt+=Number(data.advAmt||0);
+
+			totAmt += Number(data.advAmt || 0);
 
 			var lnAmt = Number(data.lnAmt);
 
@@ -433,6 +433,8 @@ sap.ui.define([
 			sap.ui.getCore().byId("idOthrAmtVB").setVisible(oEvent.getSource().getSelected());
 			sap.ui.getCore().byId("idCBAP").setSelected(false);
 			sap.ui.getCore().byId("idAPTxt").setText();
+			sap.ui.getCore().byId("idAPBR").setSelected(false);
+			sap.ui.getCore().byId("idAPBR").setVisible(false);
 			sap.ui.getCore().byId("idAPVB").setVisible(!oEvent.getSource().getSelected());
 
 			this.calAmtTD();
@@ -444,6 +446,8 @@ sap.ui.define([
 			var amt = Number(sap.ui.getCore().byId("idPayAmt").getValue());
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
 			sap.ui.getCore().byId("idAPTxt").setText();
+			sap.ui.getCore().byId("idAPBR").setSelected(false);
+			sap.ui.getCore().byId("idAPBR").setVisible(false);
 			if (amt > 0 && oEvent.getSource().getSelected()) {
 				var curDtObj;
 				for (var i = cData.instDet.length - 1; i >= 0; i--) {
@@ -453,12 +457,13 @@ sap.ui.define([
 					}
 				}
 				var txt = "";
-				if ((amt + curDtObj.amtPaid) > (curDtObj.int)) {
+				sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String(amt));
+				/*if ((amt + curDtObj.amtPaid) > (curDtObj.int)) {
 					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - curDtObj.int));
 				} else {
 					oEvent.getSource().setSelected(false);
-				}
-
+				}*/
+				sap.ui.getCore().byId("idAPBR").setVisible(true);
 			}
 		},
 
@@ -552,7 +557,7 @@ sap.ui.define([
 				amtToPay = amtToPay + Number(othrAmt);
 			}
 
-			sap.ui.getCore().byId("idTot").setText(amtToPay);
+			sap.ui.getCore().byId("idTot").setText(Math.round(amtToPay));
 
 			this.calcIntDet(curDtObj);
 
@@ -585,7 +590,6 @@ sap.ui.define([
 							".\n\nKindly choose from below option to handle the balance amount " + balAmt + ".");
 					}
 				}
-
 			}
 		},
 
@@ -599,13 +603,19 @@ sap.ui.define([
 			var cModel = this.cModel.getData();
 
 			var apAmt = 0;
-
+			var brflg;
 			cModel.payDet.forEach(function(e) {
-				apAmt += Number(e.apAmt);
+				apAmt += Number(e.apAmt || 0);
+				if (e.brFlg && !e.rflg) {
+					brflg = true;
+				}
 			});
 
 			if (apAmt > 0) {
 				sap.ui.getCore().byId("idAPamtHB").setVisible(true);
+			}
+			if (!brflg) {
+				sap.ui.getCore().byId("idPFA").setVisible(true);
 			}
 			sap.ui.getCore().byId("idAPamt").setText(apAmt);
 
@@ -766,7 +776,8 @@ sap.ui.define([
 					lnRen: lnRen ? "X" : "",
 					crtDt: Date.now().toString(),
 					xAmtOp: !sap.ui.getCore().byId("idIntDetVB").getVisible() ? "" : sap.ui.getCore().byId("idAIP").getSelected() ? "1" : "2",
-					apAmt: pfa ? -payAmt : apAmt
+					apAmt: pfa ? -payAmt : apAmt,
+					brFlg: sap.ui.getCore().byId("idAPBR").getSelected() ? "X" : ""
 				});
 
 				cData.modDt = Date.now().toString();
