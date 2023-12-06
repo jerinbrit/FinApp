@@ -8,7 +8,7 @@
 							<Text text="Previous Advance Payment: Rs." class="bold"/>
 							<Text id="idAPamt" class="sapUiTinyMarginBegin bold"/>
 						</HBox>
-						<CheckBox id="idPFA" select="selPFA" text="Pay Interest from Advance"/>
+						<CheckBox id="idPFA" select="selPFA" text="Pay Interest from Advance" visible="false"/>
 					</VBox>
 					<VBox>
 						<Text text="Payment Date:"/>
@@ -64,6 +64,7 @@
 							<Text text="Advance Payment:" class="bold"/>
 							<CheckBox id="idCBAP" select="onSelAP"/>
 							<Text id="idAPTxt"/>
+							<CheckBox id="idAPBR" text="Principal Reduction" visible="false"/>
 						</VBox>
 						<layoutData>
 							<l:GridData span="L4 M6 S6"/>
