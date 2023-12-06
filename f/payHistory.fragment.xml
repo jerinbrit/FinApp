@@ -13,13 +13,12 @@
 						<Text text="-" class="sapUiSmallMarginBeginEnd"/>
 						<Text text="{path: 'cModel>intTo', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 					</HBox>
-					<!--	<VBox>
-					<Text text="Balance Principal" class="sapUiSmallMarginTop bold" />
-					<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
-						<Text text="{cModel>bPrA}"/>
-					
-					</HBox>
-					</VBox>-->
+					<VBox>
+						<Text text="Balance Principal" class="sapUiSmallMarginTop bold"/>
+						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
+							<Text text="{cModel>bPrA}"/>
+						</HBox>
+					</VBox>
 					<VBox visible="{=${cModel>apAmt}>0 ? true : false}">
 						<Text text="Advance Payment" class="sapUiSmallMarginTop bold"/>
 						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
