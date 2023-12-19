@@ -12,8 +12,14 @@ sap.ui.define([
 	return BaseController.extend("FabFinV3.c.View1", {
 		formatter: formatter,
 		onInit: function() {
+			this.filtOpt = {
+				"sort": false,
+				"Overdue": true,
+				"Pending Payment": true,
+				"Loan Closed": false,
+				"Loan Renewed": false
+			};
 			this.getOwnerComponent().getRouter().getRoute("home").attachPatternMatched(this._onObjectMatched, this);
-
 			window.mainsha;
 			window.custsha;
 			this.rCount1 = 0,
@@ -60,7 +66,7 @@ sap.ui.define([
 
 			this.loadCustData();
 			this.setUModel();
-			this.onFilterData();
+			//	this.onFilterData();
 
 		},
 		setUModel: function() {
@@ -126,6 +132,100 @@ sap.ui.define([
 			this._ucDialog.open();
 		},
 
+		showFOP: function(oEvent) {
+			var that = this;
+			var obj = {};
+			FabFinV3.filterArr.forEach(function(e) {
+				obj[e.status] = e.status;
+			});
+			var content = new sap.m.VBox().addStyleClass("sapUiTinyMargin");
+			Object.keys(obj).forEach(function(e) {
+				if (e === "Loan Closed" || e === "Loan Renewed") {
+					if (that.uModel.getData().adm || that.getView().getModel("config").getData().filter) {
+						content.addItem(new sap.m.CheckBox({
+							text: e,
+							selected: that.filtOpt[e] || false
+						}));
+					}
+				} else {
+					content.addItem(new sap.m.CheckBox({
+						text: e,
+						selected: that.filtOpt[e] || false
+					}));
+				}
+
+			});
+			var p = new sap.m.Popover({
+				showHeader: true,
+				title: "Filter",
+				placement: "Bottom",
+				content: content,
+				endButton: new sap.m.Button({
+					type: "Transparent",
+					icon: "sap-icon://decline",
+					press: function() {
+						p.close();
+					}
+				}),
+				footer: new sap.m.Toolbar({
+					content: [new sap.m.ToolbarSpacer(), new sap.m.Button({
+						text: "Ok",
+						type: "Transparent",
+						press: function() {
+							content.getItems().forEach(function(e) {
+								that.filtOpt[e.getText()] = e.getSelected();
+							});
+							that.filtOpt.sort = true;
+							that.onFOP();
+							p.close();
+						}
+					})]
+				})
+			});
+			p.openBy(oEvent.getSource());
+		},
+
+		onFOP: function() {
+			var that = this;
+			var arr = [];
+			this.byId("idList").getBinding("items").filter();
+			if (this.filtOpt.sort) {
+				var tmpArr,
+					sortArr = [];
+				var oModel = $.extend(true, [], this.getView().getModel("oModel").getData());
+
+				FabFinV3.filterArr.forEach(function(e) {
+					tmpArr = oModel.filter(function(el) {
+						return el.key === e.key;
+					});
+					sortArr.push(tmpArr[0]);
+				});
+
+				this.getView().getModel("oModel").setData(sortArr);
+				this.getView().getModel("oModel").refresh();
+			}
+
+			Object.keys(this.filtOpt).forEach(function(e) {
+				if (that.filtOpt[e]) {
+					arr.push(e);
+				}
+			});
+			var fArr = FabFinV3.filterArr.filter(function(e) {
+				return arr.indexOf(e.status) >= 0;
+			});
+
+			var filterArray = [];
+			fArr.forEach(function(e) {
+				filterArray.push(new Filter("key", FilterOperator.EQ, e.key));
+			});
+			filterArray = new Filter({
+				filters: filterArray,
+				and: false
+			});
+
+			this.byId("idList").getBinding("items").filter(filterArray);
+		},
+
 		onFilterData: function(oEvent) {
 			var filterArray = [];
 			if (this.byId("idFilter").getSelected()) {
@@ -139,6 +239,7 @@ sap.ui.define([
 		},
 
 		loadCustData: function() {
+			FabFinV3.filterArr = [];
 			var that = this;
 			var i = $.Deferred();
 			var j = $.Deferred();
@@ -175,11 +276,11 @@ sap.ui.define([
 					var data = atob(odata.content);
 					data = data.trim() ? JSON.parse(data) : [];
 					data.forEach(function(e) {
+						that.formatter.setStatus_h(e, that);
 						e.lnDt = new Date(e.lnDt).toDateString().split(" ").splice(1, 4).join(' ');
 						if (e.nxtInstsDate) {
 							e.nxtInstsDate = new Date(e.nxtInstsDate).toDateString().split(" ").splice(1, 4).join(' ');
 						}
-
 					});
 
 					data.sort((a, b) => {
@@ -188,6 +289,12 @@ sap.ui.define([
 
 					that.oModel.setData(data);
 					that.oModel.refresh();
+
+					FabFinV3.filterArr.sort((a, b) => {
+						return a.no - b.no;
+					});
+					that.onFOP();
+
 					i.resolve();
 				},
 				error: function(oError) {
@@ -441,6 +548,13 @@ sap.ui.define([
 				success: function(odata) {
 					window.custsha = JSON.parse(odata).content.sha;
 					sap.ui.core.BusyIndicator.hide();
+					that.filtOpt = {
+						"sort": false,
+						"Overdue": true,
+						"Pending Payment": true,
+						"Loan Closed": false,
+						"Loan Renewed": false
+					};
 					that.loadCustData();
 					that.handleImage(nwData.key);
 					that.onClose();
