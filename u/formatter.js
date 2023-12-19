@@ -29,24 +29,32 @@ sap.ui.define([], function() {
 
 		},
 
-		setStatus_h: function(instDet) {
+		setStatus_h: function(instDet, filt) {
 			if (instDet) {
-
+				var fObj;
+				if (filt) {
+					fObj = {
+						key: instDet.key,
+						no: Infinity,
+						status: "Pending Payment"
+					}
+				}
 				var lnCls = instDet;
 
-				var ctrl = sap.ui.getCore().byId(this._sOwnerId + "---home").getController().formatter;
-
+				var ctrl = filt ? filt.formatter : sap.ui.getCore().byId(this._sOwnerId + "---home").getController().formatter;
 				instDet = ctrl.generateLoanData(instDet, false, this).arr;
-				var obj = ctrl.setStatus_f(lnCls, instDet);
-				this.getParent().getSecondStatus().setState(obj.status);
-				this.getParent().getAttributes()[2].setText(obj.instDateText);
-
-				return obj.statusText;
-
+				var obj = ctrl.setStatus_f(lnCls, instDet, fObj);
+				if (fObj) {
+					FabFinV3.filterArr.push(fObj);
+				} else {
+					this.getParent().getSecondStatus().setState(obj.status);
+					this.getParent().getAttributes()[2].setText(obj.instDateText);
+					return obj.statusText;
+				}
 			}
 
 		},
-		setStatus_f: function(lnClsd, instDet) {
+		setStatus_f: function(lnClsd, instDet, fObj) {
 
 			/*	var that = this;
 				["idObjInstDate", "idObjStatus", "idAmtDue"].forEach(function(e) {
@@ -64,7 +72,10 @@ sap.ui.define([], function() {
 
 				retObj.status = lnClsd.lnRen ? "Information" : "Success";
 				retObj.statusText = lnClsd.lnRen ? "Loan Renewed" : "Loan Closed";
-
+				if (fObj) {
+					fObj.no = Infinity;
+					fObj.status = lnClsd.lnRen ? "Loan Renewed" : "Loan Closed";
+				}
 			} else {
 				if (instDet) {
 					var ci = 0,
@@ -139,8 +150,11 @@ sap.ui.define([], function() {
 
 						if ((pi) >= 1) {
 
-							var odDays = Math.ceil(Math.abs(new Date(ciObj.instDt) - currDate) / (1000 * 60 * 60 * 24))
-
+							var odDays = Math.ceil(Math.abs(new Date(ciObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
+							if (fObj) {
+								fObj.no = -odDays;
+								fObj.status = "Overdue";
+							}
 							retObj.status = "Error";
 							//	this.byId("idObjStatus").setState("Error");
 
@@ -209,13 +223,21 @@ sap.ui.define([], function() {
 
 						if (currDate >= pendPayDate && currDate <= new Date(pendPyObj.instDt)) {
 							var pDays = Math.ceil(Math.abs(new Date(pendPyObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
-
+							if (fObj) {
+								fObj.no = pDays;
+								fObj.status = "Pending Payment";
+							}
 							//	this.byId("idObjStatus").setState("Warning");
 
 							retObj.status = "Warning";
 							retObj.statusText = pDays == 0 ? "Payment pending today" : "Payment pending in " + (pDays) + " days";
 
 							//		return pDays == 0 ? "Payment pending today" : "Payment pending in " + (pDays) + " days";
+						} else {
+							if (fObj && fObj.no === Infinity) {
+								fObj.no = Math.ceil(Math.abs(new Date(pendPyObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
+								fObj.status = "Pending Payment";
+							}
 						}
 					}
 
