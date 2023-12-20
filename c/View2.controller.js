@@ -654,7 +654,7 @@ sap.ui.define([
 
 			this._iDialog.open();
 
-			if (window.testRun && this.uModel.getData().adm) {
+			if (this.uModel.getData().adm) {
 				var c1, c2, that = this;
 				var apid = document.getElementById("idAPLbl");
 				apid.addEventListener("touchstart", handleTouchStart);
