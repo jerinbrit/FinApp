@@ -655,27 +655,28 @@ sap.ui.define([
 			this._iDialog.open();
 
 			if (window.testRun && this.uModel.getData().adm) {
-				var c1, c2, cflg, that = this;
+				var c1, c2, that = this;
 				var apid = document.getElementById("idAPLbl");
 				apid.addEventListener("touchstart", handleTouchStart);
 				apid.addEventListener("touchend", handleTouchEnd);
 
 				function handleTouchStart(x) {
 					x.preventDefault();
-					cflg = true;
 					c1 = Date.now();
 				}
 
 				function handleTouchEnd(y) {
 					y.preventDefault();
-					cflg = false;
 					c2 = Date.now();
-					if (c2 - c1 > 10000) {
+					if (c2 - c1 > 5000) {
+						alert(c2 - c1);
 						var payAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue());
 						if (payAmt > 0) {
+							alert(payAmt);
 							sap.ui.getCore().byId("idCBAP").setSelected(true);
 							that.mobEvt = true;
 							sap.ui.getCore().byId("idCBAP").fireSelect();
+								alert("done");
 							that.mobEvt = false;
 						}
 					}
