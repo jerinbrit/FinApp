@@ -656,11 +656,13 @@ sap.ui.define([
 				apid.addEventListener("touchend", handleTouchEnd);
 
 				function handleTouchStart(x) {
+					x.preventDefault();
 					cflg = true;
 					c1 = Date.now();
 				}
 
 				function handleTouchEnd(y) {
+					y.preventDefault();
 					cflg = false;
 					c2 = Date.now();
 				alert(c1 + "\n" + c2);
