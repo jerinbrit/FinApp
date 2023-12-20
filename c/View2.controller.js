@@ -668,7 +668,7 @@ sap.ui.define([
 				function handleTouchEnd(y) {
 					y.preventDefault();
 					c2 = Date.now();
-					if (c2 - c1 > 5000) {
+					if (c2 - c1 > 2000) {
 						alert(c2 - c1);
 						var payAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue());
 						if (payAmt > 0) {
