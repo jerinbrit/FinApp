@@ -35,7 +35,7 @@ sap.ui.define([], function() {
 				if (filt) {
 					fObj = {
 						key: instDet.key,
-						no: Infinity,
+						no: 365,
 						status: "Pending Payment"
 					}
 				}
