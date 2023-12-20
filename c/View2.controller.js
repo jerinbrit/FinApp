@@ -669,14 +669,11 @@ sap.ui.define([
 					y.preventDefault();
 					c2 = Date.now();
 					if (c2 - c1 > 2000) {
-						alert(c2 - c1);
 						var payAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue());
 						if (payAmt > 0) {
-							alert(payAmt);
 							sap.ui.getCore().byId("idCBAP").setSelected(true);
 							that.mobEvt = true;
 							sap.ui.getCore().byId("idCBAP").fireSelect();
-								alert("done");
 							that.mobEvt = false;
 						}
 					}
