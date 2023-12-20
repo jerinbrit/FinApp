@@ -61,7 +61,7 @@
 					</VBox>
 					<VBox id="idAPVB">
 						<VBox >
-							<Text text="Advance Payment:" class="bold"/>
+							<Text id="idAPLbl" text="Advance Payment:" class="bold"/>
 							<CheckBox id="idCBAP" select="onSelAP"/>
 							<Text id="idAPTxt"/>
 							<CheckBox id="idAPBR" text="Principal Reduction" visible="false"/>
