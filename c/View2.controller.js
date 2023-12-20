@@ -456,8 +456,18 @@ sap.ui.define([
 						break;
 					}
 				}
-				var txt = "";
-				sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String(amt));
+				
+				var intAmt=0;
+				var curIntdays=Math.ceil(Math.abs(new Date(payDate) - new Date(curDtObj.intFrm)) / (1000 * 60 * 60 * 24)) + 1;
+				if(curIntdays>15){
+					intAmt = curDtObj.int;
+				}else{
+					intAmt = ((curDtObj.int - curDtObj.cfInt) / 2);
+					intAmt = intAmt + curDtObj.cfInt;
+				}
+
+				
+				sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String(amt-intAmt));
 				/*if ((amt + curDtObj.amtPaid) > (curDtObj.int)) {
 					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - curDtObj.int));
 				} else {
