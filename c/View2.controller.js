@@ -648,6 +648,25 @@ sap.ui.define([
 			sap.ui.getCore().byId("idPayDate").setMaxDate(new Date());
 
 			this._iDialog.open();
+
+			if (window.testRun) {
+				var c1, c2, cflg;
+				var apid = document.getElementById("idAPLbl");
+				apid.addEventListener("touchstart", handleTouchStart);
+				apid.addEventListener("touchend", handleTouchEnd);
+
+				function handleTouchStart(x) {
+					cflg = true;
+					c1 = Date.now();
+				}
+
+				function handleTouchEnd(y) {
+					cflg = false;
+					c2 = Date.now();
+				alert(c1 + "\n" + c2);
+				}
+			}
+
 		},
 
 		onSubmit: function(oEvent) {
