@@ -457,23 +457,28 @@ sap.ui.define([
 					}
 				}
 
-				var intAmt = 0;
-				var curIntdays = Math.ceil(Math.abs(new Date(payDate) - new Date(curDtObj.intFrm)) / (1000 * 60 * 60 * 24)) + 1;
-				if (curIntdays > 15) {
-					intAmt = curDtObj.int;
-				} else {
-					intAmt = ((curDtObj.int - curDtObj.cfInt) / 2);
-					intAmt = intAmt + curDtObj.cfInt;
-				}
-
-				intAmt = Math.round(intAmt);
-
-				if ((amt + curDtObj.amtPaid) > (intAmt)) {
-					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - intAmt));
+				if (this.mobEvt) {
+					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String(amt));
 					sap.ui.getCore().byId("idAPBR").setVisible(true);
 				} else {
-					oEvent.getSource().setSelected(false);
-					sap.ui.getCore().byId("idAPBR").setVisible(false);
+					var intAmt = 0;
+					var curIntdays = Math.ceil(Math.abs(new Date(payDate) - new Date(curDtObj.intFrm)) / (1000 * 60 * 60 * 24)) + 1;
+					if (curIntdays > 15) {
+						intAmt = curDtObj.int;
+					} else {
+						intAmt = ((curDtObj.int - curDtObj.cfInt) / 2);
+						intAmt = intAmt + curDtObj.cfInt;
+					}
+
+					intAmt = Math.round(intAmt);
+
+					if ((amt + curDtObj.amtPaid) > (intAmt)) {
+						sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - intAmt));
+						sap.ui.getCore().byId("idAPBR").setVisible(true);
+					} else {
+						oEvent.getSource().setSelected(false);
+						sap.ui.getCore().byId("idAPBR").setVisible(false);
+					}
 				}
 
 				/*if ((amt + curDtObj.amtPaid) > (curDtObj.int)) {
@@ -649,8 +654,8 @@ sap.ui.define([
 
 			this._iDialog.open();
 
-			if (window.testRun) {
-				var c1, c2, cflg;
+			if (window.testRun && this.uModel.getData().adm) {
+				var c1, c2, cflg, that = this;
 				var apid = document.getElementById("idAPLbl");
 				apid.addEventListener("touchstart", handleTouchStart);
 				apid.addEventListener("touchend", handleTouchEnd);
@@ -665,7 +670,15 @@ sap.ui.define([
 					y.preventDefault();
 					cflg = false;
 					c2 = Date.now();
-				alert(c1 + "\n" + c2);
+					if (c2 - c1 > 10000) {
+						var payAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue());
+						if (payAmt > 0) {
+							sap.ui.getCore().byId("idCBAP").setSelected(true);
+							that.mobEvt = true;
+							sap.ui.getCore().byId("idCBAP").fireSelect();
+							that.mobEvt = false;
+						}
+					}
 				}
 			}
 
