@@ -247,7 +247,7 @@ sap.ui.define([], function() {
 
 							//		return pDays == 0 ? "Payment pending today" : "Payment pending in " + (pDays) + " days";
 						} else {
-							if (fObj && fObj.no === Infinity) {
+							if (fObj && fObj.no === 365) {
 								fObj.no = Math.ceil(Math.abs(new Date(pendPyObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
 								fObj.status = "Pending Payment";
 							}
