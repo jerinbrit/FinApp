@@ -36,7 +36,8 @@ sap.ui.define([], function() {
 					fObj = {
 						key: instDet.key,
 						no: 365,
-						status: "Pending Payment"
+						status: "Pending Payment",
+						amt: 0
 					}
 				}
 				var lnCls = instDet;
@@ -49,6 +50,18 @@ sap.ui.define([], function() {
 				} else {
 					this.getParent().getSecondStatus().setState(obj.status);
 					this.getParent().getAttributes()[2].setText(obj.instDateText);
+					var eId = this.getId();
+					$.sap.delayedCall(100, this, function() {
+						$("#" + eId).removeClass("classStDueAmt");
+						var cont = "";
+						if (obj.amtDue) {
+							cont = obj.amtDue;
+							cont = cont.replace("Total Amount Due: ", "Rs.");
+							$("#" + eId).addClass("classStDueAmt");
+							$("#" + eId).attr('data-content', cont);
+						}
+					});
+
 					return obj.statusText;
 				}
 			}
