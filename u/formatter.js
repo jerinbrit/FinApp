@@ -12,6 +12,13 @@ sap.ui.define([], function() {
 			return date[1] + " " + date[2] + "," + date[3];
 		},
 
+		dateFormat_1: function(date) {
+			if (date) {
+				date = new Date(Number(date)).toDateString().split(" ");
+				return date[1] + " " + date[2] + "," + date[3];
+			}
+		},
+
 		fillGArr: function() {
 			var arr = ["Anklet", "Anklet (916)", "Bangle", "Bangle (916)", "Bracelet", "Bracelet (916)", "Chain", "Chain (916)", "Ear Ring",
 				"Ear Ring (916)", "Necklace", "Necklace (916)", "Ring", "Ring (916)", "Other", "Other (916)"
