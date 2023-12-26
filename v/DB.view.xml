@@ -56,7 +56,7 @@
 								<Title text="Rs. {path: 'dModel>/lamtTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
-							<viz:VizFrame id="idAmtVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut' selectData=".onSelectVF($event,'idAmtVF')">
+							<viz:VizFrame id="idAmtVF"  height="15rem" width="100%" vizType='donut' selectData=".onSelectVF($event,'idAmtVF')">
 								<viz:dataset>
 									<viz.data:FlattenedDataset data="{dModel>/lnAmtDB}">
 										<viz.data:dimensions>
@@ -82,7 +82,7 @@
 								<Title text="{path: 'dModel>/accTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
-							<viz:VizFrame id="idAccVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut'>
+							<viz:VizFrame id="idAccVF"  height="15rem" width="100%" vizType='donut'>
 								<viz:dataset>
 									<viz.data:FlattenedDataset data="{dModel>/accDB}">
 										<viz.data:dimensions>
@@ -108,7 +108,7 @@
 								<Title text="Rs. {path: 'dModel>/expTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
-							<viz:VizFrame id="idExpVF" uiConfig="{applicationSet:'fiori'}" height="15rem" width="100%" vizType='donut'>
+							<viz:VizFrame id="idExpVF"  height="15rem" width="100%" vizType='donut'>
 								<viz:dataset>
 									<viz.data:FlattenedDataset data="{dModel>/expDB}">
 										<viz.data:dimensions>
@@ -132,7 +132,7 @@
 							<FlexBox justifyContent="Center">
 								<Title text="Summary" class="bold classVZTit"/>
 							</FlexBox>
-							<viz:VizFrame id="idSumVF" uiConfig="{applicationSet:'fiori'}" height='90rem' width="100%" vizType='dual_horizontal_combination'>
+							<viz:VizFrame id="idSumVF"  height='90rem' width="100%" vizType='dual_horizontal_combination'>
 								<viz:dataset>
 									<viz.data:FlattenedDataset data="{dModel>/sumDB}">
 										<viz.data:dimensions>
