@@ -241,6 +241,22 @@ sap.ui.define([
 					text: tit,
 					visible: false
 				},
+				tooltip: {
+					formatString: formatPattern.STANDARDFLOAT,
+					postRender: function(dom) {
+						try {
+							if ($(dom[0][0]).children().children().children().children()[1].cells[0].textContent.indexOf("Margin") < 0) {
+								var val = "Rs. " + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
+								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
+							}else{
+								var val =  $(dom[0][0]).children().children().children().children()[1].cells[1].textContent+ "%";
+								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
+							}
+						} catch (err) {
+							console.log(err);
+						}
+					}
+				},
 				valueAxis: {
 					title: {
 						visible: false
@@ -302,6 +318,20 @@ sap.ui.define([
 				title: {
 					visible: false
 				},
+				tooltip: {
+					formatString: formatPattern.STANDARDFLOAT,
+					postRender: function(dom) {
+						if (!nf) {
+							try {
+								var val = "Rs. " + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
+								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
+							} catch (err) {
+								console.log(err);
+							}
+						}
+					}
+
+				},
 				valueAxis: {
 					title: {
 						visible: true
@@ -322,8 +352,7 @@ sap.ui.define([
 				legendGroup: {
 					layout: {
 						alignment: "center",
-						position: "right",
-						width: "100px"
+						position: "bottom"
 					}
 				}
 			});
