@@ -60,10 +60,17 @@ sap.ui.define([], function() {
 					var eId = this.getId();
 					$.sap.delayedCall(100, this, function() {
 						$("#" + eId).removeClass("classStDueAmt");
+						$("#" + eId).removeClass("classStDueAmt1");
 						var cont = "";
-						if (obj.amtDue) {
+
+						if (obj.odAmt) {
+							cont = "";
+							cont = "\u20B9" + obj.odAmt;
+							$("#" + eId).addClass("classStDueAmt1");
+							$("#" + eId).attr('data-content-bfr', cont);
+						} else if (obj.amtDue) {
 							cont = obj.amtDue;
-							cont = cont.replace("Total Amount Due: ", "Rs.");
+							cont = cont.replace("Total Amount Due: ", "\u20B9");
 							$("#" + eId).addClass("classStDueAmt");
 							$("#" + eId).attr('data-content', cont);
 						}
@@ -139,7 +146,8 @@ sap.ui.define([], function() {
 
 						if (cAmtObj.no > lnClsd.lnDur) {
 							totAmtDue = instDet[Number(lnClsd.lnDur) - 1].bPrA;
-							totTxt = "Total Amount Due: " + (totAmtDue) + "+";
+							totAmtDue += (cAmtObj.int - cAmtObj.amtPaid) > 0 ? (cAmtObj.int - cAmtObj.amtPaid) : 0;
+							totTxt = "Total Amount Due: " + (totAmtDue) + "~";
 							expFlg = true;
 						} else {
 							totAmtDue = (cAmtObj.int - cAmtObj.amtPaid) > 0 ? (cAmtObj.int - cAmtObj.amtPaid) : 0;
@@ -149,8 +157,16 @@ sap.ui.define([], function() {
 					}
 
 					//	this.byId("idAmtDue").setText(totTxt);
-
+					retObj.odAmt = 0;
+					
+					if(expFlg)
+						{
+							retObj.odAmt = totAmtDue + "~";
+							retObj.expFlg = expFlg;
+						}
+					
 					retObj.amtDue = totTxt;
+					retObj.totAmtDue = totAmtDue;
 
 					if (totAmtDue > 0) {
 						if (new Date(cAmtObj.instDt) <= currDate) {
@@ -210,6 +226,10 @@ sap.ui.define([], function() {
 							}
 
 							retObj.statusText = !retObj.statusText ? "Overdue by " + (odDays) + " days" : retObj.statusText;
+
+							if (!expFlg) {
+								retObj.odAmt = cAmtObj.cfInt;
+							}
 
 							//		return "Overdue by " + (pi) + "+ months";
 
@@ -279,7 +299,16 @@ sap.ui.define([], function() {
 				var obj = this.formatter.setStatus_f(lnCls, instDet);
 
 				this.byId("idObjStatus").setState(obj.status);
-				this.byId("idAmtDue").setText(obj.amtDue);
+				
+				var dueTxt=obj.amtDue||"";
+				dueTxt = dueTxt.replace("Total Amount Due: ", "Total Due: \u20B9");
+				
+				if(obj.odAmt && !obj.expFlg)
+					{
+						dueTxt+= " | "+"Overdue: \u20B9"+obj.odAmt;
+					}
+				this.byId("idAmtDue").setText(dueTxt);
+			//	this.byId("idAmtOvrDue").setText("Overdue Amount: "+obj.odAmt);
 				this.byId("idObjInstDate").setState(obj.instDateState);
 				this.byId("idObjInstDate").setText(obj.instDateText);
 
