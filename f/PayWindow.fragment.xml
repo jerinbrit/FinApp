@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table">
-	<Dialog title="Payment Window" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
+	<Dialog title="Payment cycle" class="sapUiContentPadding sapUiSizeCompact" contentWidth="100%" initialFocus="done">
 		<content>
 			<l:Grid defaultSpan="L12 M12 S12" vSpacing="0.5" hSpacing="0.5">
 				<l:content>
@@ -59,7 +59,7 @@
 					</t:Table>
 					
 					<HBox alignItems="Center" class="sapUiTinyMarginTop">
-						<Text text="Lone Duration :" class="sapUiTinyMarginEnd" wrapping="false"/>
+						<Text text="Loan Duration :" class="sapUiTinyMarginEnd" wrapping="false"/>
 						<Input  id="idLnDur"  description="months"/>
 					</HBox>
 					
