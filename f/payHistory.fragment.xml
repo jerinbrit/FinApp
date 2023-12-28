@@ -16,7 +16,7 @@
 					<VBox>
 						<Text text="Balance Principal" class="sapUiSmallMarginTop bold"/>
 						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
-							<Text text="{cModel>bPrA}"/>
+							<Text text="&#8377;{path: 'cModel>bPrA', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"/>
 						</HBox>
 					</VBox>
 					<VBox visible="{=${cModel>apAmt}>0 ? true : false}">
@@ -39,7 +39,7 @@
 								</t:template>
 							</t:Column>
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false">
-								<Text text="Amount Paid" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
+								<Text text="Amount Paid (&#8377;)" class="white bold" textAlign="Begin" wrapping="false" width="100%"/>
 								<t:template>
 									<HBox >
 										<Text text="{=Number(${cModel>amt})+Number(${cModel>apAmt}||0)}"/>
