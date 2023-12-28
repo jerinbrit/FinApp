@@ -22,7 +22,7 @@
 				<content>
 					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
-						<ObjectHeader icon="{= !${iModel>/dp} ? 'sap-icon://customer' : ${iModel>/dp}}" imageShape="Circle" title="{cModel>/name}" number="{cModel>/lnAmt}" numberUnit="INR">
+						<ObjectHeader icon="{= !${iModel>/dp} ? 'sap-icon://customer' : ${iModel>/dp}}" imageShape="Circle" title="{cModel>/name}" number="&#8377;{path: 'cModel>/lnAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
 							<statuses>
 								<ObjectStatus text="{cModel>/goldGms} gms" active="true" press="showGoldDetails"/>
 								<ObjectStatus inverted="true" id="idObjStatus"
@@ -91,15 +91,15 @@
 											text="{parts:[{ path: 'cModel>no'},{ path: 'cModel>/lnDur'},{path:'refreshModel>/r'}] , formatter: 'FabFinV3.c.View2.prototype.formatter.highlightRow' }"
 											class="bold"/>
 									<!--	<Text text="{cModel>prA}"/>-->
-										<Text text="{=${cModel>/lnCls}=== 'X' ? ${cModel>int} : ${cModel>int}-${cModel>cfInt}}"/>
-										<ObjectHeader class="classObjHdrTab" number="{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}"
-											numberUnit="INR">
+										<Text text="&#8377;{=${cModel>/lnCls}=== 'X' ? ${cModel>int} : ${cModel>int}-${cModel>cfInt}}"/>
+										<ObjectHeader class="classObjHdrTab" number="&#8377;{=(${cModel>int}) - ${cModel>amtPaid} > 0 ? (${cModel>int}) - ${cModel>amtPaid} : 0}"
+											numberUnit="">
 											<statuses>
 												<ObjectStatus
 													text="{path: 'cModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
 											</statuses>
 										</ObjectHeader>
-										<ObjectHeader class="classObjHdrTab" number="{cModel>amtPaid}" numberUnit="INR">
+										<ObjectHeader class="classObjHdrTab" number="&#8377;{cModel>amtPaid}" numberUnit="">
 											<statuses>
 												<ObjectStatus
 													text="{path: 'cModel>payDate', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd,YYYY'}}"/>
