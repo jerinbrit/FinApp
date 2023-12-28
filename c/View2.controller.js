@@ -363,9 +363,9 @@ sap.ui.define([
 
 			intAmt = intAmt > 0 ? intAmt : 0;
 
-			this.byId("idTotPaid").setText("Total Amount Paid: " + totAmt);
-			this.byId("idIntEarn").setText("Profit: " + intAmt);
-			this.byId("idDefAmt").setText("Waived off: " + defAmt);
+			this.byId("idTotPaid").setText("Total Amount Paid: ₹" + totAmt);
+			this.byId("idIntEarn").setText("Profit: ₹" + intAmt);
+			this.byId("idDefAmt").setText("Waived off: ₹" + defAmt);
 		},
 
 		calPayData: function() {
@@ -458,7 +458,7 @@ sap.ui.define([
 				}
 
 				if (this.mobEvt) {
-					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String(amt));
+					sap.ui.getCore().byId("idAPTxt").setText("₹" + String(amt));
 					sap.ui.getCore().byId("idAPBR").setVisible(true);
 				} else {
 					var intAmt = 0;
@@ -473,7 +473,7 @@ sap.ui.define([
 					intAmt = Math.round(intAmt);
 
 					if ((amt + curDtObj.amtPaid) > (intAmt)) {
-						sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - intAmt));
+						sap.ui.getCore().byId("idAPTxt").setText("₹" + String((amt + curDtObj.amtPaid) - intAmt));
 						sap.ui.getCore().byId("idAPBR").setVisible(true);
 					} else {
 						oEvent.getSource().setSelected(false);
@@ -482,7 +482,7 @@ sap.ui.define([
 				}
 
 				/*if ((amt + curDtObj.amtPaid) > (curDtObj.int)) {
-					sap.ui.getCore().byId("idAPTxt").setText("Rs. " + String((amt + curDtObj.amtPaid) - curDtObj.int));
+					sap.ui.getCore().byId("idAPTxt").setText("₹" + String((amt + curDtObj.amtPaid) - curDtObj.int));
 				} else {
 					oEvent.getSource().setSelected(false);
 				}*/
@@ -564,7 +564,7 @@ sap.ui.define([
 					intTD = intTD + curDtObj.cfInt;
 				}
 
-				amtToPay = ((curDtObj.prA - Number(sap.ui.getCore().byId("idAPamt").getText())) + Number(othrAmt) + intTD - curDtObj.amtPaid);
+				amtToPay = ((Number(cData.lnAmt) - Number(sap.ui.getCore().byId("idAPamt").getText())) + Number(othrAmt) + intTD - curDtObj.amtPaid);
 			} else if (sap.ui.getCore().byId("idCBR").getSelected()) {
 				//	var lnEndDate = this.formatter.getLnEdDt(new Date(cData.lnDt),Number(cData.lnDur));
 				if (!cData.instDet[Number(cData.lnDur) - 1] || Number(sap.ui.getCore().byId("idAPamt").getText()) > 0) {
@@ -768,7 +768,7 @@ sap.ui.define([
 			}
 			if (sap.ui.getCore().byId("idCBAP").getSelected()) {
 
-				if ((Number(sap.ui.getCore().byId("idAPamt").getText()) + Number(sap.ui.getCore().byId("idAPTxt").getText().split("Rs. ")[1])) >=
+				if ((Number(sap.ui.getCore().byId("idAPamt").getText()) + Number(sap.ui.getCore().byId("idAPTxt").getText().split("₹")[1])) >=
 					Number(cData.lnAmt)) {
 
 					MessageBox.error("You cannot pay amount more than " + cData.lnAmt + " as Advance payment.");
@@ -816,7 +816,7 @@ sap.ui.define([
 			}
 
 			if (payDate && payAmt) {
-				var apAmt = sap.ui.getCore().byId("idCBAP").getSelected() ? Number(sap.ui.getCore().byId("idAPTxt").getText().split("Rs. ")[1]) :
+				var apAmt = sap.ui.getCore().byId("idCBAP").getSelected() ? Number(sap.ui.getCore().byId("idAPTxt").getText().split("₹")[1]) :
 					0;
 				cData.payDet.push({
 					payDate: payDate,
