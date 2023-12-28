@@ -227,7 +227,7 @@ sap.ui.define([
 						visible: true,
 						formatString: formatPattern.SHORTFLOAT_MFD2,
 						renderer: function(val) {
-							val.text = val['info'].key === "Margin" ? val.text + "%" : "Rs." + val.text;
+							val.text = val['info'].key === "Margin" ? val.text + "%" : "\u20B9" + val.text;
 						}
 					},
 					dataShape: {
@@ -246,7 +246,7 @@ sap.ui.define([
 					postRender: function(dom) {
 						try {
 							if ($(dom[0][0]).children().children().children().children()[1].cells[0].textContent.indexOf("Margin") < 0) {
-								var val = "Rs. " + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
+								var val = "\u20B9" + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
 								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
 							}else{
 								var val =  $(dom[0][0]).children().children().children().children()[1].cells[1].textContent+ "%";
@@ -309,7 +309,7 @@ sap.ui.define([
 						visible: true,
 						formatString: formatPattern.SHORTFLOAT_MFD2,
 						renderer: function(val) {
-							val.text = nf ? val.text : "Rs. " + val.text;
+							val.text = nf ? val.text : "\u20B9" + val.text;
 						}
 					},
 					drawingEffect: "glossy",
@@ -323,7 +323,7 @@ sap.ui.define([
 					postRender: function(dom) {
 						if (!nf) {
 							try {
-								var val = "Rs. " + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
+								var val = "\u20B9" + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
 								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
 							} catch (err) {
 								console.log(err);
