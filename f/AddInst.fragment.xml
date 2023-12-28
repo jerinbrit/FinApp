@@ -5,8 +5,8 @@
 				<l:content>
 					<VBox id="idAPamtHB" visible="false">
 						<HBox >
-							<Text text="Previous Advance Payment: Rs." class="bold"/>
-							<Text id="idAPamt" class="sapUiTinyMarginBegin bold"/>
+							<Text text="Previous Advance Payment: ₹" class="bold"/>
+							<Text id="idAPamt" class="bold"/>
 						</HBox>
 						<CheckBox id="idPFA" select="selPFA" text="Pay Interest from Advance" visible="false"/>
 					</VBox>
@@ -18,7 +18,7 @@
 						</layoutData>
 					</VBox>
 					<VBox>
-						<Text text="Amount Paid:"/>
+						<Text text="Amount Paid (&#8377;):"/>
 						<Input id="idPayAmt" value="" type="Number" change="calAmtTD"/>
 						<HBox justifyContent="End" visible="false">
 							<CheckBox id="idNtve" text="Reversal" visible="{=${uModel>/adm} || ${config>/reversal}}" select="calAmtTD"/>
@@ -73,8 +73,8 @@
 					<VBox id="idOthrAmtVB" visible="false">
 						<Text text="Other charges (if any):"/>
 						<Input id="idOthrAmt" value="" type="Number" change="calAmtTD"/>
-						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay"/>
-							<Text class="sapUiTinyMarginBegin" id="idTot" text=""/></HBox>
+						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay ₹"/>
+							<Text class="" id="idTot" text=""/></HBox>
 						<HBox alignItems="Center" class="sapUiTinyMarginTop" id="idGAHB">
 							<Text text="Gold Auction: "/>
 							<CheckBox id="idGA"/>
