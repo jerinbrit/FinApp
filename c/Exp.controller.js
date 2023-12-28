@@ -82,7 +82,12 @@ sap.ui.define([
 
 					that.eModel.setData(data);
 					that.eModel.refresh();
-					that.byId("idTotTxt").setText(tot);
+					
+					tot = Number(tot).toFixed(2);
+					tot = sap.ui.core.format.NumberFormat.getFloatInstance().format(tot);
+
+					
+					that.byId("idTotTxt").setText("\u20B9"+tot);
 					sap.ui.core.BusyIndicator.hide();
 				},
 				error: function(oError) {
