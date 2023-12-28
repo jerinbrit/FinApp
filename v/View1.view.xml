@@ -31,7 +31,7 @@
 							<Button type="Accept" icon="sap-icon://add-employee" text="Add" press=".onAddCust(false)"/>
 						</OverflowToolbar>
 						<List id="idList" items="{oModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
-							<ObjectListItem title="{oModel>name}" type="Active" press=".onNav(${oModel>})" number="{oModel>lnAmt}" numberUnit="INR">
+							<ObjectListItem title="{oModel>name}" type="Active" press=".onNav(${oModel>})" number="&#8377;{path: 'oModel>lnAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
 								<firstStatus>
 									<ObjectStatus text="{oModel>goldGms} gms"/>
 								</firstStatus>
