@@ -11,7 +11,7 @@
 						</layoutData>
 					</VBox>
 						<VBox>
-						<Text text="Interest rate"/>
+						<Text text="Interest (%)"/>
 						<Input id="idRoiInp" type="Number"/>
 						<layoutData>
 							<l:GridData span="L6 M6 S6"/>
@@ -37,7 +37,7 @@
 							<t:Column sortProperty="" filterProperty="" hAlign="Start" resizable="false" >
 								<Text text="Interest" class="white bold" textAlign="Begin" wrapping="false" />
 								<t:template>
-									<Text text="{iDialogModel>roi}"/>
+									<Text text="{iDialogModel>roi}%"/>
 								</t:template>
 							</t:Column>
 							
