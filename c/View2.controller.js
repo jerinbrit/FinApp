@@ -363,9 +363,15 @@ sap.ui.define([
 
 			intAmt = intAmt > 0 ? intAmt : 0;
 
-			this.byId("idTotPaid").setText("Total Amount Paid: ₹" + totAmt);
-			this.byId("idIntEarn").setText("Profit: ₹" + intAmt);
-			this.byId("idDefAmt").setText("Waived off: ₹" + defAmt);
+			this.byId("idTotPaid").setText("Total Amount Paid: ₹" + numFormat(totAmt));
+			this.byId("idIntEarn").setText("Profit: ₹" + numFormat(intAmt));
+			this.byId("idDefAmt").setText("Waived off: ₹" + numFormat(defAmt));
+
+			function numFormat(val) {
+				val = Number(val);
+				return sap.ui.core.format.NumberFormat.getFloatInstance().format(val);
+			}
+
 		},
 
 		calPayData: function() {
@@ -521,6 +527,11 @@ sap.ui.define([
 		},
 
 		calAmtTD: function(flg) {
+		
+			if (flg === '2'||sap.ui.getCore().byId("idAdjust").getSelected()) {
+				sap.ui.getCore().byId("idOthrAmt").setValue(0);
+			}
+			
 			if (flg === '1') {
 				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
 				sap.ui.getCore().byId("idCB").setSelected(false);
@@ -534,6 +545,7 @@ sap.ui.define([
 			}
 
 			var cData = this.cModel.getData();
+			
 			var othrAmt = sap.ui.getCore().byId("idOthrAmt").getValue();
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
 			var amtToPay;
@@ -587,7 +599,16 @@ sap.ui.define([
 			if (sap.ui.getCore().byId("idCBAP").getSelected()) {
 				sap.ui.getCore().byId("idCBAP").fireSelect();
 			}
+			
+			this.adjustAmt();
 
+		},
+
+		adjustAmt: function() {
+			if (sap.ui.getCore().byId("idAdjust").getSelected()) {
+				var othrAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue()) - Number(sap.ui.getCore().byId("idTot").getText());
+				sap.ui.getCore().byId("idOthrAmt").setValue(othrAmt);
+			} 
 		},
 
 		calcIntDet: function(obj) {
