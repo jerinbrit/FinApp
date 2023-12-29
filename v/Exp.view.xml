@@ -55,14 +55,14 @@
 							<Button type="Accept" text="Add" icon="sap-icon://create-form" press="onAddExp"/>
 						</Toolbar>
 						<List id="idList" items="{eModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
-							<ObjectListItem title="{eModel>desc}" number="{path: 'eModel>amt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="INR">
+							<ObjectListItem title="{eModel>desc}" number="₹{path: 'eModel>amt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
 								<firstStatus>
 									<ObjectStatus text="{path:'eModel>typ',formatter:'.getTypDesc'}"/>
 								</firstStatus>
 								<secondStatus>
 									<ObjectStatus icon="sap-icon://delete" active="true" press="onDelExp"/>
 								</secondStatus>
-								<ObjectAttribute text="Date: {eModel>dat}"/>
+								<ObjectAttribute text="{eModel>dat}"/>
 							</ObjectListItem>
 						</List>
 					</l:Grid>
