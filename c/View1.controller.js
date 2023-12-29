@@ -277,7 +277,7 @@ sap.ui.define([
 					data = data.trim() ? JSON.parse(data) : [];
 					data.forEach(function(e) {
 						that.formatter.setStatus_h(e, that);
-						e.lnDt = new Date(e.lnDt).toDateString().split(" ").splice(1, 4).join(' ');
+						e.lnDt = that.formatter.dateFormat(new Date(e.lnDt)); 
 						if (e.nxtInstsDate) {
 							e.nxtInstsDate = new Date(e.nxtInstsDate).toDateString().split(" ").splice(1, 4).join(' ');
 						}
