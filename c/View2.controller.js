@@ -307,7 +307,9 @@ sap.ui.define([
 							if ((data[i].lnCls || data[i].lnRen) && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
 								that.calcSummary(data[i]);
 							}
-
+							
+							data[i].lnDt = that.formatter.dateFormat(new Date(data[i].lnDt)); 
+							
 							that.cModel.setData(data[i]);
 							that.calPayData();
 							if ((that.uModel.getData().adm || that.getView().getModel("config").getData().not)) {
