@@ -72,7 +72,11 @@
 					</VBox>
 					<VBox id="idOthrAmtVB" visible="false">
 						<Text text="Other charges (if any):"/>
-						<Input id="idOthrAmt" value="" type="Number" change="calAmtTD"/>
+						<HBox>
+								<Input id="idOthrAmt" value="" type="Number" change="calAmtTD"/>
+								<CheckBox id="idAdjust" text="Adjustment" select=".calAmtTD('2')"/>
+						</HBox>
+					
 						<HBox alignItems="Center" class="sapUiTinyMarginTop"><Text text="Total Amount to pay ₹"/>
 							<Text class="" id="idTot" text=""/></HBox>
 						<HBox alignItems="Center" class="sapUiTinyMarginTop" id="idGAHB">
