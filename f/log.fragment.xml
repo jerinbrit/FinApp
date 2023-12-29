@@ -4,14 +4,14 @@
 			<Bar>
 			
 				<contentMiddle>
-					<DatePicker id="idLogDt" class= "classDt"  width="10rem" change="fetchLogData" valueFormat="MMM dd,yyyy"/>
+					<DatePicker id="idLogDt" class= "classDt" width="10rem" change="fetchLogData" valueFormat="MMM dd,yyyy"/>
 				</contentMiddle>
 			</Bar>
 		</customHeader>
 		<content>
 			<VBox class="sapUiTinyMargin">
 			<List  items="{log>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
-							<ObjectListItem title="{log>name}" type="Active" press=".onNav(${log>})" number="{log>lnAmt}" numberUnit="INR">
+							<ObjectListItem title="{log>name}" type="Active" press=".onNav(${log>})" number="₹{path: 'log>lnAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
 								<firstStatus>
 									<ObjectStatus text="{log>rem}"  state="Success"/>
 								</firstStatus>
