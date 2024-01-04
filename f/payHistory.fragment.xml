@@ -16,13 +16,13 @@
 					<VBox>
 						<Text text="Balance Principal" class="sapUiSmallMarginTop bold"/>
 						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
-							<Text text="&#8377;{path: 'cModel>bPrA', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"/>
+							<Text text="&#8377;{path: 'cModel>bPrA', formatter:'.formatter.numberFormat'}"/>
 						</HBox>
 					</VBox>
 					<VBox visible="{=${cModel>apAmt}>0 ? true : false}">
 						<Text text="Advance Payment" class="sapUiSmallMarginTop bold"/>
 						<HBox class="sapUiTinyMarginTop sapUiTinyMarginBegin">
-							<Text text="&#8377;{path: 'cModel>apAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"/>
+							<Text text="&#8377;{path: 'cModel>apAmt', formatter:'.formatter.numberFormat'}"/>
 						</HBox>
 					</VBox>
 					<Toolbar height="2rem" class="sapUiTinyMarginTop">
