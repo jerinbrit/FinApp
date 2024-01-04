@@ -24,7 +24,7 @@
 					
 					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
 					
-						<ObjectHeader icon="{= !${iModel>/dp} ? 'sap-icon://customer' : ${iModel>/dp}}" imageShape="Circle" title="{cModel>/name}" number="&#8377;{path: 'cModel>/lnAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" 
+						<ObjectHeader icon="{= !${iModel>/dp} ? 'sap-icon://customer' : ${iModel>/dp}}" imageShape="Circle" title="{cModel>/name}" number="&#8377;{path: 'cModel>/lnAmt', formatter:'.formatter.numberFormat'}" 
 						numberUnit="">
 							<statuses>
 								<ObjectStatus text="{cModel>/goldGms} gms" active="true" press="showGoldDetails"/>
