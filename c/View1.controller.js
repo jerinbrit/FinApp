@@ -15,7 +15,7 @@ sap.ui.define([
 			this.filtOpt = {
 				"sort": false,
 				"Overdue": true,
-				"Pending Payment": true,
+				"Payment Due": true,
 				"Loan Closed": false,
 				"Loan Renewed": false
 			};
@@ -551,7 +551,7 @@ sap.ui.define([
 					that.filtOpt = {
 						"sort": false,
 						"Overdue": true,
-						"Pending Payment": true,
+						"Payment Due": true,
 						"Loan Closed": false,
 						"Loan Renewed": false
 					};
