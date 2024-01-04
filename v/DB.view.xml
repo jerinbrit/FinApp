@@ -24,15 +24,15 @@
 						<VBox height="10rem" alignItems="Center">
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
 								<Title text="Revenue" class=""/>
-								<Text text="&#8377;{path: 'dModel>/rev', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="green"/>
+								<Text text="&#8377;{path: 'dModel>/rev', formatter:'.formatter.numberFormat'}" class="green"/>
 							</VBox>
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
 								<Title text="Expense" class=""/>
-								<Text text="&#8377;{path: 'dModel>/exp', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="blue"/>
+								<Text text="&#8377;{path: 'dModel>/exp', formatter:'.formatter.numberFormat'}" class="blue"/>
 							</VBox>
 							<VBox width="100%" alignItems="Center" justifyContent="Center" class="classVZVB classVZVBT">
 								<Title text="Waived off" class=""/>
-								<Text text="&#8377;{path: 'dModel>/def', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" class="red"/>
+								<Text text="&#8377;{path: 'dModel>/def', formatter:'.formatter.numberFormat'}" class="red"/>
 							</VBox>
 							<layoutData>
 								<l:GridData span="L6 M6 S6"/>
@@ -53,7 +53,7 @@
 						<VBox visible="{=${dModel>/lnAmtDB}.length>0 ? true : false}" class="classVZVB">
 							<FlexBox justifyContent="Center">
 								<Title text="Amount Disbursed:" class="bold classVZTit"/>
-								<Title text="&#8377;{path: 'dModel>/lamtTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+								<Title text="&#8377;{path: 'dModel>/lamtTit', formatter:'.formatter.numberFormat'}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
 							<viz:VizFrame id="idAmtVF"  height="15rem" width="100%" vizType='donut' selectData=".onSelectVF($event,'idAmtVF')">
@@ -79,7 +79,7 @@
 						<VBox visible="{=${dModel>/accDB}.length>0 ? true : false}" class="classVZVB">
 							<FlexBox justifyContent="Center">
 								<Title text="Total Accounts:" class="bold classVZTit"/>
-								<Title text="{path: 'dModel>/accTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+								<Title text="{path: 'dModel>/accTit', formatter:'.formatter.numberFormat'}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
 							<viz:VizFrame id="idAccVF"  height="15rem" width="100%" vizType='donut'>
@@ -105,7 +105,7 @@
 						<VBox visible="{=${dModel>/expDB}.length>0 ? true : false}" class="classVZVB">
 							<FlexBox justifyContent="Center">
 								<Title text="Total Expense:" class="bold classVZTit"/>
-								<Title text="&#8377;{path: 'dModel>/expTit', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"
+								<Title text="&#8377;{path: 'dModel>/expTit', formatter:'.formatter.numberFormat'}"
 									class="classVZTit sapUiTinyMarginBegin"/>
 							</FlexBox>
 							<viz:VizFrame id="idExpVF"  height="15rem" width="100%" vizType='donut'>
