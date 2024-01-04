@@ -43,7 +43,7 @@
 						</VBox>
 						<VBox>
 							<Label text="Amount:"/>
-							<Input id="idExpAmt" width="100%" typr="Number"/>
+							<Input id="idExpAmt" width="100%" type="Number"/>
 							<layoutData>
 								<l:GridData span="L3 M4 S6"/>
 							</layoutData>
@@ -55,7 +55,8 @@
 							<Button type="Accept" text="Add" icon="sap-icon://create-form" press="onAddExp"/>
 						</Toolbar>
 						<List id="idList" items="{eModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
-							<ObjectListItem title="{eModel>desc}" number="₹{path: 'eModel>amt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
+							<ObjectListItem title="{eModel>desc}" number="₹{path: 'eModel>amt', formatter:'.formatter.numberFormat'}" numberUnit="">
+								<!--number="₹{path: 'eModel>amt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}"-->
 								<firstStatus>
 									<ObjectStatus text="{path:'eModel>typ',formatter:'.getTypDesc'}"/>
 								</firstStatus>
