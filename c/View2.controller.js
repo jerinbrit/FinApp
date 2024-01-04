@@ -365,14 +365,14 @@ sap.ui.define([
 
 			intAmt = intAmt > 0 ? intAmt : 0;
 
-			this.byId("idTotPaid").setText("Total Amount Paid: ₹" + numFormat(totAmt));
-			this.byId("idIntEarn").setText("Profit: ₹" + numFormat(intAmt));
-			this.byId("idDefAmt").setText("Waived off: ₹" + numFormat(defAmt));
+			this.byId("idTotPaid").setText("Total Amount Paid: ₹" + this.formatter.numberFormat(totAmt));
+			this.byId("idIntEarn").setText("Profit: ₹" + this.formatter.numberFormat(intAmt));
+			this.byId("idDefAmt").setText("Waived off: ₹" + this.formatter.numberFormat(defAmt));
 
-			function numFormat(val) {
+			/*function numFormat(val) {
 				val = Number(val);
 				return sap.ui.core.format.NumberFormat.getFloatInstance().format(val);
-			}
+			}*/
 
 		},
 
