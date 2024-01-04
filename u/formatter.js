@@ -153,11 +153,11 @@ sap.ui.define([], function() {
 						if (cAmtObj.no > lnClsd.lnDur) {
 							totAmtDue = instDet[Number(lnClsd.lnDur) - 1].bPrA;
 							totAmtDue += (cAmtObj.int - cAmtObj.amtPaid) > 0 ? (cAmtObj.int - cAmtObj.amtPaid) : 0;
-							totTxt = "Total Amount Due: " + (totAmtDue) + "~";
+							totTxt = "Total Amount Due: " + (this.numberFormat(totAmtDue)) + "~";
 							expFlg = true;
 						} else {
 							totAmtDue = (cAmtObj.int - cAmtObj.amtPaid) > 0 ? (cAmtObj.int - cAmtObj.amtPaid) : 0;
-							totTxt = "Total Amount Due: " + (totAmtDue);
+							totTxt = "Total Amount Due: " + (this.numberFormat(totAmtDue));
 						}
 
 					}
@@ -167,12 +167,12 @@ sap.ui.define([], function() {
 					
 					if(expFlg)
 						{
-							retObj.odAmt = totAmtDue + "~";
+							retObj.odAmt = this.numberFormat(totAmtDue) + "~";
 							retObj.expFlg = expFlg;
 						}
 					
 					retObj.amtDue = totTxt;
-					retObj.totAmtDue = totAmtDue;
+					retObj.totAmtDue = this.numberFormat(totAmtDue);
 
 					if (totAmtDue > 0) {
 						if (new Date(cAmtObj.instDt) <= currDate) {
@@ -234,7 +234,7 @@ sap.ui.define([], function() {
 							retObj.statusText = !retObj.statusText ? "Overdue by " + (odDays) + " days" : retObj.statusText;
 
 							if (!expFlg) {
-								retObj.odAmt = cAmtObj.cfInt;
+								retObj.odAmt = this.numberFormat(cAmtObj.cfInt);
 							}
 
 							//		return "Overdue by " + (pi) + "+ months";
