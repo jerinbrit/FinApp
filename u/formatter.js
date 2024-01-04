@@ -11,6 +11,12 @@ sap.ui.define([], function() {
 			var date = date.toDateString().split(" ");
 			return date[1] + " " + date[2] + "," + date[3];
 		},
+		
+		numberFormat:function(val1,val2)
+		{
+			var val = val1;
+			return sap.ui.core.format.NumberFormat.getFloatInstance(new sap.ui.core.Locale("en-in")).format(val);
+		},
 
 		dateFormat_1: function(date) {
 			if (date) {
@@ -43,7 +49,7 @@ sap.ui.define([], function() {
 					fObj = {
 						key: instDet.key,
 						no: 365,
-						status: "Pending Payment",
+						status: "Payment Due",
 						amt: 0
 					}
 				}
@@ -265,18 +271,18 @@ sap.ui.define([], function() {
 							var pDays = Math.ceil(Math.abs(new Date(pendPyObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
 							if (fObj) {
 								fObj.no = pDays;
-								fObj.status = "Pending Payment";
+								fObj.status = "Payment Due";
 							}
 							//	this.byId("idObjStatus").setState("Warning");
 
 							retObj.status = "Warning";
-							retObj.statusText = pDays == 0 ? "Payment pending today" : "Payment pending in " + (pDays) + " days";
+							retObj.statusText = pDays == 0 ? "Due today" : "Due in " + (pDays) + " days";
 
-							//		return pDays == 0 ? "Payment pending today" : "Payment pending in " + (pDays) + " days";
+							//		return pDays == 0 ? "Due today" : "Due in " + (pDays) + " days";
 						} else {
 							if (fObj && fObj.no === 365) {
 								fObj.no = Math.ceil(Math.abs(new Date(pendPyObj.instDt) - currDate) / (1000 * 60 * 60 * 24));
-								fObj.status = "Pending Payment";
+								fObj.status = "Payment Due";
 							}
 						}
 					}
@@ -367,7 +373,7 @@ sap.ui.define([], function() {
 			if (currDate >= pendPayDate && currDate <= new Date(instDt)) {
 				if (!ctrl) {
 					this.setState("Warning");
-					return "Payment pending";
+					return "Due";
 				}
 
 			}
