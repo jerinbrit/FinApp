@@ -11,7 +11,7 @@
 		<content>
 			<VBox class="sapUiTinyMargin">
 			<List  items="{log>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
-							<ObjectListItem title="{log>name}" type="Active" press=".onNav(${log>})" number="₹{path: 'log>lnAmt', type: 'sap.ui.model.type.Float', formatOptions: {maxFractionDigits: 2}}" numberUnit="">
+							<ObjectListItem title="{log>name}" type="Active" press=".onNav(${log>})" number="₹{path: 'log>lnAmt', formatter:'.formatter.numberFormat'}" numberUnit="">
 								<firstStatus>
 									<ObjectStatus text="{log>rem}"  state="Success"/>
 								</firstStatus>
