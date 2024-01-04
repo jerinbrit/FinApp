@@ -218,14 +218,43 @@ sap.ui.define([
 		},
 
 		setSumVizProp: function(vf, tit) {
-			Format.numericFormatter(ChartFormatter.getInstance());
-			var formatPattern = ChartFormatter.DefaultPattern;
+			// Format.numericFormatter(ChartFormatter.getInstance());
+			// var formatPattern = ChartFormatter.DefaultPattern;
+
+			var formatterInstance = ChartFormatter.getInstance();
+			Format.numericFormatter(formatterInstance);
+
+			formatterInstance.registerCustomFormatter("INR_Long", function(value) {
+				var fixedFloat = sap.ui.core.format.NumberFormat.getCurrencyInstance({minFractionDigits:0},new sap.ui.core.Locale("en-in"));
+				return fixedFloat.format(value);
+			});
+			formatterInstance.registerCustomFormatter("INR_Short", function(value) {
+				value = Math.abs(value)
+				if (value >= 10000000) {
+					value = Number((value / 10000000).toFixed(2));
+					return String(value) + "C";
+
+				} //return '${(value / 10000000).toFixed(2)}C'
+				if (value >= 100000) {
+					value = Number((value / 100000).toFixed(2));
+					return String(value) + "L";
+
+				}
+				if (value >= 1000) {
+					value = Number((value / 1000).toFixed(2));
+					return String(value) + "K";
+
+				}
+				//	if (val >= 100000) return '${(value / 100000).toFixed(2)}L'
+				return value;
+			})
+
 			vf.setVizProperties({
 				plotArea: {
 					dataLabel: {
 						type: "value",
 						visible: true,
-						formatString: formatPattern.SHORTFLOAT_MFD2,
+						formatString: "INR_Short",
 						renderer: function(val) {
 							val.text = val['info'].key === "Margin" ? val.text + "%" : "\u20B9" + val.text;
 						}
@@ -242,14 +271,14 @@ sap.ui.define([
 					visible: false
 				},
 				tooltip: {
-					formatString: formatPattern.STANDARDFLOAT,
+					formatString: "INR_Long",
 					postRender: function(dom) {
 						try {
 							if ($(dom[0][0]).children().children().children().children()[1].cells[0].textContent.indexOf("Margin") < 0) {
 								var val = "\u20B9" + $(dom[0][0]).children().children().children().children()[1].cells[1].textContent;
 								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
-							}else{
-								var val =  $(dom[0][0]).children().children().children().children()[1].cells[1].textContent+ "%";
+							} else {
+								var val = $(dom[0][0]).children().children().children().children()[1].cells[1].textContent + "%";
 								$(dom[0][0]).children().children().children().children()[1].cells[1].textContent = val;
 							}
 						} catch (err) {
@@ -300,14 +329,43 @@ sap.ui.define([
 		},
 
 		setVizProp: function(vf, clr, nf) {
-			Format.numericFormatter(ChartFormatter.getInstance());
-			var formatPattern = ChartFormatter.DefaultPattern;
+			//	Format.numericFormatter(ChartFormatter.getInstance());
+			//	var formatPattern = ChartFormatter.DefaultPattern;
+
+			var formatterInstance = ChartFormatter.getInstance();
+			Format.numericFormatter(formatterInstance);
+
+			formatterInstance.registerCustomFormatter("INR_Long", function(value) {
+				var fixedFloat = sap.ui.core.format.NumberFormat.getCurrencyInstance({minFractionDigits:0},new sap.ui.core.Locale("en-in"));
+				return fixedFloat.format(value);
+			});
+			formatterInstance.registerCustomFormatter("INR_Short", function(value) {
+				value = Math.abs(value)
+				if (value >= 10000000) {
+					value = Number((value / 10000000).toFixed(2));
+					return String(value) + "C";
+
+				} //return '${(value / 10000000).toFixed(2)}C'
+				if (value >= 100000) {
+					value = Number((value / 100000).toFixed(2));
+					return String(value) + "L";
+
+				}
+				if (value >= 1000) {
+					value = Number((value / 1000).toFixed(2));
+					return String(value) + "K";
+
+				}
+				//	if (val >= 100000) return '${(value / 100000).toFixed(2)}L'
+				return value;
+			})
+
 			vf.setVizProperties({
 				plotArea: {
 					dataLabel: {
 						type: "value",
 						visible: true,
-						formatString: formatPattern.SHORTFLOAT_MFD2,
+						formatString: "INR_Short",
 						renderer: function(val) {
 							val.text = nf ? val.text : "\u20B9" + val.text;
 						}
@@ -319,7 +377,7 @@ sap.ui.define([
 					visible: false
 				},
 				tooltip: {
-					formatString: formatPattern.STANDARDFLOAT,
+					formatString: "INR_Long",
 					postRender: function(dom) {
 						if (!nf) {
 							try {
