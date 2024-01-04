@@ -83,8 +83,8 @@ sap.ui.define([
 					that.eModel.setData(data);
 					that.eModel.refresh();
 					
-					tot = Number(tot).toFixed(2);
-					tot = sap.ui.core.format.NumberFormat.getFloatInstance().format(tot);
+				//	tot = Number(tot).toFixed(2);
+					tot = that.formatter.numberFormat(tot);
 
 					
 					that.byId("idTotTxt").setText("\u20B9"+tot);
