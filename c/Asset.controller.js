@@ -109,6 +109,11 @@ sap.ui.define([
 						arr.push(el);
 					}
 				});
+				
+				arr.sort((a, b) => {
+						return new Date(Number(b.dt)) - new Date(Number(a.dt));
+					});
+				
 				e.hist = arr;
 				e.bal = stot;
 			});
