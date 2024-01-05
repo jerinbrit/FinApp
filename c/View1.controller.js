@@ -42,11 +42,13 @@ sap.ui.define([
 				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust.json";
 				this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/main.json";
 				this.imgurl = "https://api.github.com/repos/britmanjerin/tst/contents/Images/";
+				this.asseturl = "https://api.github.com/repos/britmanjerin/tst/contents/asset.json";
 				this.byId("idStopTR").setVisible(true);
 			} else {
 				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json";
 				this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/main_p.json";
 				this.imgurl = "https://api.github.com/repos/britmanjerin/tst/contents/Images_p/";
+				this.asseturl = "https://api.github.com/repos/britmanjerin/tst/contents/asset_p.json";
 				this.byId("idStopTR").setVisible(false);
 			}
 
@@ -277,7 +279,7 @@ sap.ui.define([
 					data = data.trim() ? JSON.parse(data) : [];
 					data.forEach(function(e) {
 						that.formatter.setStatus_h(e, that);
-						e.lnDt = that.formatter.dateFormat(new Date(e.lnDt)); 
+						e.lnDt = that.formatter.dateFormat(new Date(e.lnDt));
 						if (e.nxtInstsDate) {
 							e.nxtInstsDate = new Date(e.nxtInstsDate).toDateString().split(" ").splice(1, 4).join(' ');
 						}
@@ -491,8 +493,45 @@ sap.ui.define([
 
 			this._oDialog.setModel(new JSONModel($.extend(true, {}, obj)), "oDialogModel");
 			sap.ui.getCore().byId("idLnDt").setMaxDate(new Date());
-			this._oDialog.open();
 
+			this._oDialog.open();
+			sap.ui.core.BusyIndicator.show(0);
+			this.loadBalDet();
+		},
+
+		loadBalDet: function() {
+
+			var that = this;
+			$.ajax({
+				type: 'GET',
+				url: this.asseturl,
+				headers: this.headers,
+				cache: false,
+				success: function(odata) {
+					that.assetsha = odata.sha;
+					var data = atob(odata.content);
+					data = data.trim() ? JSON.parse(data) : [];
+					that.assetData = $.extend(true, [], data);
+					var arr = [];
+					data.forEach(function(e) {
+						if (!e.ib) {
+							e.bal = 0;
+							e.val = "";
+							e.hist.forEach(function(el) {
+								e.bal += Number(el.amt);
+							});
+							arr.push(e);
+						}
+					});
+
+					that._oDialog.setModel(new JSONModel(arr), "oDialogModel2");
+
+					sap.ui.core.BusyIndicator.hide();
+				},
+				error: function(oError) {
+					sap.ui.core.BusyIndicator.hide();
+				}
+			});
 		},
 
 		onAddGoldItems: function(oEvent) {
@@ -514,6 +553,18 @@ sap.ui.define([
 				MessageBox.error("Please fill all the required fields");
 				return;
 			}
+
+			var assetData = this._oDialog.getModel("oDialogModel2").getData();
+			var asstAmt = 0;
+			for (var x in assetData) {
+				asstAmt += Number(assetData[x].val);
+			}
+
+			if (assetData.length > 0 && Number(nwData.lnAmt) != asstAmt) {
+				MessageBox.error("Kindly verify the Amount entered in Debit source");
+				return;
+			}
+		
 
 			for (var i = nwData.gDet.length - 1; i >= 0; i--) {
 				nwData.gDet[i].flg = nwData.gDet[i].flg ? "X" : "";
@@ -557,6 +608,7 @@ sap.ui.define([
 					};
 					that.loadCustData();
 					that.handleImage(nwData.key);
+					that.updateBal(assetData, nwData);
 					that.onClose();
 					MessageBox.success("Customer Added Successfully.")
 				},
@@ -567,6 +619,45 @@ sap.ui.define([
 				}
 			});
 
+		},
+
+		updateBal: function(assetData, lnData) {
+
+			this.assetData.forEach(function(e) {
+				if (!e.ib) {
+					assetData.forEach(function(el) {
+						if (e.key === el.key && Number(el.val) > 0) {
+							e.hist.push({
+								desc: "Debited to " + lnData.name + " (Ref No." + lnData.refNo + ")",
+								amt: "-" + el.val,
+								dt: Date.now().toString()
+							})
+						}
+					});
+				}
+			});
+
+			var url = this.asseturl;
+			var body = {
+				message: "Updating file",
+				content: btoa(JSON.stringify(this.assetData)),
+				sha: this.assetsha
+			};
+			$.ajax({
+				type: 'PUT',
+				url: url,
+				headers: this.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
+				success: function(odata) {
+				window.assetsha=null;
+				},
+				error: function(odata) {
+
+					MessageBox.error("Failed to update.")
+
+				}
+			});
 		},
 
 		handleUpload: function(oEvent, key, read) {
@@ -1105,6 +1196,7 @@ sap.ui.define([
 			window.mainsha = null;
 			window.custsha = null;
 			window.expsha = null;
+			window.assetsha = null;
 			this.byId("idStopTR").setVisible(evt === "S" ? false : true);
 			this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "cust_p" : "cust") + ".json";
 			this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "main_p" : "main") + ".json";
