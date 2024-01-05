@@ -1,0 +1,50 @@
+<mvc:View controllerName="FabFinV3.c.Asset" displayBlock="true" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core">
+	<App>
+		<pages>
+			<Page title="" class="sapUiSizeCompact" showNavButton="true" navButtonPress="onNavBack">
+				<customHeader>
+					<Bar>
+						<contentLeft>
+							<VBox>
+								<core:Icon src="sap-icon://nav-back" press="onNavBack" class="sapUiSmallMarginBegin"/>
+							</VBox>
+							<core:Icon id="idStopTR" src="sap-icon://stop" press="onTestRun" visible="false" class="sapUiMediumMarginBegin"/>
+						</contentLeft>
+						<contentMiddle>
+							<DatePicker id="idDt" class="classDt" width="10rem" change="showAssetData" valueFormat="MMM dd,yyyy"/>
+						</contentMiddle>
+					</Bar>
+				</customHeader>
+				<content>
+					<l:Grid defaultSpan="L12 M12 S12" vSpacing="0" hSpacing="0.5">
+						<VBox alignItems="Center" visible="{=(${uModel>/adm})?true:false}">
+							<Title text="Total balance"/>
+							<Title id="idTot" titleStyle="H3" class="bold"/>
+							<layoutData>
+								<l:GridData span="L12 M12 S12"/>
+							</layoutData>
+						</VBox>
+						<Toolbar visible="{=(${uModel>/adm})?true:false}">
+							<ToolbarSpacer/>
+							<Button type="Accept" text="Add" icon="sap-icon://add-product" press="onAddSrc"/>
+						</Toolbar>
+						<List id="idList" items="{aModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
+							<ObjectListItem title="{aModel>src}" number="{path: 'aModel>bal', formatter:'.formatter.numberFormat_1'}" type="Active"
+								press=".showTrans(${aModel>})" numberUnit="Availale balance" visible="{=(${aModel>ps}||${uModel>/adm})?true:false}"
+								numberState="{=Number(${aModel>bal})>0?'None':'Error'}">
+								<firstStatus>
+									<ObjectStatus text="{=${aModel>ps}?'Primary':''}" inverted="true" state="Information"/>
+								</firstStatus>
+								<secondStatus>
+									<ObjectStatus icon="sap-icon://delete" active="true" press="onDelAsset" visible="{=(${uModel>/adm})?true:false}"/>
+								</secondStatus>
+								<ObjectAttribute text="{aModel>dat}"/>
+							</ObjectListItem>
+						</List>
+					</l:Grid>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
