@@ -112,6 +112,12 @@
 				"target": [
 					"exp"
 				]
+			},{
+				"pattern": "asset",
+				"name": "asset",
+				"target": [
+					"asset"
+				]
 			}],
 			"targets": {
 				"login": {
@@ -138,11 +144,20 @@
 					"viewName": "Exp",
 					"viewId": "exp",
 					"viewLevel": 3
+				},
+				"asset": {
+					"viewName": "Asset",
+					"viewId": "asset",
+					"viewLevel": 3
 				}
 			}
 		},
 		"resources": {
-			"css": [],
+			"css": [{
+				"uri": "cs/cropper.min.css"
+			}, {
+				"uri": "cs/style.css"
+			}],
 			"js": [{
 				"uri": "l/cropper.min.js"
 			}, {
