@@ -11,6 +11,7 @@
 					class="sapUiTinyMargin"/>
 			</VBox>
 			<VBox jsutifyContent="Start" class=" sapUiTinyMarginBeginEnd">
+				<Button type="Ghost" width="10rem" icon="sap-icon://wallet" text="Asset" class="sapUiTinyMargin" press=".onNavTo('asset')"/>
 				<Button type="Ghost" width="10rem" icon="sap-icon://simulate" text="Calculator" press="openIntCalc" class="sapUiTinyMargin"/>
 				<Button type="Ghost" width="10rem" icon="sap-icon://key-user-settings" press="onUserConfig" text="User Config" visible="{uModel>/adm}"
 					class="sapUiTinyMargin"/>
