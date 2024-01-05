@@ -32,10 +32,12 @@ sap.ui.define([
 			if (window.testRun) {
 				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust.json";
 				this.imgurl = "https://api.github.com/repos/britmanjerin/tst/contents/Images/";
+				this.asseturl = "https://api.github.com/repos/britmanjerin/tst/contents/asset.json";
 				this.byId("idStopTR").setVisible(true);
 			} else {
 				this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/cust_p.json";
 				this.imgurl = "https://api.github.com/repos/britmanjerin/tst/contents/Images_p/";
+				this.asseturl = "https://api.github.com/repos/britmanjerin/tst/contents/asset_p.json";
 				this.byId("idStopTR").setVisible(false);
 			}
 
@@ -307,9 +309,9 @@ sap.ui.define([
 							if ((data[i].lnCls || data[i].lnRen) && (that.uModel.getData().adm || that.getView().getModel("config").getData().ls)) {
 								that.calcSummary(data[i]);
 							}
-							
-							data[i].lnDt = that.formatter.dateFormat(new Date(data[i].lnDt)); 
-							
+
+							data[i].lnDt = that.formatter.dateFormat(new Date(data[i].lnDt));
+
 							that.cModel.setData(data[i]);
 							that.calPayData();
 							if ((that.uModel.getData().adm || that.getView().getModel("config").getData().not)) {
@@ -529,11 +531,11 @@ sap.ui.define([
 		},
 
 		calAmtTD: function(flg) {
-		
-			if (flg === '2'||sap.ui.getCore().byId("idAdjust").getSelected()) {
+
+			if (flg === '2' || sap.ui.getCore().byId("idAdjust").getSelected()) {
 				sap.ui.getCore().byId("idOthrAmt").setValue(0);
 			}
-			
+
 			if (flg === '1') {
 				sap.ui.getCore().byId("idOthrAmtVB").setVisible(false);
 				sap.ui.getCore().byId("idCB").setSelected(false);
@@ -547,7 +549,7 @@ sap.ui.define([
 			}
 
 			var cData = this.cModel.getData();
-			
+
 			var othrAmt = sap.ui.getCore().byId("idOthrAmt").getValue();
 			var payDate = sap.ui.getCore().byId("idPayDate").getValue() || new Date().toDateString();
 			var amtToPay;
@@ -601,7 +603,7 @@ sap.ui.define([
 			if (sap.ui.getCore().byId("idCBAP").getSelected()) {
 				sap.ui.getCore().byId("idCBAP").fireSelect();
 			}
-			
+
 			this.adjustAmt();
 
 		},
@@ -610,7 +612,7 @@ sap.ui.define([
 			if (sap.ui.getCore().byId("idAdjust").getSelected()) {
 				var othrAmt = Number(sap.ui.getCore().byId("idPayAmt").getValue()) - Number(sap.ui.getCore().byId("idTot").getText());
 				sap.ui.getCore().byId("idOthrAmt").setValue(othrAmt);
-			} 
+			}
 		},
 
 		calcIntDet: function(obj) {
@@ -870,9 +872,69 @@ sap.ui.define([
 				}
 
 				this.updateFile(oData);
+				if (!pfa) {
+					this.loadBalDet(payAmt, cData);
+				}
+
 				this.onCl();
 
 			}
+		},
+
+		loadBalDet: function(payAmt, cData) {
+
+			var that = this;
+			$.ajax({
+				type: 'GET',
+				url: this.asseturl,
+				headers: this.headers,
+				cache: false,
+				success: function(odata) {
+
+					var data = atob(odata.content);
+					data = data.trim() ? JSON.parse(data) : [];
+					if (data.length != 0) {
+						that.updateBal(odata.sha, payAmt, data, cData);
+					}
+				},
+				error: function(oError) {}
+			});
+		},
+
+		updateBal: function(sha, amt, assetData, lnData) {
+
+			for (var i in assetData) {
+				if (assetData[i].ps) {
+					assetData[i].hist.push({
+						desc: "Credited from " + lnData.name + " (Ref No." + lnData.refNo + ")",
+						amt: amt,
+						dt: Date.now().toString()
+					})
+					break;
+				}
+			}
+
+			var url = this.asseturl;
+			var body = {
+				message: "Updating file",
+				content: btoa(JSON.stringify(assetData)),
+				sha: sha
+			};
+			$.ajax({
+				type: 'PUT',
+				url: url,
+				headers: this.headers,
+				data: JSON.stringify(body),
+				dataType: 'text',
+				success: function(odata) {
+					window.assetsha = null;
+				},
+				error: function(odata) {
+
+					MessageBox.error("Failed to update.")
+
+				}
+			});
 		},
 
 		showAPInfo: function(oEvent, val) {
@@ -1581,6 +1643,7 @@ sap.ui.define([
 			window.mainsha = null;
 			window.custsha = null;
 			window.expsha = null;
+			window.assetsha = null;
 			this.onNavBack();
 		},
 
