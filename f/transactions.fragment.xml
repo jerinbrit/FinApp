@@ -1,0 +1,32 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form">
+	<Dialog class="sapUiSizeCompact" contentWidth="100%" initialFocus="done">
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Title id="idTransTit" text="Transactions"/>
+				</contentMiddle>
+				<contentRight>
+					<Button type="Ghost" icon="sap-icon://share" press="onUpdateTrans" class="sapUiSmallMarginEnd"/>
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<VBox class="sapUiTinyMargin">
+				<List items="{trans>/hist/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
+					<ObjectListItem title="{trans>desc}" number="{path: 'trans>amt', formatter:'.formatter.numberFormat_1'}" numberUnit=""
+						numberState="{=Number(${trans>amt})>0?'Success':'Error'}">
+						<firstStatus>
+							<ObjectStatus text="{trans>rem}" state="Success"/>
+						</firstStatus>
+						<ObjectAttribute text="{path: 'trans>dt', formatter:'.formatter.dateFormat_1'}"/>
+					</ObjectListItem>
+				</List>
+			</VBox>
+		</content>
+		<buttons>
+			<Button type="Ghost" text="Close" press="onClose" class="sapUiTinyMarginEnd"/>
+		</buttons>
+		<beginButton></beginButton>
+		<endButton></endButton>
+	</Dialog>
+</core:FragmentDefinition>
