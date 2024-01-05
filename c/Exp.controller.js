@@ -196,6 +196,7 @@ sap.ui.define([
 		onTestRun: function(evt) {
 			window.testRun = false;
 			window.expsha = null;
+			window.assetsha = null;
 			window.mainsha = null;
 			window.custsha = null;
 			this.onNavBack();
