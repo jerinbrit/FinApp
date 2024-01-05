@@ -147,9 +147,21 @@
 						</layoutData>
 					</VBox>
 					<VBox id="idInstDet" visible="true">
+						<Title text="Debit From" class="bold"/>
+						<List items="{oDialogModel2>/}" class="sapUiTinyMarginTopBottom">
+							<CustomListItem class="classCL">
+								<VBox>
+									<Label text="{oDialogModel2>src}:"/>
+									<Input type="Number" value="{oDialogModel2>val}" />
+									<FlexBox justifyContent="End">
+										<Text text="Available balance : {path: 'oDialogModel2>bal', formatter:'.formatter.numberFormat_1'}" class="sapUiTinyMarginEnd"/>
+									</FlexBox>
+								</VBox>
+							</CustomListItem>
+						</List>
 						<Title text="Installment Details" class="bold"/>
 						<List items="{oDialogModel>/instDet/}">
-							<ObjectListItem title="{oDialogModel>no}" number="{oDialogModel>int}" numberUnit="INR">
+							<ObjectListItem title="{oDialogModel>no}" number="{path: 'oDialogModel>int', formatter:'.formatter.numberFormat_1'}" numberUnit="">
 								<ObjectAttribute text="Installment Date" class="bold"/>
 								<ObjectAttribute
 									text="{path: 'oDialogModel>instDt', type:'sap.ui.model.odata.type.DateTime', formatOptions: { style: 'medium' , pattern: 'MMM dd, YYYY'}}"/>
