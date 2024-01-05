@@ -17,6 +17,14 @@ sap.ui.define([], function() {
 			var val = val1;
 			return sap.ui.core.format.NumberFormat.getFloatInstance(new sap.ui.core.Locale("en-in")).format(val);
 		},
+		
+		numberFormat_1:function(val1)
+		{
+			var val = val1;
+			var sign = val< 0 ? "- ₹":"₹";
+			val = Math.abs(val);
+			return sign+sap.ui.core.format.NumberFormat.getFloatInstance(new sap.ui.core.Locale("en-in")).format(val);
+		},
 
 		dateFormat_1: function(date) {
 			if (date) {
