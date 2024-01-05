@@ -31,7 +31,7 @@
 						</Toolbar>
 						<List id="idList" items="{aModel>/}" growing="true" growingThreshold="25" growingScrollToLoad="true">
 							<ObjectListItem title="{aModel>src}" number="{path: 'aModel>bal', formatter:'.formatter.numberFormat_1'}" type="Active"
-								press=".showTrans(${aModel>})" numberUnit="Availale balance" visible="{=(${aModel>ps}||${uModel>/adm})?true:false}"
+								press=".showTrans(${aModel>})" numberUnit="Available balance" visible="{=(${aModel>ps}||${uModel>/adm})?true:false}"
 								numberState="{=Number(${aModel>bal})>0?'None':'Error'}">
 								<firstStatus>
 									<ObjectStatus text="{=${aModel>ps}?'Primary':''}" inverted="true" state="Information"/>
