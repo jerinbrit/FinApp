@@ -52,10 +52,15 @@ sap.ui.define([
 
 		validateUser: function(user, key, aflg) {
 			sap.ui.core.BusyIndicator.show(0);
+			var url = 'https://api.github.com/repos/britmanjerin/tst/contents/main_p.json';
+			if (window.testRun) {
+				url = 'https://api.github.com/repos/britmanjerin/tst/contents/main.json';
+			}
+
 			var that = this;
 			$.ajax({
 				type: 'GET',
-				url: 'https://api.github.com/repos/britmanjerin/tst/contents/main.json',
+				url: url,
 				headers: {
 					"Authorization": 'Bearer ' + key,
 					"Accept": "application/vnd.github.v3+json",
