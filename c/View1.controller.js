@@ -1201,6 +1201,7 @@ sap.ui.define([
 			this.custurl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "cust_p" : "cust") + ".json";
 			this.mainurl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "main_p" : "main") + ".json";
 			this.imgurl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "Images_p" : "Images") + "/";
+			this.asseturl = "https://api.github.com/repos/britmanjerin/tst/contents/" + (evt === "S" ? "asset_p" : "asset") + ".json";
 			this.loadCustData();
 			if (this._oPopover) {
 				this._oPopover.close();
