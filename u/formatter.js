@@ -35,7 +35,7 @@ sap.ui.define([], function() {
 
 		fillGArr: function() {
 			var arr = ["Anklet", "Anklet (916)", "Bangle", "Bangle (916)", "Bracelet", "Bracelet (916)", "Chain", "Chain (916)", "Ear Ring",
-				"Ear Ring (916)", "Necklace", "Necklace (916)", "Ring", "Ring (916)", "Other", "Other (916)"
+				"Ear Ring (916)","Locket","Locket(916)", "Necklace", "Necklace (916)", "Ring", "Ring (916)", "Other", "Other (916)"
 			];
 			var rArr = [];
 			arr.forEach(function(e) {
